@@ -1,8 +1,4 @@
 require('dotenv').config();
-const { response } = require('express');
-const { request } = require('express');
-const req = require('express/lib/request');
-const res = require('express/lib/response');
 const jwt = require('jsonwebtoken');
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -18,7 +14,7 @@ function authenticateToken(req, res, next) {
     const token = req.cookies.token;
     
     if(!token) {
-        if(req.path.startsWith('/api'))
+        if(req.originalUrl.startsWith('/api'))
             return res.status(401).json({success: false, message: 'Token mancante, accesso non autorizzato.'}); // risponde JSON se richiesta API
         else
             return res.redirect(302, 'index.html'); // renderizza a homepage altrimenti.

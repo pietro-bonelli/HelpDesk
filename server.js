@@ -2,15 +2,42 @@ const express = require('express');
 const path = require('path');
 const db = require('./db/connection'); // importa il pool di connessione
 const cookieParser = require('cookie-parser');
+const { verifyAuthentication, authenticateToken } = require('./middleware/auth');
 
 const app = express();
 const PORT = process.env.PORT || 3000; // fallback porta 3000
 
+// Middleware GLOBALI
 app.use(express.json());
 app.use(cookieParser());
 
 // Espone la cartella public
 app.use(express.static('public'));
+
+app.get('/login.html', verifyAuthentication, (req, res, next) => {
+    next();
+});
+
+app.get('/dashboard', authenticateToken, (req, res) => {
+    res.sendFile('private/dashboard.html');
+});
+
+
+/**
+ * API PUBBLICHE
+ */
+app.use('/api/auth', require('./api/auth'));
+
+/**
+ * API PRIVATE (UTENTE)
+ */
+// Controllo autenticazione
+app.use('/api', authenticateToken);
+
+app.use('/api/tickets', require('./api/tickets'));
+app.use('/api/messages', require('./api/messages'));
+
+
 
 
 
@@ -18,7 +45,7 @@ app.use(express.static('public'));
 async function startServer() {
     try {
         // Test connessione database
-        const connection = await db.promise().getConnection();
+        const connection = await db.getConnection();
         console.log('✅ Connessione al database MySQL stabilita con successo!');
         connection.release();
 
