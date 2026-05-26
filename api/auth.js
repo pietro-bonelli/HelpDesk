@@ -77,7 +77,7 @@ router.post('/login', async (req, res) => {
     
     try {
         const query = `
-            SELECT u.id, u.first_name, u.last_name, u.password_hash, r.name AS role_name
+            SELECT u.id, u.first_name, u.last_name, u.password_hash, r.name AS role_name, r.is_admin
             FROM users u
             LEFT JOIN roles r ON u.role_id = r.id
             WHERE u.email = ?
@@ -102,7 +102,8 @@ router.post('/login', async (req, res) => {
         // Generazione token JWT
         const payload = {
             id: user.id,
-            role: user.role_name || 'Client'
+            roleName: user.role_name || 'Client',
+            isAdmin: Boolean(user.is_admin)
         };
         const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '2h' });
         res.cookie('token', token, {

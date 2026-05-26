@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const db = require('./db/connection'); // importa il pool di connessione
 const cookieParser = require('cookie-parser');
-const { verifyAuthentication, authenticateToken } = require('./middleware/auth');
+const { verifyAuthentication, authenticateToken, hasRole, isAdmin } = require('./middleware/auth');
 
 const app = express();
 const PORT = process.env.PORT || 3000; // fallback porta 3000
@@ -36,6 +36,9 @@ app.use('/api', authenticateToken);
 
 app.use('/api/tickets', require('./api/tickets'));
 app.use('/api/messages', require('./api/messages'));
+
+
+app.use('/api/admin', isAdmin, require('./api/admin'));
 
 
 

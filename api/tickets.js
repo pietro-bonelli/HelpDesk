@@ -137,7 +137,7 @@ router.get('/feed', async (req, res) => {
 
     const connection = await db.getConnection();
     try {
-        const categories = await getCategoryIdsByRole(connection, req.user.roleName);
+        const categories = await getCategoryIdsByRole(connection, req.user.roleName, req.user.isAdmin);
         const categoryIds = categories.map(cat => cat.category_id);
 
         if(categoryIds.length === 0)

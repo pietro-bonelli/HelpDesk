@@ -58,7 +58,7 @@ function hasRole(allowedRoles) {
             return res.status(401).json({success: false, message: 'Autenticazione mancante.'});
         }
 
-        if(allowedRoles.includes(req.user.roleName))
+        if(req.user.isAdmin || allowedRoles.includes(req.user.roleName))
             return next();
 
         return res.status(403).json({
@@ -68,8 +68,23 @@ function hasRole(allowedRoles) {
     }
 }
 
+function isAdmin(req, res, next) {
+    if(!req.user) {
+        return res.status(401).json({success: false, message: 'Autenticazione mancante.'});
+    }
+
+    if(req.user.isAdmin)
+        return next();
+
+    return res.status(403).json({
+        success: false,
+        message: 'Accesso negato: permessi insufficienti.'
+    });
+}
+
 module.exports = {
     authenticateToken,
     verifyAuthentication,
-    hasRole
+    hasRole,
+    isAdmin
 }
