@@ -77,10 +77,10 @@ router.post('/login', async (req, res) => {
     
     try {
         const query = `
-            SELECT u.id, u.first_name, u.last_name, u.password_hash, r.name AS role_name, r.is_admin
+            SELECT u.id, u.first_name, u.last_name, u.password_hash, r.name AS role_name, r.is_admin AS is_admin
             FROM users u
             LEFT JOIN roles r ON u.role_id = r.id
-            WHERE u.email = ?
+            WHERE u.email = ? AND u.is_active = 1
         `;
 
         const [users] = await db.query(query, [email]);
@@ -88,7 +88,7 @@ router.post('/login', async (req, res) => {
         if(users.length == 0)
             return res.status(400).json({
                 success: false,
-                message: 'Credenziali non valide'
+                message: 'Credenziali non valide.'
             });
         
         const user = users[0];
@@ -96,7 +96,7 @@ router.post('/login', async (req, res) => {
         if(!matches) // password errata
             return res.status(400).json({
                 success: false,
-                message: 'Credenziali non valide'
+                message: 'Credenziali non valide.'
             });
 
         // Generazione token JWT
@@ -142,6 +142,15 @@ router.post('/logout', (req, res) => {
         success: true,
         message: 'Logout effettuato con successo.'
     });
-})
+});
+
+/**
+ * @route GET /api/auth/me
+ * @desc Restituisce informazioni sull'utente
+ * @access authenticated
+ */
+router.get('/me', async (req, res) => {
+
+});
 
 module.exports = router;

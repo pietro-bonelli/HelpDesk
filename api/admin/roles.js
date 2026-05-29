@@ -1,14 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../db/connection');
+const db = require('../../db/connection');
+const { parse } = require('node:path');
 
 /**
  * @route POST /api/admin/roles
  * @desc Crea un nuovo ruolo e associa categorie corrispondenti
  * @access authenticated & admin
  */
-router.post('/roles', async (req, res) => {
-    const { name, category_ids } = req.body;
+router.post('/', async (req, res) => {
+    const { name, category_ids, is_admin } = req.body;
 
     // Validazione input
     if(!name || name.trim() === '')
@@ -21,14 +22,15 @@ router.post('/roles', async (req, res) => {
     try {
         await connection.beginTransaction();
 
-        const roleQuery = 'INSERT INTO roles (name) VALUES (?)';
-        const [roleResult] = await connection.query(roleQuery, [name]);
+        const roleQuery = 'INSERT INTO roles (name, is_admin) VALUES (?, ?)';
+        const isAdmin = is_admin === true ? true : false;
+        const [roleResult] = await connection.query(roleQuery, [isAdmin]);
         const newRoleID = roleResult.insertId;
 
         // Verifico Array categorie
         if(Array.isArray(category_ids) && category_ids.length > 0) {
             const records = category_ids.map(catId => [newRoleID, catId]);
-            const query = 'INSERT INTO roles_categories (role_id, category_id) VALUES ?';
+            const query = 'INSERT INTO role_categories (role_id, category_id) VALUES ?';
             await connection.query(query, [records]); // Insert Bulk di più oggetti contemporaneamente.
         }
 
@@ -56,9 +58,9 @@ router.post('/roles', async (req, res) => {
  * @desc Modifica un ruolo e le categorie associate
  * @access authenticated & admin
  */
-router.put('/roles/:id', async (req, res) => {
+router.put('/:id', async (req, res) => {
     const roleID = req.params.id;
-    const { name, category_ids } = req.body;
+    const { name, category_ids, is_admin } = req.body;
 
     if(!name || name.trim() === '')
         return res.status(400).json({success: false, message: 'Impossibile modificare il ruolo: nessun nome specificato.'});
@@ -67,8 +69,15 @@ router.put('/roles/:id', async (req, res) => {
     try {
         await connection.beginTransaction();
 
-        const updateRoleQuery = 'UPDATE roles SET name = ? WHERE id = ?';
-        await connection.query(updateRoleQuery, [roleID, name]);
+        const params = [name];
+        let updateRoleQuery = 'UPDATE roles SET name = ?';
+        if(is_admin === true || is_admin === false) {
+            updateRoleQuery += ", is_admin = ?";
+            params.push(is_admin);
+        }
+        updateRoleQuery += " WHERE id = ?";
+        params.push(roleID);
+        await connection.query(updateRoleQuery, params);
 
         // Elimino tutte le associazioni ruolo-categoria
         const deleteQuery = 'DELETE FROM role_categories WHERE role_id = ?';
@@ -110,24 +119,15 @@ router.put('/roles/:id', async (req, res) => {
  * @desc Elimina un ruolo dal sistema
  * @access authenticated & admin
  */
-router.delete('/roles/:id', async (req, res) => {
+router.delete('/:id', async (req, res) => {
     const roleID = req.params.id;
     
     const connection = await db.getConnection();
     try {
         await connection.beginTransaction();
 
-        // Controllo se ci sono utenti associati al ruolo
-        const [userCheck] = await connection.query('SELECT id FROM users WHERE role_id = ? LIMIT 1', [roleID]);
-        if(userCheck.length > 0) {
-            return res.status(409).json({
-                success: false,
-                message: 'Impossibile eliminare il ruolo: ci sono ancora utenti associati.'
-            });
-        }
-
         await connection.query('DELETE FROM role_categories WHERE role_id = ?', [roleID]);
-        await connection.query('DELETE FROM roles WHERE role_id = ?', [roleID]);
+        await connection.query('DELETE FROM roles WHERE id = ?', [roleID]);
 
         await connection.commit();
         return res.json({
@@ -137,6 +137,12 @@ router.delete('/roles/:id', async (req, res) => {
 
     } catch(error) {
         await connection.rollback();
+        if(error.code === 'ER_ROW_IS_REFERENCED_2') { // ci sono utenti associati al ruolo
+            return res.status(409).json({
+                success: false,
+                message: 'Impossibile eliminare il ruolo: ci sono ancora utenti associati.'
+            });
+        }
         console.log('Errore cancellazione ruolo: ' + error.stack);
         return res.status(500).json({
             success: false,
@@ -147,10 +153,54 @@ router.delete('/roles/:id', async (req, res) => {
     }
 });
 
+/**
+ * @route GET /api/admin/roles/:id
+ * @desc Restituisce informazioni su tutti i ruoli
+ * @access authenticated & admin
+ */
+router.get('/', async (req, res) => {
+    const connection = await db.getConnection();
+    try {
+        const rolesQuery = `
+            SELECT r.id AS role_id, r.name AS role_name, r.is_admin, c.id AS category_id, c.name AS category_name
+            FROM roles r
+            LEFT JOIN role_categories rc ON r.id = rc.role_id
+            LEFT JOIN categories c ON rc.category_id = c.id
+        `;
+        const [rows] = connection.query(rolesQuery);
 
+        const rolesMap = {};
+        for(const row of rows) {
+            if(!rolesMap[row.role_id]) {
+                rolesMap[row.role_id] = {
+                    id: row.role_id,
+                    name: row.role_name,
+                    is_admin: row.is_admin,
+                    categories: []
+                };
+            }
+            if(row.category_id !== null) {
+                rolesMap[row.role_id].categories.push({
+                    id: row.category_id,
+                    name: row.category_name,
+                });
+            }
+        }
 
+        return res.status(200).json({
+            success: true,
+            message: "Ruoli recuperati con successo.",
+            roles: Object.values(rolesMap) // trasormazione Mappa -> Array
+        });
+    } catch(error) {
+        console.log('Errore recupero ruoli: ' + error.stack);
+        return res.status(500).json({
+            success: false,
+            message: "Errore interno al server"
+        });
+    } finally {
+        connection.release();
+    }
+});
 
-
-module.exports = (
-    router
-);
+module.exports = router;

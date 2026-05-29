@@ -38,7 +38,9 @@ app.use('/api/tickets', require('./api/tickets'));
 app.use('/api/messages', require('./api/messages'));
 
 
-app.use('/api/admin', isAdmin, require('./api/admin'));
+app.use('/api/admin/roles', isAdmin, require('./api/admin/roles'));
+app.use('/api/admin/categories', isAdmin, require('./api/admin/categories'));
+app.use('/api/admin/users', isAdmin, require('./api/admin/users'));
 
 
 

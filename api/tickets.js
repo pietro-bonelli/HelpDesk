@@ -21,6 +21,16 @@ router.post('/', async (req, res) => {
     try {
         // faccio una transazione per essere sicuro che tutto venga eseguito (o tutto venga rigettato)
         await connection.beginTransaction();
+
+        const [checkCategory] = await connection.query('SELECT id FROM categories WHERE id = ? AND is_active = 1', [category_id]);
+        if(checkCategory.length === 0)
+            await connection.rollback();
+            return res.status(400).json({
+                success: false,
+                message: 'Categoria inesistente o non abilitata.'
+            });
+
+
         const ticketQuery = `
             INSERT INTO tickets (title, priority, client_id, category_id)
             VALUES (?, ?, ?, ?)
@@ -54,6 +64,81 @@ router.post('/', async (req, res) => {
         connection.release();
     }
 });
+
+
+/**
+ * @route PUT /api/tickets/:id
+ * @desc Modifica un ticket esistente
+ * @access authenticated
+ */
+router.put('/:id', async (req, res) => {
+    const ticketID = req.params.id;
+    const { status, priority, category_id } = req.body;
+
+    if(status === undefined && priority === undefined && category_id === undefined) {
+        return res.status(400).json({
+            success: false,
+            message: "Impossibile modificare il ticket: nessun dato specificato."
+        });
+    }
+
+    const connection = await db.getConnection();
+    try {
+        await connection.beginTransaction();
+
+        let query = "UPDATE tickets SET ";
+        const params = [];
+        const setStatements = [];
+
+        if(status !== undefined) {
+            setStatements.push('status = ?');
+            params.push(status);
+        }
+        if(priority !== undefined) {
+            setStatements.push('priority = ?');
+            params.push(priority);
+        }
+        if(category_id !== undefined) {
+            setStatements.push('category_id = ?');
+            params.push(category_id);
+        }
+
+        query += setStatements.join(', ');
+        query += " WHERE id = ?";
+        params.push(ticketID);
+
+        const [result] = await connection.query(query, params);
+        if(result.affectedRows === 0) {
+            return res.status(404).json({
+                success: false,
+                message: "Impossibile modificare il ticket: ticket non trovato."
+            });
+        }
+
+        return res.json({
+            success: true,
+            message: "Ticket modificato con successo."
+        });
+
+    } catch(error) {
+        if(error.code === "ER_NO_REFERENCED_ROW") {
+            return res.status(400).json({
+                success: false,
+                message: "Impossibile modificare il ticket: categoria inesistente."
+            });
+        }
+
+        console.error("Errore modifica ticket: " + error.stack);
+        return res.status(500).json({
+            success: false,
+            message: "Errore interno al server."
+        
+        });
+    } finally {
+        connection.release();
+    }
+});
+
 
 /**
  * @route GET /api/tickets/my
@@ -179,6 +264,58 @@ router.get('/feed', async (req, res) => {
     } finally {
         connection.release();
     }
-})
+});
+
+
+/**
+ * @route GET /api/tickets/categories
+ * @desc Restituisce la lista delle categorie attive organizzate ad albero
+ * @access authenticated 
+ */
+router.get('/categories', async (req, res) => {
+    const connection = await db.getConnection();
+    try {
+        const [categories] = await connection.query("SELECT id, name FROM categories WHERE is_active = 1");
+        
+        // Mappa base
+        const categoryMap = {};
+        for(const cat of categories) {
+            categoryMap[cat.id] = {
+                id: cat.id,
+                name: cat.name,
+                parent_id: cat.parent_id,
+                children: []
+            };
+        }
+
+        // Costruisco albero
+        const rootCategories = [];
+        for(const cat of categories) {
+            const current = categoryMap[cat.id];
+            if(current.parent_id === null) // è categoria padre
+                rootCategories.push(current);
+            else {
+                const parent = categoryMap[cat.parent_id]; // Funziona grazie ai passaggi per riferimento
+                if(parent) // Se il padre è disattivato, non mostro neanche i figli
+                    parent.children.push(current);
+            }
+        }
+
+        return res.json({
+            success: true,
+            message: "Categorie recuperate con successo",
+            categories: rootCategories
+        });
+    } catch(error) {
+        console.error("Errore recupero categorie: " + error.stack);
+        return res.status(500).json({
+            success: false,
+            message: "Errore interno al server."
+        });
+    } finally {
+        connection.release();
+    }
+});
+
 
 module.exports = router;
