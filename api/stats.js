@@ -36,8 +36,8 @@ router.get('/public', async (req, res) => {
         const [rateRows] = await connection.query('SELECT AVG(stars) AS average_rating FROM ratings');
 
         const stats = {
-            total_users = userRows[0].total_users,
-            resolved_tickets = closedTicketRows[0].resolved_tickets,
+            total_users: userRows[0].total_users,
+            resolved_tickets: closedTicketRows[0].resolved_tickets,
             average_rating: rateRows[0].average_rating,
             cached_at: new Date(now).toISOString()
         };

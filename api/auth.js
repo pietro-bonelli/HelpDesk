@@ -144,13 +144,4 @@ router.post('/logout', (req, res) => {
     });
 });
 
-/**
- * @route GET /api/auth/me
- * @desc Restituisce informazioni sull'utente
- * @access authenticated
- */
-router.get('/me', async (req, res) => {
-
-});
-
 module.exports = router;

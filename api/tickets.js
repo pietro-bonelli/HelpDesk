@@ -23,12 +23,13 @@ router.post('/', async (req, res) => {
         await connection.beginTransaction();
 
         const [checkCategory] = await connection.query('SELECT id FROM categories WHERE id = ? AND is_active = 1', [category_id]);
-        if(checkCategory.length === 0)
+        if(checkCategory.length === 0) {
             await connection.rollback();
             return res.status(400).json({
                 success: false,
                 message: 'Categoria inesistente o non abilitata.'
             });
+        }
 
 
         const ticketQuery = `
@@ -275,7 +276,7 @@ router.get('/feed', async (req, res) => {
 router.get('/categories', async (req, res) => {
     const connection = await db.getConnection();
     try {
-        const [categories] = await connection.query("SELECT id, name FROM categories WHERE is_active = 1");
+        const [categories] = await connection.query("SELECT id, name, parent_id FROM categories WHERE is_active = 1");
         
         // Mappa base
         const categoryMap = {};

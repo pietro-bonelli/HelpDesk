@@ -155,7 +155,7 @@ router.put('/me/password', async (req, res) => {
         const [user] = await connection.query('SELECT password_hash FROM users WHERE id = ? AND is_active = 1', [userID]);
 
         if(user.length === 0) {
-            connection.rollback();
+            await connection.rollback();
             return res.status(404).json({
                 success: false,
                 message: "Impossibile modificare la password: utente non trovato"
@@ -163,7 +163,7 @@ router.put('/me/password', async (req, res) => {
         }      
         
         const currentPasswordHash = user[0].password_hash;
-        if(!bcrypt.compare(old_password, currentPasswordHash)) {
+        if(!(await bcrypt.compare(old_password, currentPasswordHash))) {
             await connection.rollback();
             return res.status(401).json({
                 success: false,
