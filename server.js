@@ -27,6 +27,7 @@ app.get('/dashboard', authenticateToken, (req, res) => {
  * API PUBBLICHE
  */
 app.use('/api/auth', require('./api/auth'));
+app.use('/api/stats', require('./api/stats'));
 
 /**
  * API PRIVATE (UTENTE)
@@ -36,6 +37,7 @@ app.use('/api', authenticateToken);
 
 app.use('/api/tickets', require('./api/tickets'));
 app.use('/api/messages', require('./api/messages'));
+app.use('/api/users', require('./api/users'));
 
 
 app.use('/api/admin/roles', isAdmin, require('./api/admin/roles'));
