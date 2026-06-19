@@ -75,6 +75,6 @@ CREATE TABLE IF NOT EXISTS ratings (
 
 -- Indici per migliorare le performance delle query
 CREATE INDEX IF NOT EXISTS idx_ticket_status ON tickets(status); -- per filtri
-CREATE INDEX IF NOT EXISTS idx_ticket_created_at ON tickets(created_at)
+CREATE INDEX IF NOT EXISTS idx_ticket_created_at ON tickets(created_at);
 
 CREATE INDEX IF NOT EXISTS idx_messages_ticket_date ON ticket_messages(ticket_id, created_at);

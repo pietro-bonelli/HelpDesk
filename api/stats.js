@@ -60,3 +60,5 @@ router.get('/public', async (req, res) => {
         connection.release();
     }
 });
+
+module.exports = router;
