@@ -27,6 +27,8 @@ router.get('/me', async (req, res) => {
         `;
 
         const [result] = await connection.query(query, [userID]);
+        connection.release();
+        
         if(result.length === 0) {
             return res.status(404).json({
                 success: false,
