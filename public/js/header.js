@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     dropdownMenuListeners();
+    userProfileListener();
 });
 
 function dropdownMenuListeners() {
@@ -20,4 +21,12 @@ function dropdownMenuListeners() {
             }
         });
     }
+}
+
+function userProfileListener() {
+    const userProfileBtn = document.getElementById('user-profile-button');
+    const userProfileDropdown = document.getElementById('user-section-dropdown');
+    userProfileBtn.addEventListener('click', () => {
+        userProfileDropdown.classList.toggle('closed');
+    })
 }

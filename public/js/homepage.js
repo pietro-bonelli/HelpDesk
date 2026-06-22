@@ -25,6 +25,7 @@ async function loadStatistics() {
         rating.style.width = (statsJSON.data.average_rating * 10) / 5;
     } catch(error) {
         console.log(error);
+        showToast('Errore', 'Impossibile recuperare le statistiche.', 'error');
     }
 }
 
