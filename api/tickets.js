@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db/connection');
 const { getCategoryIdsByRole } = require('../services/dbServices');
+const { getCategoryPaths } = require('../services/categoryService');
 
 /**
  * @route POST /api/tickets
@@ -142,57 +143,107 @@ router.put('/:id', async (req, res) => {
 
 
 /**
+ * @route GET /api/tickets/my/stats
+ * @desc Recupera statistiche sui ticket di un utente
+ * @access authenticated
+ */
+router.get('/my/stats', async (req, res) => {
+    const query = 'SELECT status, COUNT(*) AS count FROM tickets WHERE client_id = ? GROUP BY status';
+    
+    const conn = await db.getConnection();
+    try {
+        const [result] = await conn.query(query, [req.user.id]);
+        
+        return res.status(200).json({
+            success: true,
+            message: "Statistiche recuperate con successo.",
+            stats: result
+        });
+    } catch(error) {
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: "Si è verificato un errore interno al server."
+        });
+    } finally {
+        conn.release();
+    }
+});
+
+/**
  * @route GET /api/tickets/my
  * @desc Recupera i ticket di un utente
  * @access authenticated
  */
 router.get('/my', async (req, res) => {
-    let { page, status, sort } = req.query; // filtri/sorting opzionali
+    let { page, limit, status, sort, search } = req.query; // filtri/sorting opzionali
     // valori default
-    page = (page ? page : 1);
-    status = (status ? status : 'all');
-    sort = (sort ? sort : 'desc');
+    page = parseInt(page) || 1;
+    limit = parseInt(limit) || 10;
+    status = status ? status : 'all';
+    sort = sort ? sort : 'desc';
+    search = search ? search.trim() : '';
 
-    const limit = 10; // 10 elementi per pagina
     const offset = limit * (page - 1);
-    let query = `
-        SELECT t.id, t.title, t.status, t.priority, t.created_at, c.name AS category_name
-        FROM tickets t
-        JOIN categories c on c.id = t.category_id
-        WHERE t.client_id = ?
-    `;
 
-    const queryParams = [req.user.id];
+    let filterQuery = ' WHERE t.client_id = ?';
+    const filterParams = [req.user.id];
 
     if(status != 'all') {
-        query += ' AND t.status = ?'
-        queryParams.push(status);
+        filterQuery += ' AND t.status = ?'
+        filterParams.push(status);
     }
 
-    // Sorting
-    switch(sort.toLowerCase()) {
-        case 'asc':
-            query += ' ORDER BY t.created_at ASC';
-            break;
-        case 'priority':
-            query += ` ORDER BY CASE t.priority WHEN 'high' THEN 1 WHEN 'medium' THEN 2 WHEN 'low' THEN 3 END`;
-            break;
-        default:
-            query += ' ORDER BY t.created_at DESC';
-            break;
+    if(search !== '') {
+        filterQuery += ' AND t.title LIKE ?';
+        filterParams.push(`%${search}%`);
     }
-
-    query += ` LIMIT ? OFFSET ?`
-    queryParams.push(limit, offset);
-
+    
     const connection = await db.getConnection();
     try {
-        const [tickets] = await connection.query(query, queryParams);
+        const countQuery = `
+            SELECT COUNT(*) AS total
+            FROM tickets t
+            ${filterQuery}
+        `;
+        const [countResult] = await connection.query(countQuery, filterParams);
+        const totalCount = countResult[0].total;
+
+        let dataQuery = `
+            SELECT t.id, t.title, t.status, t.priority, t.created_at, t.category_id, c.name AS category_name
+            FROM tickets t
+            JOIN categories c on c.id = t.category_id
+            ${filterQuery}
+        `;
+
+
+        // Sorting
+        switch(sort.toLowerCase()) {
+            case 'asc':
+                dataQuery += ' ORDER BY t.created_at ASC';
+                break;
+            case 'priority':
+                dataQuery += ` ORDER BY CASE t.priority WHEN 'high' THEN 1 WHEN 'medium' THEN 2 WHEN 'low' THEN 3 END`;
+                break;
+            default:
+                dataQuery += ' ORDER BY t.created_at DESC';
+                break;
+        }
+        dataQuery += ` LIMIT ? OFFSET ?`
+        const dataParams = [...filterParams, limit, offset];
+
+        const [tickets] = await connection.query(dataQuery, dataParams);
+        for(const ticket of tickets) {
+            const {category_ids, category_names} = getCategoryPaths(ticket.category_id);
+            ticket.category_ids = category_ids;
+            ticket.category_names = category_names;
+        }
+
         return res.json({
             success: true,
             message: 'Ticket recuperati con successo.',
             tickets: tickets,
-            count: tickets.length
+            totalCount: totalCount
         });
     } catch(error) {
         console.error('Errore recupero ticket: ' + error.stack);

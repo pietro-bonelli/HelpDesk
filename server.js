@@ -3,6 +3,7 @@ const path = require('path');
 const db = require('./db/connection'); // importa il pool di connessione
 const cookieParser = require('cookie-parser');
 const { verifyAuthentication, authenticateToken, hasRole, isAdmin } = require('./middleware/auth');
+const { loadCategories } = require('./services/categoryService');
 
 const app = express();
 const PORT = process.env.PORT || 3000; // fallback porta 3000
@@ -11,15 +12,16 @@ const PORT = process.env.PORT || 3000; // fallback porta 3000
 app.use(express.json());
 app.use(cookieParser());
 
+app.get('/login', verifyAuthentication, (req, res, next) => {
+    res.sendFile(path.join(__dirname, 'public', 'login.html'));
+});
+
 // Espone la cartella public
 app.use(express.static('public'));
 
-app.get('/login.html', verifyAuthentication, (req, res, next) => {
-    next();
-});
-
+// Espone cartelle private
 app.get('/dashboard', authenticateToken, (req, res) => {
-    res.sendFile('private/dashboard.html');
+    res.sendFile(path.join(__dirname, 'private', 'client', 'dashboard.html'));
 });
 
 
@@ -55,6 +57,8 @@ async function startServer() {
         const connection = await db.getConnection();
         console.log('✅ Connessione al database MySQL stabilita con successo!');
         connection.release();
+
+        loadCategories();
 
         // Accendo server express
         app.listen(PORT, () => {

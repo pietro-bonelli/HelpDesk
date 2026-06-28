@@ -7,6 +7,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const accessButton = document.getElementById('slider-accedi');
     const registerButton = document.getElementById('slider-registrati');
 
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    if(urlParams.get('register') === "1")
+        switchToRegister();
+
     accessButton.addEventListener('click', () => {
         switchToLogin();
         hideErrorMessage();
@@ -24,7 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
         hideErrorMessage();
         const email = document.querySelector('#form-login input[name="email"]');
         const password = document.querySelector('#form-login input[name="password"]');
-        login(email.value, password.value);
+        login(loginForm, email.value, password.value);
+
     });
 
     registerForm.addEventListener('submit', (event) => {
@@ -36,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const first_name = document.querySelector('#form-register input[name="first_name"]');
         const last_name = document.querySelector('#form-register input[name="last_name"]');
         const password = document.querySelector('#form-register input[name="password"]');
-        register(first_name.value, last_name.value, email.value, password.value);
+        register(registerForm, first_name.value, last_name.value, email.value, password.value);
     });
 
     const confirmPassword = document.querySelector('#form-register input[name="conferma-password"]');
@@ -45,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-async function login(email, password) {
+async function login(formElement, email, password) {
     const data = {
         email: email,
         password: password
@@ -67,10 +73,13 @@ async function login(email, password) {
         }
     } catch(error) {
         showErrorMessage('Si è verificato un problema durante la connessione al server.');
+    } finally {
+        if(formElement)
+            formElement.dispatchEvent(new CustomEvent('loading-end'));
     }
 }
 
-async function register(first_name, last_name, email, password) {
+async function register(formElement, first_name, last_name, email, password) {
     const data = {
         first_name: first_name,
         last_name: last_name,
@@ -95,6 +104,9 @@ async function register(first_name, last_name, email, password) {
         }
     } catch(error) {
         showErrorMessage('Si è verificato un problema durante la connessione al server.');
+    } finally {
+        if(formElement)
+            formElement.dispatchEvent(new CustomEvent('loading-end'));
     }
 }
 

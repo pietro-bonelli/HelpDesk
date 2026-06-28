@@ -259,6 +259,14 @@ nav ul a {
     text-decoration: none;
 }
 
+button {
+    font-size: inherit;
+    font-family: inherit;
+    border: none;
+    border-radius: var(--radius-lg);
+    padding: 1em;
+}
+
 @media (max-width: 700px) {
     .btn-sm, .btn-md, .btn-lg {
         width: 100%;

@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS tickets (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(150) NOT NULL,
     status ENUM('pending', 'in_progress', 'resolved', 'archived') DEFAULT 'pending',
-    priority ENUM('low', 'medium',' high') DEFAULT 'medium',
+    priority ENUM('low', 'medium', 'high') DEFAULT 'medium',
     client_id INT NOT NULL,
     operator_id INT DEFAULT NULL,
     category_id INT NOT NULL,

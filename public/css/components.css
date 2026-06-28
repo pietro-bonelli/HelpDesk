@@ -4,6 +4,17 @@
     margin-right: 0.7em;
 }
 
+.btn-xs:hover, .btn-sm:hover, .btn-md:hover, .btn-lg:hover {
+    cursor: pointer;
+}
+
+.btn-xs {
+    display: block;
+    padding: 0.4em 0.6em;
+    border-radius: var(--radius-sm);
+    font-size: var(--text-sm);
+    width: fit-content;
+}
 .btn-sm {
     display: block;
     padding: 0.6em 0.9em;
@@ -11,7 +22,8 @@
     width: fit-content;
 }
 .btn-md {
-    display: block;
+    display: flex;
+    align-items: center;
     padding: 0.8em 1.3em;
     border-radius: var(--radius-md);
     width: fit-content;
@@ -50,6 +62,7 @@
     color: var(--color-text-secondary);
     text-decoration: none;
     font-weight: var(--font-semibold);
+    background-color: transparent;
 }
 .btn-ghost:hover {
     color: var(--color-text-primary);
@@ -59,6 +72,35 @@
     color: var(--color-text-link);
     background-color: var(--color-accent-subtle);
 }
+
+
+.btn-loading::after {
+    content: "";
+    position: absolute;
+    height: 60%;
+    width: auto;
+    aspect-ratio: 1 / 1;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    margin: auto;
+    border: 2px solid transparent;
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+.btn-loading {
+    position: relative;
+    color: transparent !important;
+    pointer-events: none;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
 
 /*
     BADGE
@@ -70,6 +112,7 @@
     padding: 0.4em 0.8em;
     border-radius: var(--radius-sm);
     display: inline-block;
+    white-space: nowrap;
 }
 .priority-badge .fa-circle, .status-badge .fa-circle, .id-badge .fa-circle, .role-badge .fa-circle {
     font-size: 0.4em;
@@ -292,14 +335,15 @@ form input:focus {
     box-shadow: var(--shadow-focus);
 }
 
-form input[type="submit"] {
+form input[type="submit"], form button[type="submit"] {
     background-color: var(--color-accent);
     color: var(--color-text-inverse);
     font-weight: var(--font-semibold);
     padding: 1em;
     border-radius: var(--radius-lg);
+    border: none;
 }
-form input[type="submit"]:hover {
+form input[type="submit"]:hover, form button[type="submit"]:hover {
     background-color: var(--color-accent-hover);
     cursor: pointer;
 }

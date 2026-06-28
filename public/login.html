@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" /></head>
     
     <script src="js/toast.js"></script>
+    <script src="js/global.js"></script>
     <script src="js/header.js"></script>
     <script src="js/login.js"></script>
 </head>
@@ -25,19 +26,21 @@
                 <li><a href="index.html#faq" class="btn-ghost btn-sm">FAQ</a></li>
                 <li><a href="index.html#contacts" class="btn-ghost btn-sm">Contatti</a></li>
             </ul>
+
             <div class="user-section">
                 <a href="login.html" class="btn-ghost btn-md" id="login">Login</a>
                 <a href="login.html?register=1" class="btn-primary btn-md" id="register">Registrati</a>
-                <div class="user-profile">
+                <a href="/dashboard" class="btn-primary btn-md" id="dashboard">I Tuoi Ticket</a>
+                <div class="user-profile" id="user-profile">
                     <div class="user-profile-button" id="user-profile-button">
-                        <p class="operator-avatar" id="user-profile-avatar">PB</p>
-                        <p id="user-profile-display">Pietro Bonelli</p>
+                        <p class="" id="user-profile-avatar"></p>
+                        <p id="user-profile-display"></p>
                         <i class="fa-solid fa-angle-down icon"></i>
                     </div>
                     <div class="user-section-dropdown closed" id="user-section-dropdown">
                         <p class="label-upper">Informazioni Personali</p>
-                        <p class="small">pietro.bonelli2004@gmail.com</p>
-                        <p class="role-badge admin"><i class="fa-solid fa-circle"></i>Admin</p>
+                        <p class="small" id="user-profile-email">pietro.bonelli2004@gmail.com</p>
+                        <p class="role-badge" id="user-profile-role"><i class="fa-solid fa-circle"></i></p>
                         <hr>
                         <nav class="nav-light">
                             <p class="label-upper nav-label">TEST</p>
@@ -64,16 +67,16 @@
             </div>
         </div>
 
-        <form id="form-login">
+        <form id="form-login" data-login>
             <label for="email">Email</label>
             <input type="email" placeholder="name@example.com" name="email" required>
             <label for="password">Password</label>
             <input type="password" placeholder="•••••••" name="password" required>
 
-            <input type="submit" value="Accedi" name="accedi" id="submit-access">
+            <button type="submit">Accedi</button>
         </form>
 
-        <form id="form-register">
+        <form id="form-register" data-loading>
             <label for="fist_name">Nome</label>
             <input type="text" placeholder="Mario" name="first_name" required>
             <label for="last_name">Cognome</label>

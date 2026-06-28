@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket Helpdesk | Dashboard</title>
+
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/pages/dashboard.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" /></head>
+
+    <script src="js/toast.js"></script>
+    <script src="js/global.js"></script>
+    <script src="js/header.js"></script>
+    <script src="js/pages/dashboard.js"></script>
+</head>
+<body>
+    <header>
+        <h3 class="logo"><a href="index.html">HelpDesk</a></h3>
+        <nav class="menu menu-closed">
+            <ul>
+                <li><a href="index.html" class="btn-ghost btn-sm btn-ghost-selected">Home</a></li>
+                <li><a href="index.html#features" class="btn-ghost btn-sm">Funzionalità</a></li>
+                <li><a href="index.html#faq" class="btn-ghost btn-sm">FAQ</a></li>
+                <li><a href="index.html#contacts" class="btn-ghost btn-sm">Contatti</a></li>
+            </ul>
+
+            <div class="user-section">
+                <a href="login.html" class="btn-ghost btn-md" id="login">Login</a>
+                <a href="login.html?register=1" class="btn-primary btn-md" id="register">Registrati</a>
+                <button id="new-ticket" class="btn-md btn-primary"><i class="fa-solid fa-plus btn-icon"></i><p>Nuovo Ticket</p></button>
+                <div class="user-profile" id="user-profile">
+                    <div class="user-profile-button" id="user-profile-button">
+                        <p class="" id="user-profile-avatar"></p>
+                        <p id="user-profile-display"></p>
+                        <i class="fa-solid fa-angle-down icon"></i>
+                    </div>
+                    <div class="user-section-dropdown closed" id="user-section-dropdown">
+                        <p class="label-upper">Informazioni Personali</p>
+                        <p class="small" id="user-profile-email">pietro.bonelli2004@gmail.com</p>
+                        <p class="role-badge" id="user-profile-role"><i class="fa-solid fa-circle"></i></p>
+                        <hr>
+                        <nav class="nav-light">
+                            <p class="label-upper nav-label">TEST</p>
+                            <button id="logout" class="nav-item"><i class="icon fa-solid fa-arrow-right-from-bracket"></i>Logout</button>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <p class="burger-menu dropdown-menu-btn" id="burger-menu"><i class="fa-solid fa-bars"></i></p>
+    </header>
+
+    <main>
+        <section id="welcome-section">
+            <p class="label-upper date">Lunedì, 12 maggio 2026</p>
+            <h1 class="welcome">Benvenuto, <span>Pietro</span>.</h1>
+        </section>
+
+        <section id="statistics">
+            <div class="statistics-card" id="pending-card">
+                <i class="fa-regular fa-clock card-icon"></i>
+                <p class="card-value" id="pending-value">-</p>
+                <p class="card-description label-upper">In Attesa</p>
+            </div>
+            <div class="statistics-card" id="in-progress-card">
+                <i class="fa-solid fa-wrench card-icon"></i>
+                <p class="card-value" id="in-progress-value">-</p>
+                <p class="card-description label-upper">In Lavorazionne</p>
+            </div>
+            <div class="statistics-card" id="resolved-card">
+                <i class="fa-regular fa-circle-check card-icon"></i>
+                <p class="card-value" id="resolved-value">-</p>
+                <p class="card-description label-upper">Risolti</p>
+            </div>
+            <div class="statistics-card" id="total-card">
+                <i class="fa-regular fa-file-lines card-icon"></i>
+                <p class="card-value" id="total-value">-</p>
+                <p class="card-description label-upper">Totale Aperti</p>
+            </div>
+        </section>
+
+        <hr>
+
+        <div class="ticket-section">
+            <section id="filter-bar">
+                <div class="left filter-bar-element" id="filters">
+                    <p class="label-upper"><i class="fa-solid fa-filter"></i> Stato</p>
+                    <button class="btn-xs btn-ghost btn-ghost-selected" id="filter-all">Tutti</button>
+                    <button class="btn-xs btn-ghost" data-value="pending">In Attesa</button>
+                    <button class="btn-xs btn-ghost" data-value="in-progress">In Lavorazione</button>
+                    <button class="btn-xs btn-ghost" data-value="resolved">Risolti</button>
+                    <button class="btn-xs btn-ghost" data-value="archived">Archiviati</button>
+                </div>
+
+                <div class="right">
+                    <div class="search-bar filter-bar-element">
+                        <i class="fa-brands fa-sistrix icon"></i>
+                        <input type="text" id="search-ticket" placeholder="Cerca ticket..." autocomplete="off">
+                    </div>
+                    <div class="order-bar filter-bar-element">
+                        <label for="order-by" class="label-upper"><i class="fa-solid fa-arrow-down-wide-short icon"></i> Ordina</label>
+                        <select name="order-by" id="order-by">
+                            <option value="desc">Più recenti</option>
+                            <option value="asc">Meno recenti</option>
+                            <option value="priority">Priorità</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <section id="limits">
+                <p class="small info-num">Mostrando <span id="min-num">0</span>-<span id="max-num">0</span> di <span id="total-num">0</span> ticket.</p>
+                <div class="right">
+                    <p class="small">Righe per pagina</p>
+                    <select name="page-limit" id="page-limit" class="btn-xs btn-secondary">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                    </select>
+                </div>
+            </section>
+
+            <section id="ticket-list">
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="columns">
+                <div class="col">
+                    <h4>HelpDesk</h4>
+                    <p class="desc">Sistema di ticketing per la gestione centralizzata delle richieste di supporto.</p>
+                </div>
+                <div class="col">
+                    <p class="label-upper">Piattaforma</p>
+                    <nav>
+                        <ul>
+                            <li><a href="dashboard">Dashboard</a></li>
+                            <li><a href="dashboard/ticket/new">Apri Ticket</a></li>
+                            <li><a href="dashboard">I miei Ticket</a></li>
+                            <li><a href="admin">Pannello Admin</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="col">
+                    <p class="label-upper">Risorse</p>
+                    <nav>
+                        <ul>
+                            <li><a href="index.html#features">Funzionalità</a></li>
+                            <li><a href="index.html#faq">FAQ</a></li>
+                            <li><a href="index.html#contacts">Contatti</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="col">
+                    <p class="label-upper">Legale</p>
+                    <nav>
+                        <ul>
+                            <li><a href="#">Privacy Policy</a></li>
+                            <li><a href="#">Termini di Servizio</a></li>
+                            <li><a href="#">Cookie Policy</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            <hr>
+            <p class="copyright">&copy; 2026 • HelpDesk</p>
+        </div>
+    </footer>
+</body>
+</html>
