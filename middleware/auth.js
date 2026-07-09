@@ -69,13 +69,20 @@ function hasRole(allowedRoles) {
 }
 
 function isAdmin(req, res, next) {
+    const responseType = req.accepts(['html', 'json']);
+
+
     if(!req.user) {
+        if(responseType === 'html')
+            return res.redirect(302, '/index.html');
         return res.status(401).json({success: false, message: 'Autenticazione mancante.'});
     }
 
     if(req.user.isAdmin)
         return next();
 
+    if(responseType === 'html')
+        return res.redirect(302, '/index.html');
     return res.status(403).json({
         success: false,
         message: 'Accesso negato: permessi insufficienti.'

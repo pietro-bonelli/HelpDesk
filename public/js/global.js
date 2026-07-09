@@ -19,8 +19,26 @@ document.addEventListener('DOMContentLoaded', (event) => {
             submitBtn.disabled = false;
             submitBtn.classList.remove('btn-loading');
         }, { once: true }); //rimuove il listener dopo il primo trigger
-    })
+    });
+
+    loadModalListeners();
 });
+
+function loadModalListeners() {
+    const closeBtn = document.getElementById('modal-close-btn');
+    
+    closeBtn.addEventListener('click', (event) => {
+        event.preventDefault();
+        closeModal();
+    });
+
+
+    document.addEventListener('keydown', (event) => {
+        if(event.key === 'Escape' && isModalOpened()) {
+            closeModal();
+        }
+    })
+}
 
 
 function getStatusBadge(status, prefix = "") {
@@ -153,3 +171,159 @@ const formatRelativeDate = (dateString) => {
 
     return `${day}/${month}/${year} ${timeString}`;
 };
+
+
+/*
+    MODALI
+*/
+
+function setModalTitle(title) {
+    const modalTitle = document.getElementById('modal-title');
+
+    modalTitle.textContent = title;
+}
+
+function addModalElement(element) {
+    const modalBody = document.getElementById('modal-body');
+
+    modalBody.appendChild(element);
+}
+
+function addModalFooter(element) {
+    const modalFooter = document.getElementById('modal-footer');
+
+    modalFooter.appendChild(element);
+}
+
+function openModal(autoFocus = true) {
+    const modalOverlay = document.getElementById('modal-overlay');
+    modalOverlay.classList.remove('hidden');
+    void modalOverlay.offsetWidth; // Forza un "refresh"
+    modalOverlay.classList.add('show');
+    document.body.classList.add('modal-open');
+
+    document.querySelector('header').setAttribute('inert', '');
+    document.querySelector('main').setAttribute('inert', '');
+    document.querySelector('footer').setAttribute('inert', '');
+
+    if(autoFocus) {
+        const elements = modalOverlay.querySelectorAll('input, textarea, select');
+        elements[0].focus();
+    }
+}
+
+function closeModal() {
+    const modalOverlay = document.getElementById('modal-overlay');
+    modalOverlay.classList.remove('show');
+    setTimeout(() => {
+        modalOverlay.classList.add('hidden');
+        resetModal();
+    }, 300);
+
+    document.body.classList.remove('modal-open');
+
+    document.querySelector('header').removeAttribute('inert');
+    document.querySelector('main').removeAttribute('inert');
+    document.querySelector('footer').removeAttribute('inert');
+}
+
+function resetModal() {
+    const modalTitle = document.getElementById('modal-title');
+    const modalBody = document.getElementById('modal-body');
+    const modalFooter = document.getElementById('modal-footer');
+
+    modalTitle.innerHTML = '';
+    modalBody.innerHTML = '';
+    modalFooter.innerHTML = '';
+}
+
+function isModalOpened() {
+    return document.body.classList.contains('modal-open');
+}
+
+function getTextAreaElement() {
+    const textArea = document.createElement('div');
+    textArea.classList.add('rich-text-editor');
+
+    const toolbar = document.createElement('div');
+    toolbar.classList.add('editor-toolbar');
+
+    const bold = document.createElement('button');
+    bold.className = 'toolbar-button';
+    bold.dataset.cmd = 'bold';
+    bold.title = 'Grassetto (Ctrl + B)';
+    bold.innerHTML = '<i class="fa-solid fa-bold"></i>';
+    bold.type = 'button';
+
+    const italic = document.createElement('button');
+    italic.className = 'toolbar-button';
+    italic.dataset.cmd = 'italic';
+    italic.title = 'Corsivo (Ctrl + I)';
+    italic.innerHTML = '<i class="fa-solid fa-italic"></i>';
+    italic.type = 'button';
+
+    const underlined = document.createElement('button');
+    underlined.className = 'toolbar-button';
+    underlined.dataset.cmd = 'underline';
+    underlined.title = 'Grassetto (Ctrl + B)';
+    underlined.innerHTML = '<i class="fa-solid fa-underline"></i>';
+    underlined.type = 'button';
+    
+    toolbar.appendChild(bold);
+    toolbar.appendChild(italic);
+    toolbar.appendChild(underlined);
+
+    textArea.appendChild(toolbar);
+
+    const editorContent = document.createElement('div');
+    editorContent.classList.add("editor-content");
+    editorContent.contentEditable = true;
+    editorContent.placeholder = "Descrivi il problema...";
+
+    textArea.appendChild(editorContent);
+
+
+    const hiddenInput = document.createElement('input');
+    hiddenInput.hidden = true;
+    hiddenInput.id = 'ticket-message';
+    hiddenInput.name = 'ticket-message';
+
+    textArea.appendChild(hiddenInput);
+
+    toolbar.addEventListener('mousedown', (event) => {
+        const clicked = event.target.closest('.toolbar-button');
+        if(!clicked)
+            return;
+        event.preventDefault();
+
+        const command = clicked.dataset.cmd;
+        document.execCommand(command, false, null);
+        updateToolbarState();
+    });
+
+    editorContent.addEventListener('input', () => {
+        hiddenInput.value = editorContent.innerHTML;
+    });
+
+    editorContent.addEventListener('mouseup', updateToolbarState);
+    editorContent.addEventListener('keyup', updateToolbarState);
+
+    return textArea;
+}
+
+function syncHiddenInput(textArea, hiddenInput) {
+    hiddenInput.value = textArea.innerHTML;
+}
+
+function updateToolbarState() {
+    const buttons = document.querySelectorAll('.toolbar-button');
+
+    buttons.forEach((button) => {
+        const command = button.dataset.cmd;
+        const isActive = document.queryCommandState(command);
+        if(isActive)
+            button.classList.add('active');
+        else
+            button.classList.remove('active');
+    }) 
+}

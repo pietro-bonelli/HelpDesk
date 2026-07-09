@@ -17,7 +17,7 @@
     <script src="js/pages/dashboard.js"></script>
 </head>
 <body>
-    <header>
+    <header class="header">
         <h3 class="logo"><a href="index.html">HelpDesk</a></h3>
         <nav class="menu menu-closed">
             <ul>
@@ -84,15 +84,17 @@
 
         <hr>
 
-        <div class="ticket-section">
+        <div class="ticket-section" id="ticket-section">
             <section id="filter-bar">
                 <div class="left filter-bar-element" id="filters">
                     <p class="label-upper"><i class="fa-solid fa-filter"></i> Stato</p>
-                    <button class="btn-xs btn-ghost btn-ghost-selected" id="filter-all">Tutti</button>
-                    <button class="btn-xs btn-ghost" data-value="pending">In Attesa</button>
-                    <button class="btn-xs btn-ghost" data-value="in-progress">In Lavorazione</button>
-                    <button class="btn-xs btn-ghost" data-value="resolved">Risolti</button>
-                    <button class="btn-xs btn-ghost" data-value="archived">Archiviati</button>
+                    <div class="filter-buttons">
+                        <button class="btn-xs btn-ghost btn-ghost-selected" id="filter-all">Tutti</button>
+                        <button class="btn-xs btn-ghost" data-value="pending">In Attesa</button>
+                        <button class="btn-xs btn-ghost" data-value="in-progress">In Lavorazione</button>
+                        <button class="btn-xs btn-ghost" data-value="resolved">Risolti</button>
+                        <button class="btn-xs btn-ghost" data-value="archived">Archiviati</button>
+                    </div>
                 </div>
 
                 <div class="right">
@@ -124,6 +126,11 @@
             </section>
 
             <section id="ticket-list">
+            </section>
+            <section id="pages">
+                <button class="page-icon" id="page-previous"><i class="fa-solid fa-angle-left"></i></button>
+                <p id="page-number">1</p>
+                <button class="page-icon" id="page-next"><i class="fa-solid fa-angle-right"></i></button>
             </section>
         </div>
     </main>
@@ -171,5 +178,20 @@
             <p class="copyright">&copy; 2026 • HelpDesk</p>
         </div>
     </footer>
+
+    <div id="modal-overlay" class="modal-overlay hidden">
+        <div class="modal-window">
+            <header class="modal-header">
+                <h3 id="modal-title"></h3>
+                <button class="btn-close" id="modal-close-btn"><i class="fa-solid fa-xmark"></i></button>
+            </header>
+
+            <div class="modal-body" id="modal-body">
+            </div>
+
+            <div class="modal-footer" id="modal-footer">
+            </div>
+        </div>
+    </div>
 </body>
 </html>

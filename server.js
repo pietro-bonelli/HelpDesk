@@ -24,6 +24,14 @@ app.get('/dashboard', authenticateToken, (req, res) => {
     res.sendFile(path.join(__dirname, 'private', 'client', 'dashboard.html'));
 });
 
+app.get('/ticket/:id', authenticateToken, (req, res) => {
+    res.sendFile(path.join(__dirname, 'private', 'client', 'ticket.html'));
+});
+
+app.get('/admin', authenticateToken, isAdmin, (req, res) => {
+    res.sendFile(path.join(__dirname, 'private', 'admin', 'panel.html'));
+});
+
 
 /**
  * API PUBBLICHE

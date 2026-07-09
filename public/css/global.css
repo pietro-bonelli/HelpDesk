@@ -274,8 +274,8 @@ button {
     }
 }
 
-/* HEADER */
-header {
+/* .header */
+.header {
     position: sticky;
     top: 0;
     z-index: 10;
@@ -287,7 +287,7 @@ header {
     background-color: var(--color-surface);
 }
 
-header .logo a {
+.header .logo a {
     color: var(--color-text-primary);
     text-decoration: none;
     background-color: var(--color-bg-alt);
@@ -298,13 +298,13 @@ header .logo a {
     font-weight: var(--font-extrabold);
 }
 
-header .user-section {
+.header .user-section {
     display: flex;
     align-items: center;
     gap: 1em;
 }
 
-header nav {
+.header nav {
     margin-left: 2em;
     display: flex;
     justify-content: space-between;
@@ -312,12 +312,12 @@ header nav {
     width: 100%;
     height: 100%;
 }
-header nav ul li a {
+.header nav ul li a {
     display: block;
     margin: 0.2em;
 }
 
-header .burger-menu {
+.header .burger-menu {
     font-size: var(--text-2xl);
     display: none;
     padding: 1em;
@@ -326,10 +326,10 @@ header .burger-menu {
 }
 
 /* USER PROFILE */
-header .user-profile {
+.header .user-profile {
     position: relative;
 }
-header .user-profile-button {
+.header .user-profile-button {
     display: flex;
     gap: 0.7em;
     align-items: center;
@@ -341,7 +341,7 @@ header .user-profile-button {
     font-size: var(--text-sm);
     height: 3.5em;
 }
-header .user-profile-button:hover {
+.header .user-profile-button:hover {
     cursor: pointer;
     border-color: var(--color-border-strong);
     box-shadow: var(--shadow-sm);
@@ -368,15 +368,15 @@ header .user-profile-button:hover {
     background-color: var(--color-role-admin-bg);
     color: var(--color-role-admin);
 }
-header .user-profile-button #user-profile-display {
+.header .user-profile-button #user-profile-display {
     white-space: nowrap;
 }
-header .user-profile-button .icon {
+.header .user-profile-button .icon {
     font-size: 0.7em;
     margin-right: 0.7em;
 }
 
-header .user-section-dropdown {
+.header .user-section-dropdown {
     position: absolute;
     top: 3em;
     right: 0;
@@ -387,19 +387,19 @@ header .user-section-dropdown {
     transition: max-height 0.3s;
 }
 
-header .user-section-dropdown nav {
+.header .user-section-dropdown nav {
     padding: 0;
 }
 
-header .user-section-dropdown .label-upper {
+.header .user-section-dropdown .label-upper {
     margin-bottom: 0.5em;
 }
 
-header .user-section-dropdown hr {
+.header .user-section-dropdown hr {
     margin: 1em 0;
 }
 
-header .user-section-dropdown.closed {
+.header .user-section-dropdown.closed {
     max-height: 0;
     padding: 0;
     box-shadow: none;
@@ -411,21 +411,21 @@ header .user-section-dropdown.closed {
     display: none;
 }
 
-header.logged .user-section #login,
-header.logged .user-section #register {
+.header.logged .user-section #login,
+.header.logged .user-section #register {
     display: none;
 }
-header.logged .user-section #dashboard,
-header.logged .user-section #user-profile {
+.header.logged .user-section #dashboard,
+.header.logged .user-section #user-profile {
     display: inherit;
 }
 
 @media (max-width: 700px) {
-    header nav.menu-closed {
+    .header nav.menu-closed {
         max-height: 0;
         padding: 0;
     }
-    header nav {
+    .header nav {
         overflow: hidden;
         transition: none;
         transition: max-height 0.3s;
@@ -440,10 +440,10 @@ header.logged .user-section #user-profile {
         gap: 2em;
         max-height: 100vh;
     }
-    header nav ul {
+    .header nav ul {
         flex-direction: column;
     }
-    header .burger-menu {
+    .header .burger-menu {
         display: block;
     }
 }

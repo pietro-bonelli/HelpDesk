@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ticket Helpdesk | Login</title>
+    <title>Ticket Helpdesk | Admin Panel</title>
 
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/components.css">
-    <link rel="stylesheet" href="css/pages/login.css">
+    <link rel="stylesheet" href="css/pages/admin_panel.css">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" /></head>
-    
+
     <script src="js/toast.js"></script>
     <script src="js/global.js"></script>
     <script src="js/header.js"></script>
-    <script src="js/login.js"></script>
+    <script src="js/pages/admin_panel.js"></script>
 </head>
 <body>
     <header class="header">
@@ -30,7 +30,7 @@
             <div class="user-section">
                 <a href="login.html" class="btn-ghost btn-md" id="login">Login</a>
                 <a href="login.html?register=1" class="btn-primary btn-md" id="register">Registrati</a>
-                <a href="/dashboard" class="btn-primary btn-md" id="dashboard">I Tuoi Ticket</a>
+                <button id="new-ticket" class="btn-md btn-primary"><i class="fa-solid fa-plus btn-icon"></i><p>Nuovo Ticket</p></button>
                 <div class="user-profile" id="user-profile">
                     <div class="user-profile-button" id="user-profile-button">
                         <p class="" id="user-profile-avatar"></p>
@@ -53,49 +53,23 @@
         <p class="burger-menu dropdown-menu-btn" id="burger-menu"><i class="fa-solid fa-bars"></i></p>
     </header>
 
-    <main id="login-card">
-        <h1 id="card-title-login">Bentornato</h1>
-        <h1 id="card-title-register">Benvenuto</h1>
-        <p class="small" id="card-text-login">Accedi al tuo account per gestire i ticket.</p>
-        <p class="small" id="card-text-register">Registrati per inviare il tuo primo ticket.</p>
+    <main>
+        <aside class="sidebar">
+            <h3>Pannello di Gestione</h3>
 
-        <div class="slider">
-            <div class="slider-background-wrapper"><div class="slider-background"></div></div>
-            <div class="slider-text">
-                <button id="slider-accedi">Accedi</button>
-                <button id="slider-registrati">Registrati</button>
-            </div>
-        </div>
-
-        <form id="form-login" data-loading>
-            <label for="email">Email</label>
-            <input type="email" placeholder="name@example.com" name="email" required>
-            <label for="password">Password</label>
-            <input type="password" placeholder="•••••••" name="password" required>
-
-            <button type="submit">Accedi</button>
-        </form>
-
-        <form id="form-register" data-loading>
-            <label for="fist_name">Nome</label>
-            <input type="text" placeholder="Mario" name="first_name" required>
-            <label for="last_name">Cognome</label>
-            <input type="text" placeholder="Rossi" name="last_name" required>
-
-            <label for="email">Email</label>
-            <input type="email" placeholder="test@example.com" name="email" required>
-
-            <label for="password">Password</label>
-            <input type="password" placeholder="•••••••" name="password" required>
-            <label for="password">Conferma Password</label>
-            <input type="password" placeholder="•••••••" name="conferma-password" required>
-
-            <input type="submit" value="Registrati" id="submit-register">
-        </form>
-
-        <div class="error-message" id="error-message-container">
-            <i class="fa-regular fa-circle-xmark error-message-icon"></i>
-            <p id="error-message">Test messaggio di errore</p>
+            <nav class="nav-dark">
+                <ul>
+                    <li><button class="nav-item active" id="users-switch"><i class="fa-regular fa-user icon"></i>Utenti</button></li>
+                    <li><button class="nav-item" id="roles-switch"><i class="fa-regular fa-id-badge icon"></i>Ruoli</button></li>
+                    <li><button class="nav-item" id="categories-switch"><i class="fa-solid fa-layer-group icon"></i>Categorie</button></li>
+                </ul>
+            </nav>
+        </aside>
+        <div class="content">
+            <header>
+                <h2 class="content-title">Titolo</h2>
+                <button class="content-button btn-primary btn-md">Bottone</button>
+            </header>
         </div>
     </main>
 </body>

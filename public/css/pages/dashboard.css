@@ -11,6 +11,7 @@ main {
     display: flex;
     flex-direction: column;
     gap: 1em;
+    scroll-margin-top: 5em;
 }
 
 #welcome-section {
@@ -103,7 +104,7 @@ main {
 #filter-bar .left {
     display: flex;
     align-items: center;
-    gap: 0.5em;
+    gap: 1.5em;
 }
 #filter-bar .right {
     display: flex;
@@ -118,8 +119,14 @@ main {
     box-shadow: var(--shadow-sm);
 }
 
-#filter-bar .left .label-upper {
-    margin-right: 1em;
+#filter-bar .filter-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5em;
+}
+
+.ticket-section .label-upper {
+    white-space: nowrap;
 }
 
 #filter-bar .search-bar {
@@ -263,4 +270,82 @@ main {
     padding: 0.3em;
     border-radius: var(--radius-md);
     outline: none;
+}
+
+#pages {
+    margin-left: auto;
+    display: flex;
+    flex-direction: row;
+    gap: 1em;
+    align-items: center;
+}
+
+#page-number {
+    font-weight: var(--font-bold);
+}
+
+#pages .page-icon {
+    color: var(--color-text-muted);
+    padding: 0.5em;
+    border-radius: var(--radius-md);
+    background-color: transparent;
+}
+
+#pages .page-icon:hover {
+    color: var(--color-text-primary);
+    background-color: var(--color-bg-alt);
+    cursor: pointer;
+}
+
+
+@media (max-width: 700px) {
+    main {
+        width: 95%;
+    }
+
+    #statistics {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+    }
+
+    #filter-bar {
+        flex-wrap: wrap;
+        gap: 0.7em;
+        max-width: 100%;
+    }
+
+    #filter-bar .left {
+        max-width: 100%;
+    }
+
+    #filter-bar .left .filter-buttons {
+        overflow-x: auto;
+        min-width: 0;
+    }
+
+    .ticket {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+    }
+
+    .ticket .ticket-manage {
+        grid-column: span 2;
+        width: 100%;
+    }
+
+    .ticket .ticket-manage button {
+        flex-grow: 1;
+        text-align: center;
+        justify-content: center;
+    }
+
+    .ticket-description .ticket-title {
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        white-space: normal;
+    }
 }

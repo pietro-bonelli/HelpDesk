@@ -1,21 +1,235 @@
 let ticketsContainer;
-let limit;
+let limit = 10;
 let page = 1;
 let orderBy = 'desc';
 let filter = 'all';
+let search = '';
 
-document.addEventListener('DOMContentLoaded', () => {
+let categories;
+
+document.addEventListener('DOMContentLoaded', async () => {
     ticketsContainer = document.getElementById('ticket-list');
 
+    categories = await getCategories();
+    
     loadStats();
     renderTickets();
     loadStatusFilterListener();
     loadOrderByListener();
     loadPageLimitListener();
     loadTicketOpenListener();
+    loadSearchBarListener();
+    loadPageSwitchListener();
+    newTicketListener();
 });
 
+function loadCreateTicketListener() {
+    const form = document.getElementById('create-ticket-form');
+    console.log(form);
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const titleElement = form.querySelector('input[name="title"]');
+        const priorityElement = form.querySelector('select[name="priority"]');
+        const categoryId = form.dataset.category_id;
+        const description = form.querySelector('input[name="ticket-message"]');
 
+        const button = document.getElementById('create-ticket-button');
+        button.classList.add('btn-loading');
+        await createTicket(titleElement.value, priorityElement.value, categoryId, description.value);
+        closeModal();
+
+        renderTickets(limit, page, orderBy, filter, search);
+    });
+}
+
+async function createTicket(title, priority, categoryId, description) {
+    console.log(title + " " + priority + " " + categoryId + " " + description);
+    try {
+        const res = await fetch('/api/tickets', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                "title": title,
+                "priority": priority,
+                "category_id": categoryId,
+                "message_text": description
+            })
+        });
+
+        const resJSON = await res.json();
+        if(!resJSON.success) {
+            showToast('Impossibile creare il ticket', resJSON.message, 'error');
+            return;
+        } else {
+            showToast('Successo', resJSON.message, 'success');
+        }
+    } catch(error) {
+        showToast('Errore', 'Si è verificato un problema durante la creazione del ticket.', 'error');
+    }
+}
+
+function loadCategorySelectListener() {
+    const modal = document.getElementById('modal-overlay');
+    
+    modal.addEventListener('change', (event) => {
+        const clicked = event.target;
+        if(!clicked.classList.contains('category-selector')) 
+            return;
+
+        const sub = clicked.dataset.sub;
+        
+        const form = modal.querySelector('form');
+        form.dataset.category_id = "";
+        for(const subCat of form.children) {
+            if(subCat.classList.contains('category-selector') && subCat.dataset.sub > sub)
+                subCat.remove();
+        }
+
+        const children = getChildrenCategories(clicked.value, categories);
+        if(children && children.length > 0) {
+            const categorySelect = document.createElement('select');
+            categorySelect.setAttribute('name', 'category-' + parseInt(sub) + 1);
+            categorySelect.required = true;
+            categorySelect.classList.add('category-selector');
+            categorySelect.dataset.sub = parseInt(sub) +1;
+            const defaultOpt = document.createElement('option');
+            defaultOpt.selected = true;
+            defaultOpt.disabled = true;
+            defaultOpt.hidden = true;
+            defaultOpt.value = '';
+            defaultOpt.textContent = "Seleziona un'opzione...";
+            categorySelect.appendChild(defaultOpt);
+            for(const cat of children) {
+                const opt = document.createElement('option');
+                opt.setAttribute('value', cat.id);
+                opt.textContent = cat.name;
+                categorySelect.appendChild(opt);
+            }
+            clicked.after(categorySelect);
+
+        } else {
+            form.dataset.category_id = clicked.value;
+        }
+
+    });
+}
+
+
+function openNewTicketModal() {
+    if(!categories) {
+        showToast('Errore', 'Impossibile recuperare la lista categorie.', 'error');
+    }
+    setModalTitle("Nuovo Ticket");
+    
+    const form = document.createElement('form');
+    form.id = 'create-ticket-form';
+    form.dataset.loading = true;
+
+    const titleLabel = document.createElement('label');
+    titleLabel.setAttribute('for', 'title');
+    titleLabel.textContent = 'Titolo';
+    form.appendChild(titleLabel);
+
+    const title = document.createElement('input');
+    title.setAttribute('name', 'title');
+    title.setAttribute('placeholder', 'Il PC non si accende');
+    title.required = true;
+    form.appendChild(title);
+
+    const priorityLabel = document.createElement('label');
+    priorityLabel.setAttribute('for', 'priority');
+    priorityLabel.textContent = 'Priorità';
+    form.appendChild(priorityLabel);
+
+    const prioritySelect = document.createElement('select');
+    prioritySelect.setAttribute('name', 'priority');
+
+    const low = document.createElement('option');
+    low.setAttribute('value', 'low');
+    low.innerHTML = 'Bassa';
+    prioritySelect.appendChild(low);
+    
+    const medium = document.createElement('option');
+    medium.setAttribute('value', 'medium');
+    medium.innerHTML = 'Media';
+    prioritySelect.appendChild(medium);
+
+    const high = document.createElement('option');
+    high.setAttribute('value', 'high');
+    high.innerHTML = 'Alta';
+    prioritySelect.appendChild(high);
+
+    form.appendChild(prioritySelect);
+
+    const categoryLabel = document.createElement('label');
+    categoryLabel.setAttribute('for', 'category');
+    categoryLabel.textContent = 'Categoria';
+    form.appendChild(categoryLabel);
+
+    const categorySelect = document.createElement('select');
+    categorySelect.setAttribute('name', 'category');
+    categorySelect.required = true;
+    categorySelect.classList.add('category-selector');
+    categorySelect.dataset.sub = 1;
+    const defaultOpt = document.createElement('option');
+    defaultOpt.selected = true;
+    defaultOpt.disabled = true;
+    defaultOpt.hidden = true;
+    defaultOpt.value = '';
+    defaultOpt.textContent = "Seleziona un'opzione...";
+    categorySelect.appendChild(defaultOpt);
+    for(const cat of categories) {
+        const opt = document.createElement('option');
+        opt.setAttribute('value', cat.id);
+        opt.textContent = cat.name;
+        categorySelect.appendChild(opt);
+    }
+    form.appendChild(categorySelect);
+
+    const descriptionLabel = document.createElement('label');
+    descriptionLabel.textContent = 'Descrizione del problema';
+    form.appendChild(descriptionLabel);
+    form.appendChild(getTextAreaElement());
+    
+    addModalElement(form);
+    
+    const createButton = document.createElement('button');
+    createButton.type = 'submit';
+
+    createButton.className = 'btn-primary btn-md';
+    createButton.innerHTML = '<i class="btn-icon fa-solid fa-plus"></i>Crea Ticket';
+    createButton.id = 'create-ticket-button';
+    createButton.setAttribute('form', 'create-ticket-form');
+
+    addModalFooter(createButton);
+    openModal();
+
+    loadCategorySelectListener();
+    loadCreateTicketListener();
+}
+
+async function getCategories() {
+    try {
+        const res = await fetch('/api/tickets/categories');
+        const resJSON = await res.json();
+
+        return resJSON.categories;
+    } catch(error) {
+        showToast('Errore', 'Impossibile recuperare la lista categorie', 'error');
+        return null;
+    }
+}
+
+function newTicketListener() {
+    const button = document.getElementById('new-ticket');
+
+    button.addEventListener('click', (event) => {
+        openNewTicketModal();
+    });
+}
 
 async function loadStats() {
     const pending = document.getElementById('pending-value');
@@ -40,6 +254,39 @@ async function loadStats() {
     } catch(error) {
 
     }
+}
+
+function loadPageSwitchListener() {
+    const container = document.getElementById('pages');
+    container.addEventListener('click', (event) => {
+        const clicked = event.target.closest('.page-icon');
+        if(!clicked)
+            return;
+
+        if(clicked.id === 'page-previous' && page > 1)
+            page--;
+        else if(clicked.id === 'page-next')
+            page++;
+
+        renderTickets(limit, page, orderBy, filter, search);
+        window.location.href = '#ticket-section';
+    });
+}
+
+function loadSearchBarListener() {
+    const searchBar = document.getElementById('search-ticket');
+
+    let debounceTimer;
+
+    searchBar.addEventListener('input', (event) => {
+        clearTimeout(debounceTimer);
+
+        debounceTimer = setTimeout(() => {
+        search = event.target.value.trim();
+
+        renderTickets(limit, page, orderBy, filter, search);
+        }, 500); // si esegue con 500ms di ritardo e solo se non ci sono altri input nel frattempo
+    });
 }
 
 function loadPageLimitListener() {
@@ -170,4 +417,20 @@ async function renderTickets(limit = 10, page = 1, orderBy = 'desc', filter = 'a
     } catch(error) {
         showToast('Errore', "Impossibile caricare la lista dei ticket." + error, 'error');
     }
+}
+
+function getChildrenCategories(targetId, categories) {
+    console.log(categories);
+    for(const cat of categories) {
+        if(cat.id == targetId)
+            return cat.children;
+
+        if(cat.children && cat.children.length > 0) {
+            const found = getChildrenCategories(targetId, cat.children);
+            if(found !== null)
+                return found;
+        }
+    }
+
+    return null;
 }
