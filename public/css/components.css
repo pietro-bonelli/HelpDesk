@@ -97,6 +97,30 @@
     background-color: var(--color-accent-hover) !important;
 }
 
+.spinner::after {
+    content: "";
+    position: absolute;
+    height: 60%;
+    width: auto;
+    aspect-ratio: 1 / 1;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    margin: auto;
+    border: 2px solid transparent;
+    border-top-color: var(--color-accent-light);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+.spinner {
+    height: 4em;
+    position: relative;
+    color: transparent !important;
+    pointer-events: none;
+    background-color: transparent !important;
+}
+
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }

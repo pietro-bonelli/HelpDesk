@@ -58,3 +58,22 @@ nav.nav-dark .nav-item.active {
     justify-content: space-between;
     align-items: center;
 }
+
+.table-wrapper {
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    margin-top: 2em;
+}
+table {
+    width: 100%;
+    font-size: var(--text-body);
+    border-collapse: collapse;
+}
+
+table td, table th {
+    border-bottom: 1px solid var(--color-border);
+    border-collapse: collapse;
+    padding: 1em;
+    text-align: center;
+}

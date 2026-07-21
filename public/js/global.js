@@ -107,6 +107,9 @@ function getUserBadge(role) {
         case "admin":
             text = 'Admin';
             break;
+        default:
+            text = role;
+            break;
     }
 
     

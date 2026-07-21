@@ -14,6 +14,7 @@
     <script src="js/toast.js"></script>
     <script src="js/global.js"></script>
     <script src="js/header.js"></script>
+    <script src="js/InfiniteScroll.js"></script>
     <script src="js/pages/admin_panel.js"></script>
 </head>
 <body>
@@ -57,11 +58,13 @@
         <aside class="sidebar">
             <h3>Pannello di Gestione</h3>
 
-            <nav class="nav-dark">
+            <nav class="nav-dark" id="selector">
                 <ul>
-                    <li><button class="nav-item active" id="users-switch"><i class="fa-regular fa-user icon"></i>Utenti</button></li>
+                    <p class="label-upper">Gestione</p>
+                    <li><button class="nav-item" id="operators-switch"><i class="fa-regular fa-user icon"></i>Operatori</button></li>
                     <li><button class="nav-item" id="roles-switch"><i class="fa-regular fa-id-badge icon"></i>Ruoli</button></li>
                     <li><button class="nav-item" id="categories-switch"><i class="fa-solid fa-layer-group icon"></i>Categorie</button></li>
+                    <p class="label-upper">Analisi</p>
                 </ul>
             </nav>
         </aside>
@@ -70,6 +73,10 @@
                 <h2 class="content-title">Titolo</h2>
                 <button class="content-button btn-primary btn-md">Bottone</button>
             </header>
+
+            <div id="content-area">
+    
+            </div>
         </div>
     </main>
 </body>

@@ -5,10 +5,10 @@ class InfiniteScroll {
      * @param {Object} options
      */
     constructor(triggerElement, loadDataCallback, options = {}) {
-        this.trigger = this.triggerElement;
+        this.trigger = triggerElement;
         this.loadData = loadDataCallback;
 
-        this.page = 1;
+        this.page = 0;
         this.isLoading = false;
         this.hasMore = true;
 
@@ -55,8 +55,8 @@ class InfiniteScroll {
     reset() {
         this.page = 1;
         this.hasMore = true;
-        this.isLoading = false,
-        this.trigger.display = 'block';
+        this.isLoading = false;
+        this.trigger.style.display = 'block';
 
         this.observer.disconnect();
         this.observer.observe(this.trigger);

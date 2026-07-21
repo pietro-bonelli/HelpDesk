@@ -192,7 +192,7 @@ router.delete('/:id', async (req, res) => {
  * @access authenticated & admin 
 */
 router.get('/', async (req, res) => {
-    let { page, search } = req.query;
+    let { page, search , operators_only} = req.query;
     page = page ? parseInt(page) : 1;
 
     const limit = 10; // limitato a 10 utenti alla volta
