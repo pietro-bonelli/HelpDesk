@@ -71,10 +71,10 @@ router.put('/:id', async (req, res) => {
     const userID = req.params.id;
     const { first_name, last_name, email, password, role_id, is_active } = req.body;
 
-    if(!first_name || !last_name || !email || !role_id) {
+    if(!first_name && !last_name && !email && !role_id && !password && !is_active) {
         return res.status(400).json({
             success: false,
-            message: "Impossibile modificare l'utente: i campi nome, cognome, email e ruolo sono obbligatori."
+            message: "Impossibile modificare l'utente: non è stato modificato nessun valore."
         });
     }
 
@@ -90,9 +90,10 @@ router.put('/:id', async (req, res) => {
         
         let query = `
             UPDATE users
-            SET first_name = ?, last_name = ?, email = ?, role_id = ?
+            SET 
         `;
-        const params = [first_name, last_name, email, role_id];
+        const setters = [];
+        const params = [];
         
 
         if(password && password.trim() != '') {
@@ -102,10 +103,28 @@ router.put('/:id', async (req, res) => {
             params.push(hashedPassword);
         }
 
+        if(first_name) {
+            setters.push('first_name = ?');
+            params.push(first_name);
+        }
+        if(last_name) {
+            setters.push('last_name = ?');
+            params.push(last_name);
+        }
+        if(email) {
+            setters.push('email = ?');
+            params.push(email);
+        }
+        if(role_id !== undefined) {
+            setters.push('role_id = ?');
+            params.push(role_id == 'NULL' || role_id == 0 ? null : role_id);
+        }
         if(is_active !== undefined) {
-            query += ', is_active = ?';
+            setters.push('is_active = ?');
             params.push(is_active);
         }
+
+        query += setters.join(', ');
 
         query += ' WHERE id = ?';
         params.push(userID);
@@ -202,7 +221,7 @@ router.get('/', async (req, res) => {
     try {
 
         let query = `
-            SELECT u.id, u.first_name, u.last_name, u.email, u.is_active, u.created_at, r.name AS role_name
+            SELECT u.id, u.first_name, u.last_name, u.email, u.is_active, u.created_at, r.id AS role_id, r.name AS role_name
             FROM users u
             LEFT JOIN roles r ON u.role_id = r.id
         `;
@@ -214,7 +233,7 @@ router.get('/', async (req, res) => {
             params.push(searchPattern, searchPattern, searchPattern);
         }
 
-        query += " ORDER BY u.created_at DESC LIMIT ? OFFSET ?";
+        query += " ORDER BY u.role_id DESC, u.created_at DESC LIMIT ? OFFSET ?";
         params.push(limit, offset);
 
         const [users] = await connection.query(query, params);

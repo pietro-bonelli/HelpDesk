@@ -94,26 +94,31 @@ function getUserBadge(role) {
     const badge = document.createElement('p');
     
     badge.classList.add('role-badge');
-    badge.classList.add(role);
+    if(!role)
+        role = 'Client';
 
     let text;
     switch(role.toLowerCase()) {
         case "client":
             text = 'Cliente';
+            badge.classList.add('client');
             break;
         case "operator":
             text = 'Operatore';
+            badge.classList.add('operator');
             break;
         case "admin":
             text = 'Admin';
+            badge.classList.add('admin');
             break;
         default:
             text = role;
+            badge.classList.add('operator');
             break;
     }
 
     
-    badge.innerHTML = '<i class="fa-solid fa-circle">' + text + '</i>';
+    badge.innerHTML = '<i class="fa-solid fa-circle"></i>' + text;
     return badge;
 }
 
@@ -329,4 +334,12 @@ function updateToolbarState() {
         else
             button.classList.remove('active');
     }) 
+}
+
+function startLoading(element) {
+    element.classList.add('btn-loading');
+}
+function stopLoading(element) {
+    element.dispatchEvent(new CustomEvent('loading-end'));
+    element.classList.remove('btn-loading');
 }

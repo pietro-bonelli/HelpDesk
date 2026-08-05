@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,13 +10,17 @@
     <link rel="stylesheet" href="../css/components.css">
     <link rel="stylesheet" href="../css/pages/ticket.css">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" /></head>
-    
-    <script src="../js/toast.js"></script>
-    <script src="../js/global.js"></script>
-    <script src="../js/header.js"></script>
-    <script src="../js/pages/ticket.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+        integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
+
+<script src="../js/toast.js"></script>
+<script src="../js/global.js"></script>
+<script src="../js/header.js"></script>
+<script src="../js/pages/ticket.js"></script>
+</head>
+
 <body>
     <header class="header">
         <h3 class="logo"><a href="index.html">HelpDesk</a></h3>
@@ -44,7 +49,8 @@
                         <hr>
                         <nav class="nav-light">
                             <p class="label-upper nav-label">TEST</p>
-                            <button id="logout" class="nav-item"><i class="icon fa-solid fa-arrow-right-from-bracket"></i>Logout</button>
+                            <button id="logout" class="nav-item"><i
+                                    class="icon fa-solid fa-arrow-right-from-bracket"></i>Logout</button>
                         </nav>
                     </div>
                 </div>
@@ -52,5 +58,130 @@
         </nav>
         <p class="burger-menu dropdown-menu-btn" id="burger-menu"><i class="fa-solid fa-bars"></i></p>
     </header>
+
+    <main>
+        <aside class="aside-operator" id="aside">
+            <h2 class="ticket-title">Problemi di connessione di rete</h2>
+            <div class="badge-section"></div>
+            <hr>
+            <form class="ticket-info">
+                <label for="category" class="label-upper">Categoria</label>
+                <input type="text" value="Rete">
+                <input type="text" value="VPN">
+                <label for="priority" class="label-upper">Priorità</label>
+                <input type="text" value="Alta">
+                <label for="status" class="label-upper">Stato</label>
+                <input type="text" value="In Attesa">
+                <hr>
+
+                <p class="label-upper">Tracciamento</p>
+                <div class="track-element">
+                    <p class="small">Aperto il</p>
+                    <p id="created-at">12 mag 2026, 14:30</p>
+                </div>
+                <hr>
+                <div class="track-element">
+                    <p class="small">Ultimo aggiornamento</p>
+                    <p id="updated-at">Oggi, 15:42</p>
+                </div>
+                <hr>
+                <div class="track-element">
+                    <p class="small">ID Ticket</p>
+                    <p id="ticket-id">#00001</p>
+                </div>
+                <hr>
+                <div class="track-element">
+                    <p class="small">Operatoret</p>
+                    <p id="operator">Pietro Bonelli</p>
+                </div>
+                <hr>
+                <div class="track-element">
+                    <p class="small">Cliente</p>
+                    <p id="client">Mario Rossi</p>
+                </div>
+            </form>
+
+            <footer class="ticket-actions">
+                <button class="btn-md btn-secondary" id="edit-ticket-btn">
+                    <i class="fa-solid fa-pen-to-square btn-icon"></i>
+                    Modifica Informazioni
+                </button>
+                <button class="btn-sm btn-ghost" id="archive-ticket-btn">
+                    <i class="fa-solid fa-box-archive btn-icon"></i>
+                    Archivia
+                </button>
+                <button class="btn-sm btn-ghost" id="close-ticket-btn">
+                    <i class="fa-solid fa-lock btn-icon"></i>
+                    Chiudi
+                </button>
+            </footer>
+        </aside>
+
+        <section class="private-notes expanded">
+            <div class="private-notes-header">
+                <p class="private-notes-icon"><i class="fa-solid fa-lock"></i></p>
+                <p class="label-upper">Note Private</p>
+                <i class="fa-solid fa-angle-down"></i>
+            </div>
+
+            <div class="private-notes-content">
+                <div class="note">
+                    <p class="note-message">
+                        Verificato da Pietro.
+                    </p>
+                    <p class="note-info small">
+                        Pietro • 12 mag, 15:53
+                    </p>
+                </div>
+                <div class="note">
+                    <p class="note-message">
+                        Verificato da Pietro.
+                    </p>
+                    <p class="note-info small">
+                        Pietro • 12 mag, 15:53
+                    </p>
+                </div>
+                <div class="note">
+                    <p class="note-message">
+                        Verificato da Pietro.
+                    </p>
+                    <p class="note-info small">
+                        Pietro • 12 mag, 15:53
+                    </p>
+                </div>
+            </div>
+
+            <div class="private-notes-textarea">
+                <button class="btn-sm btn-secondary" id="send-private-note">
+                    <i class="fa-regular fa-paper-plane btn-icon"></i>
+                    Invia Nota
+                </button>
+            </div>
+        </section>
+
+        <section class="chat">
+            <div class="chat-messages">
+                <div class="message client right">
+                    <p class="message-text">Corpo del messaggio con tatto di <b>formattazione</b></b></p>
+                    <div class="message-data">
+                        <p class="message-owner">Pietro Bonelli</p>
+                        <p class="message-date">25/05/2026 21:30</p>
+                    </div>
+                </div>
+                <div class="message operator left">
+                    <p class="message-text">Corpo del messaggio con tatto di <b>formattazione</b></b></p>
+                    <div class="message-data">
+                        <p class="message-owner">Pietro Bonelli</p>
+                        <p class="message-date">25/05/2026 21:30</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-textarea">
+
+            </div>
+        </section>
+    </main>
 </body>
+
 </html>

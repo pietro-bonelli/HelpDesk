@@ -110,7 +110,7 @@ main {
     display: flex;
     gap: 0.6em;
 }
-#filter-bar .filter-bar-element {
+.filter-bar-element {
     background-color: var(--color-surface);
     border-radius: var(--radius-lg);
     padding: 0.5em;
@@ -127,40 +127,6 @@ main {
 
 .ticket-section .label-upper {
     white-space: nowrap;
-}
-
-#filter-bar .search-bar {
-    position: relative;
-    display: flex;
-    align-items: center;
-    padding: 0;
-    border: none;
-    box-shadow: none;
-}
-#filter-bar .search-bar .icon {
-    color: var(--color-text-muted);
-    vertical-align: middle;
-    position: absolute;
-    left: 0.4em;
-    vertical-align: middle;
-}
-#search-ticket {
-    border: none;
-    width: 100%;
-    height: 100%;
-    padding: 0.5em;
-    border-radius: var(--radius-lg);
-    padding-left: 2.4em;
-    border: 1px solid var(--color-border);
-    box-shadow: var(--shadow-sm);
-}
-#search-ticket:focus {
-    outline: none;
-    border-color: var(--color-border-focus);
-    box-shadow: var(--shadow-focus);
-}
-#search-ticket::placeholder {
-    color: var(--color-text-muted);
 }
 
 #filter-bar .order-bar {
@@ -295,6 +261,15 @@ main {
     color: var(--color-text-primary);
     background-color: var(--color-bg-alt);
     cursor: pointer;
+}
+
+#pages .page-icon.disabled {
+    color: var(--color-text-muted);
+    opacity: 0.5;
+}
+#pages .page-icon.disabled:hover {
+    cursor: not-allowed;
+    background: none;
 }
 
 

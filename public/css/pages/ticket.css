@@ -1,0 +1,209 @@
+main {
+    width: 100%;
+    height: calc(100vh - 5em);
+    display: grid;
+    grid-template-columns: 1fr 5fr;
+    grid-template-rows: 2fr 5fr;
+}
+
+#aside {
+    grid-row: span 2;
+    padding: 1.5em;
+    background-color: var(--color-surface-raised);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    position: relative;
+    border-right: 1px solid var(--color-border);
+}
+
+#aside footer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: fit-content;
+    padding: 1.5em;
+    gap: 1em;
+    justify-content: center;
+    border-top: 1px solid var(--color-border);
+}
+
+#aside footer .btn-secondary {
+    width: 100%;
+    justify-content: center;
+}
+
+#aside footer .btn-ghost {
+    width: 40%;
+    font-size: var(--text-sm);
+    justify-content: center;
+}
+
+#close-ticket-btn {
+    color: var(--color-error-text)
+}
+
+.track-element {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.private-notes {
+    background-color: var(--color-surface);
+    overflow: hidden;
+    max-height: 3.35em;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    overflow: hidden;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.private-notes.expanded {
+    max-height: 100%;
+}
+
+.private-notes-header {
+    background-color: var(--color-msg-private-bg);
+    padding: 0.5em;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1em;
+    border-bottom: 1px solid var(--color-border);
+    position: relative;
+    width: 100%;
+}
+
+.private-notes-icon {
+    background-color: var(--color-msg-private-border);
+    padding: 0.5em;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--color-msg-private-text);
+    border-radius: 50%;
+}
+
+.private-notes-header .label-upper {
+    font-weight: var(--font-bold);
+    color: var(--color-msg-private-border);
+}
+
+.private-notes-header .fa-angle-down {
+    position: absolute;
+    top: 1em;
+    right: 1em;
+}
+
+.private-notes.expanded .private-notes-header .fa-angle-down {
+    rotate: 180deg;
+}
+
+.private-notes-header:hover {
+    cursor: pointer;
+}
+
+.private-notes-content {
+    padding: 1em;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8em;
+    height: 100%;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+.private-notes-content .note {
+    padding: 0.7em;
+    background-color: var(--color-msg-private-bg);
+    border-style: dashed;
+    border-width: 1px;
+    border-color: var(--color-msg-private-border);
+    border-radius: var(--radius-md);
+    color: var(--color-msg-private-text);
+    border-bottom-right-radius: 0;
+}
+
+.private-notes-content .note .note-info {
+    margin-top: 1em;
+    color: var(--color-text-muted);
+}
+
+.private-notes-textarea {
+    width: 30em;
+    position: relative;
+    padding: 0.5em;
+    border-left: 1px solid var(--color-border);
+}
+
+#send-private-note {
+    margin-left: auto;
+}
+
+.chat {
+    padding: 2em;
+}
+
+.chat-messages {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
+.chat-messages .message {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    padding: 1em;
+    border-radius: var(--radius-lg);
+    box-sizing: var(--shadow-md);
+    max-width: 80%;
+    min-width: 60%;
+}
+
+.chat-messages .message-data {
+    display: flex;
+    flex-direction: row;
+    gap: 1em;
+    margin-top: 1em;
+    margin-left: auto;
+    width: fit-content;
+    opacity: 0.9;
+}
+
+.chat-messages .message-data .message-owner {
+    font-weight: var(--font-semibold);
+    font-size: var(--text-2xs);
+    color: var(--color-text-secondary);
+}
+
+.chat-messages .message-data .message-date {
+    font-size: var(--text-2xs);
+    color: var(--color-text-muted);
+}
+
+.chat-messages .message.client {
+    background-color: var(--color-msg-client-bg);
+    color: var(--color-msg-client-text);
+}
+
+.chat-messages .message.operator {
+    background-color: var(--color-msg-operator-bg);
+    color: var(--color-msg-operator-text);
+}
+
+.chat-messages .message.left {
+    margin-right: auto;
+    border-bottom-left-radius: 0;
+}
+
+.chat-messages .message.right {
+    margin-left: auto;
+    border-bottom-right-radius: 0;
+}

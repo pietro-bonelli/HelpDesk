@@ -4,6 +4,7 @@ let page = 1;
 let orderBy = 'desc';
 let filter = 'all';
 let search = '';
+let totalCount = 0;
 
 let categories;
 
@@ -263,13 +264,15 @@ function loadPageSwitchListener() {
         if(!clicked)
             return;
 
-        if(clicked.id === 'page-previous' && page > 1)
+        if(clicked.id === 'page-previous' && page > 1) {
             page--;
-        else if(clicked.id === 'page-next')
+            renderTickets(limit, page, orderBy, filter, search);
+            window.location.href = '#ticket-section';
+        } else if(clicked.id === 'page-next' && (limit * page) < totalCount) {
             page++;
-
-        renderTickets(limit, page, orderBy, filter, search);
-        window.location.href = '#ticket-section';
+            renderTickets(limit, page, orderBy, filter, search);
+            window.location.href = '#ticket-section';
+        }
     });
 }
 
@@ -362,6 +365,20 @@ async function renderTickets(limit = 10, page = 1, orderBy = 'desc', filter = 'a
         minNum.textContent = (resJSON.totalCount > 0 ? ((page - 1) * limit + 1) : 0);
         maxNum.textContent = (page - 1) * limit + tickets.length;
         totalNum.textContent = resJSON.totalCount;
+        totalCount = resJSON.totalCount;
+
+        const pageNum = document.getElementById('page-number');
+        pageNum.textContent = page;
+        const pagePrev = document.getElementById('page-previous');
+        const pageNext = document.getElementById('page-next');
+        pagePrev.classList.remove('disabled');
+        pageNext.classList.remove('disabled');
+        if(page === 1) {
+            pagePrev.classList.add('disabled');
+        }
+        if(limit * page >= totalCount) {
+            pageNext.classList.add('disabled');
+        }
 
         const fragment = document.createDocumentFragment();
 

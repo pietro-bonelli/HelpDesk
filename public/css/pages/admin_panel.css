@@ -5,6 +5,7 @@ main {
     height: calc(100vh - 12em);
     gap: 2em;
 }
+
 .sidebar {
     width: 18em;
     border-radius: var(--radius-2xl);
@@ -12,6 +13,7 @@ main {
     box-shadow: var(--shadow-md);
     color: var(--color-sidebar-text);
     padding: 2em;
+    position: relative;
 }
 
 .sidebar nav ul {
@@ -49,6 +51,18 @@ nav.nav-dark .nav-item.active {
     border-radius: var(--radius-2xl);
     flex-grow: 1;
     padding: 1em;
+
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+#content-area {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-height: 0;
+    padding: 0 0.5em;
 }
 
 .content header {
@@ -61,19 +75,107 @@ nav.nav-dark .nav-item.active {
 
 .table-wrapper {
     border-radius: var(--radius-md);
-    overflow: hidden;
     box-shadow: var(--shadow-md);
     margin-top: 2em;
+    background-color: var(--color-surface);
+
+    flex-grow: 1;
+    overflow-y: auto;
+    min-height: 0;
 }
+
 table {
     width: 100%;
     font-size: var(--text-body);
     border-collapse: collapse;
 }
 
-table td, table th {
+table td,
+table th {
     border-bottom: 1px solid var(--color-border);
     border-collapse: collapse;
     padding: 1em;
     text-align: center;
+    white-space: nowrap;
+}
+
+table th {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: var(--color-bg);
+    border-bottom: 1px solid var(--color-border);
+    padding: 1em;
+}
+
+table .table-actions {
+    display: flex;
+    gap: 0.3em;
+    font-size: 0.8em;
+    justify-content: center;
+}
+
+table .table-actions .btn-ghost {
+    padding: 0.7em;
+}
+
+#search-bar {
+    padding: 0.5em;
+    border-radius: var(--radius-lg);
+}
+
+.category-tree {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 2em;
+}
+
+.tree-node {
+    margin-top: 0.5em;
+}
+
+.category-tree,
+.category-tree ul {
+    list-style: none;
+}
+
+.tree-node {
+    padding-left: 1em;
+}
+
+#burger-menu-btn {
+    position: absolute;
+    right: 1em;
+    top: 1.2em;
+    font-size: var(--text-lg);
+    display: none;
+    cursor: pointer;
+}
+
+@media (max-width: 700px) {
+    #burger-menu-btn {
+        display: block;
+    }
+
+    main {
+        flex-direction: column;
+        width: 95%;
+        margin-top: 1em;
+        gap: 1em;
+        height: 85vh;
+    }
+
+    .sidebar {
+        width: 100%;
+        padding: 1.5em;
+        overflow: hidden;
+        max-height: 4em;
+    }
+
+    .sidebar:hover {
+        max-height: 100%;
+        min-height: fit-content;
+    }
+
 }
