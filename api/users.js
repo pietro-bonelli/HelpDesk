@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const db = require('../db/connection');
+const { getCategoryIdsByRole } = require('../services/dbServices');
 
 /**
  * @route GET /api/users/me
@@ -10,7 +11,7 @@ const db = require('../db/connection');
  */
 router.get('/me', async (req, res) => {
     const userID = req.user.id;
-    if(userID === undefined) {
+    if (userID === undefined) {
         return res.status(404).json({
             success: false,
             message: "Utente non trovato."
@@ -20,7 +21,7 @@ router.get('/me', async (req, res) => {
     const connection = await db.getConnection();
     try {
         const query = `
-            SELECT u.id, u.first_name, u.last_name, u.email, u.created_at, r.name AS role_name, r.is_admin
+            SELECT u.id, u.first_name, u.last_name, u.email, u.created_at, r.name AS role_name, r.id AS role_id, r.is_admin
             FROM users u
             LEFT JOIN roles r ON u.role_id = r.id
             WHERE u.id = ? AND u.is_active = 1
@@ -28,20 +29,24 @@ router.get('/me', async (req, res) => {
 
         const [result] = await connection.query(query, [userID]);
         connection.release();
-        
-        if(result.length === 0) {
+
+        if (result.length === 0) {
             return res.status(404).json({
                 success: false,
                 message: "Utente non trovato."
             });
         }
 
+        const user = result[0];
+        const categories = await getCategoryIdsByRole(connection, user.role_name, user.is_admin);
+        user.categories = categories;
+
         return res.json({
             success: true,
             message: "Profilo utente recuperato con successo.",
-            user: result[0]
+            user: user
         });
-    } catch(error) {
+    } catch (error) {
         console.error("Errore recupero profilo utente: " + error.stack);
         return res.status(500).json({
             success: false,
@@ -60,7 +65,7 @@ router.get('/me', async (req, res) => {
  */
 router.put('/me', async (req, res) => {
     const userID = req.user.id;
-    if(userID === undefined) {
+    if (userID === undefined) {
         return res.status(404).json({
             success: false,
             message: "Utente non trovato"
@@ -68,14 +73,14 @@ router.put('/me', async (req, res) => {
     }
 
     const { first_name, last_name, email } = req.body;
-    if(!first_name && !last_name && !email) {
+    if (!first_name && !last_name && !email) {
         return res.status(400).json({
             success: false,
             message: "Impossibile aggiornare il profilo: nessuna modifica specificata."
         });
     }
 
-    if(email !== undefined && !email.includes('@')) {
+    if (email !== undefined && !email.includes('@')) {
         return res.status(400).json({
             success: false,
             message: "Impossibile aggiornare il profilo: formato email non valido."
@@ -91,15 +96,15 @@ router.put('/me', async (req, res) => {
         const params = [];
         const setRecords = [];
 
-        if(first_name !== undefined) {
+        if (first_name !== undefined) {
             setRecords.push('first_name = ?');
             params.push(first_name);
         }
-        if(last_name !== undefined) {
+        if (last_name !== undefined) {
             setRecords.push('last_name = ?');
             params.push(last_name);
-        } 
-        if(email !== undefined) {
+        }
+        if (email !== undefined) {
             setRecords.push('email = ?');
             params.push(email);
         }
@@ -109,14 +114,14 @@ router.put('/me', async (req, res) => {
         params.push(userID);
 
         const [result] = await connection.query(query, params);
-        if(result.affectedRows === 0) {
+        if (result.affectedRows === 0) {
             return res.status(404).json({
                 success: false,
                 message: "Utente non trovato"
             });
         }
 
-    } catch(error) {
+    } catch (error) {
         console.error("Errore aggiornamento profilo: " + error.stack);
         return res.status(500).json({
             success: false,
@@ -137,14 +142,14 @@ router.put('/me', async (req, res) => {
 router.put('/me/password', async (req, res) => {
     const userID = req.user.id;
     const { old_password, new_password } = req.body;
-    if(!old_password || !new_password) {
+    if (!old_password || !new_password) {
         return res.status(400).json({
             success: false,
             message: "Impossibile modificare la password: informazioni incomplete."
         });
     }
 
-    if(old_password === new_password) {
+    if (old_password === new_password) {
         return res.status(400).json({
             success: false,
             message: "Impossibile modificare la password: la nuova password non può essere uguale a quella vecchia."
@@ -156,16 +161,16 @@ router.put('/me/password', async (req, res) => {
         await connection.beginTransaction();
         const [user] = await connection.query('SELECT password_hash FROM users WHERE id = ? AND is_active = 1', [userID]);
 
-        if(user.length === 0) {
+        if (user.length === 0) {
             await connection.rollback();
             return res.status(404).json({
                 success: false,
                 message: "Impossibile modificare la password: utente non trovato"
             });
-        }      
-        
+        }
+
         const currentPasswordHash = user[0].password_hash;
-        if(!(await bcrypt.compare(old_password, currentPasswordHash))) {
+        if (!(await bcrypt.compare(old_password, currentPasswordHash))) {
             await connection.rollback();
             return res.status(401).json({
                 success: false,
@@ -183,7 +188,7 @@ router.put('/me/password', async (req, res) => {
             success: true,
             message: "Password modificata con successo."
         });
-    } catch(error) {
+    } catch (error) {
         await connection.rollback();
         console.error("Errore modifica password utente: " + error.stack);
         return res.status(500).json({

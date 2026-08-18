@@ -14,7 +14,7 @@ const CACHE_TTL_MS = 6 * 60 * 60 * 1000; // 6 ore in millisecondi
  */
 router.get('/public', async (req, res) => {
     const now = Date.now();
-    if(statsCache && now < lastCacheTime + CACHE_TTL_MS) {
+    if (statsCache && now < lastCacheTime + CACHE_TTL_MS) {
         res.setHeader('X-Cache', 'HIT'); // imposto header per informare che si tratta di dati cachati
         return res.status(200).json({
             success: true,
@@ -34,7 +34,6 @@ router.get('/public', async (req, res) => {
 
         // Valutazione media
         const [rateRows] = await connection.query('SELECT AVG(stars) AS average_rating FROM ratings');
-
         const stats = {
             total_users: userRows[0].total_users,
             resolved_tickets: closedTicketRows[0].resolved_tickets,
@@ -50,7 +49,7 @@ router.get('/public', async (req, res) => {
             message: "Statistiche recuperate con successo.",
             data: statsCache
         });
-    } catch(error) {
+    } catch (error) {
         console.error("Errore recupero statistiche: " + error.stack);
         return res.status(500).json({
             success: false,

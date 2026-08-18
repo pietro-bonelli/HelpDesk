@@ -28,6 +28,11 @@ app.get('/ticket/:id', authenticateToken, (req, res) => {
     res.sendFile(path.join(__dirname, 'private', 'client', 'ticket.html'));
 });
 
+app.get('/operator', authenticateToken, (req, res) => {
+    res.sendFile(path.join(__dirname, 'private', 'operator', 'operator_dashboard.html'));
+});
+
+
 app.get('/admin', authenticateToken, isAdmin, (req, res) => {
     res.sendFile(path.join(__dirname, 'private', 'admin', 'panel.html'));
 });
@@ -75,7 +80,7 @@ async function startServer() {
 
     } catch (error) {
         console.error('❌ ERRORE: Impossibile connettersi al database: ' + error.message);
-        process.exit(1); 
+        process.exit(1);
     }
 }
 

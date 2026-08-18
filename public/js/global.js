@@ -3,11 +3,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     document.body.addEventListener('submit', (event) => {
         const form = event.target;
-        if(!form.hasAttribute('data-loading'))
+        if (!form.hasAttribute('data-loading'))
             return;
 
         const submitBtn = form.querySelector('[type="submit"]');
-        if(!submitBtn)
+        if (!submitBtn)
             return;
 
         submitBtn.disabled = true;
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
 function loadModalListeners() {
     const closeBtn = document.getElementById('modal-close-btn');
-    
+
     closeBtn.addEventListener('click', (event) => {
         event.preventDefault();
         closeModal();
@@ -34,7 +34,7 @@ function loadModalListeners() {
 
 
     document.addEventListener('keydown', (event) => {
-        if(event.key === 'Escape' && isModalOpened()) {
+        if (event.key === 'Escape' && isModalOpened()) {
             closeModal();
         }
     })
@@ -47,7 +47,7 @@ function getStatusBadge(status, prefix = "") {
     badge.classList.add(status.replace('_', '-'));
 
     let text;
-    switch(status.toLowerCase()) {
+    switch (status.toLowerCase()) {
         case "pending":
             text = 'In Attesa';
             break;
@@ -73,7 +73,7 @@ function getPriorityBadge(priority, prefix = "") {
     badge.classList.add(priority);
 
     let text;
-    switch(priority.toLowerCase()) {
+    switch (priority.toLowerCase()) {
         case "low":
             text = 'Bassa';
             break;
@@ -92,13 +92,13 @@ function getPriorityBadge(priority, prefix = "") {
 
 function getUserBadge(role) {
     const badge = document.createElement('p');
-    
+
     badge.classList.add('role-badge');
-    if(!role)
+    if (!role)
         role = 'Client';
 
     let text;
-    switch(role.toLowerCase()) {
+    switch (role.toLowerCase()) {
         case "client":
             text = 'Cliente';
             badge.classList.add('client');
@@ -117,7 +117,7 @@ function getUserBadge(role) {
             break;
     }
 
-    
+
     badge.innerHTML = '<i class="fa-solid fa-circle"></i>' + text;
     return badge;
 }
@@ -126,33 +126,62 @@ function getIDBadge(id) {
     const badge = document.createElement('p');
     const size = id.toString().length;
     let text = '#';
-    if(size >= 5)
+    if (size >= 5)
         text += id;
     else {
-        for(let i = 5; i > size; i--) {
+        for (let i = 5; i > size; i--) {
             text += '0';
         }
         text += id;
     }
-    
+
     badge.classList.add('id-badge');
     badge.textContent = text;
     return badge;
 }
 
+function getStatuses() {
+    return Object.entries({
+        pending: 'In Attesa',
+        in_progress: 'In Lavorazione',
+        resolved: 'Risolto',
+        archived: 'Archiviato'
+    });
+}
+
+function getPriorities() {
+    return Object.entries({
+        low: 'Bassa',
+        medium: 'Media',
+        high: 'Alta'
+    });
+}
+
+
+function getCurrentDateFormatted() {
+    const now = new Date();
+    const weekday = now.toLocaleDateString('it-IT', { weekday: 'long' });
+    const day = now.getDate();
+    const month = now.toLocaleDateString('it-IT', { month: 'long' });
+    const year = now.getFullYear();
+
+    const capitalizedWeekday = weekday.charAt(0).toUpperCase() + weekday.slice(1);
+    
+    return `${capitalizedWeekday}, ${day} ${month} ${year}`;
+}
 
 const formatRelativeDate = (dateString) => {
     if (!dateString) return '';
 
     const date = new Date(dateString);
-    
+
     // Fallback nel caso in cui la stringa passata non sia una data valida
     if (isNaN(date.getTime())) return dateString;
 
     // Data di oggi a mezzanotte esatta
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    
+
     // Data di ieri a mezzanotte esatta
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
@@ -164,12 +193,12 @@ const formatRelativeDate = (dateString) => {
 
     // Controllo se è "Oggi"
     if (date >= today) {
-        return `Oggi ${timeString}`;
+        return `Oggi, ${timeString}`;
     }
 
     // Controllo se è "Ieri"
     if (date >= yesterday && date < today) {
-        return `Ieri ${timeString}`;
+        return `Ieri, ${timeString}`;
     }
 
     // Altrimenti formato standard: dd/mm/yyyy hh:ii
@@ -214,7 +243,7 @@ function openModal(autoFocus = true) {
     document.querySelector('main').setAttribute('inert', '');
     document.querySelector('footer').setAttribute('inert', '');
 
-    if(autoFocus) {
+    if (autoFocus) {
         const elements = modalOverlay.querySelectorAll('input, textarea, select');
         elements[0].focus();
     }
@@ -249,7 +278,7 @@ function isModalOpened() {
     return document.body.classList.contains('modal-open');
 }
 
-function getTextAreaElement() {
+function getTextAreaElement(inputName, buttonId = null) {
     const textArea = document.createElement('div');
     textArea.classList.add('rich-text-editor');
 
@@ -276,31 +305,39 @@ function getTextAreaElement() {
     underlined.title = 'Grassetto (Ctrl + B)';
     underlined.innerHTML = '<i class="fa-solid fa-underline"></i>';
     underlined.type = 'button';
-    
+
     toolbar.appendChild(bold);
     toolbar.appendChild(italic);
     toolbar.appendChild(underlined);
+
+    if (buttonId) {
+        const button = document.createElement('button');
+        button.id = buttonId;
+        button.innerHTML = '<i class="fa-regular fa-paper-plane btn-icon"></i>Invia';
+        button.className = 'textarea-send-button btn-sm btn-primary';
+        toolbar.appendChild(button);
+    }
 
     textArea.appendChild(toolbar);
 
     const editorContent = document.createElement('div');
     editorContent.classList.add("editor-content");
     editorContent.contentEditable = true;
-    editorContent.placeholder = "Descrivi il problema...";
 
     textArea.appendChild(editorContent);
 
 
     const hiddenInput = document.createElement('input');
     hiddenInput.hidden = true;
-    hiddenInput.id = 'ticket-message';
-    hiddenInput.name = 'ticket-message';
+    hiddenInput.id = inputName;
+    hiddenInput.name = inputName;
+    hiddenInput.className = 'hidden-input';
 
     textArea.appendChild(hiddenInput);
 
     toolbar.addEventListener('mousedown', (event) => {
         const clicked = event.target.closest('.toolbar-button');
-        if(!clicked)
+        if (!clicked)
             return;
         event.preventDefault();
 
@@ -310,7 +347,7 @@ function getTextAreaElement() {
     });
 
     editorContent.addEventListener('input', () => {
-        hiddenInput.value = editorContent.innerHTML;
+        hiddenInput.value = sanitizeHTML(editorContent.innerHTML);
     });
 
     editorContent.addEventListener('mouseup', updateToolbarState);
@@ -319,8 +356,16 @@ function getTextAreaElement() {
     return textArea;
 }
 
+function resetTextArea(textAreaElement) {
+    const textContent = textAreaElement.querySelector('.editor-content');
+    textContent.innerHTML = '';
+
+    const hiddenInput = textAreaElement.querySelector('.hidden-input');
+    hiddenInput.value = '';
+}
+
 function syncHiddenInput(textArea, hiddenInput) {
-    hiddenInput.value = textArea.innerHTML;
+    hiddenInput.value = sanitizeHTML(textArea.innerHTML);
 }
 
 function updateToolbarState() {
@@ -329,11 +374,11 @@ function updateToolbarState() {
     buttons.forEach((button) => {
         const command = button.dataset.cmd;
         const isActive = document.queryCommandState(command);
-        if(isActive)
+        if (isActive)
             button.classList.add('active');
         else
             button.classList.remove('active');
-    }) 
+    })
 }
 
 function startLoading(element) {
@@ -342,4 +387,36 @@ function startLoading(element) {
 function stopLoading(element) {
     element.dispatchEvent(new CustomEvent('loading-end'));
     element.classList.remove('btn-loading');
+}
+
+function sanitizeHTML(html) {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+
+    // Whitelist dei tag permessi (formattazione base e a capo)
+    const allowedTags = ['B', 'STRONG', 'I', 'EM', 'U', 'BR', 'P', 'DIV'];
+
+    // Raccogliamo tutti gli elementi
+    const elements = tempDiv.getElementsByTagName('*');
+    const nodes = Array.from(elements);
+
+    // Iteriamo al contrario per manipolare il DOM in sicurezza dal basso verso l'alto
+    for (let i = nodes.length - 1; i >= 0; i--) {
+        const el = nodes[i];
+
+        if (!allowedTags.includes(el.nodeName.toUpperCase())) {
+            // Tag non in whitelist: lo "scartiamo" estraendo il suo contenuto e mettendolo prima
+            while (el.firstChild) {
+                el.parentNode.insertBefore(el.firstChild, el);
+            }
+            el.parentNode.removeChild(el);
+        } else {
+            // Tag permesso: rimuoviamo TUTTI i suoi attributi per sicurezza assoluta (no onclick, no href, no style)
+            while (el.attributes.length > 0) {
+                el.removeAttribute(el.attributes[0].name);
+            }
+        }
+    }
+
+    return tempDiv.innerHTML;
 }

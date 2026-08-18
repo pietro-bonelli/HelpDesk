@@ -8,7 +8,7 @@
 
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/components.css">
-    <link rel="stylesheet" href="css/pages/dashboard.css">
+    <link rel="stylesheet" href="css/pages/operator_dashboard.css">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
         integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
@@ -18,7 +18,8 @@
 <script src="js/toast.js"></script>
 <script src="js/global.js"></script>
 <script src="js/header.js"></script>
-<script src="js/pages/dashboard.js"></script>
+<script src="js/InfiniteScroll.js"></script>
+<script src="js/pages/operator_dashboard.js"></script>
 </head>
 
 <body>
@@ -35,9 +36,6 @@
             <div class="user-section">
                 <a href="login.html" class="btn-ghost btn-md" id="login">Login</a>
                 <a href="login.html?register=1" class="btn-primary btn-md" id="register">Registrati</a>
-                <button id="new-ticket" class="btn-md btn-primary"><i class="fa-solid fa-plus btn-icon"></i>
-                    <p>Nuovo Ticket</p>
-                </button>
                 <div class="user-profile" id="user-profile">
                     <div class="user-profile-button" id="user-profile-button">
                         <p class="" id="user-profile-avatar"></p>
@@ -65,6 +63,7 @@
         <section id="welcome-section">
             <p class="label-upper date" id="date"></p>
             <h1 class="welcome">Benvenuto, <span id="user-first-name"></span>.</h1>
+            <p id="enabled-categories"></p>
         </section>
 
         <section id="statistics">
@@ -76,17 +75,12 @@
             <div class="statistics-card" id="in-progress-card">
                 <i class="fa-solid fa-wrench card-icon"></i>
                 <p class="card-value" id="in-progress-value">-</p>
-                <p class="card-description label-upper">In Lavorazionne</p>
+                <p class="card-description label-upper">In Lavorazione</p>
             </div>
             <div class="statistics-card" id="resolved-card">
                 <i class="fa-regular fa-circle-check card-icon"></i>
                 <p class="card-value" id="resolved-value">-</p>
                 <p class="card-description label-upper">Risolti</p>
-            </div>
-            <div class="statistics-card" id="total-card">
-                <i class="fa-regular fa-file-lines card-icon"></i>
-                <p class="card-value" id="total-value">-</p>
-                <p class="card-description label-upper">Totale Aperti</p>
             </div>
         </section>
 
@@ -99,7 +93,7 @@
                     <div class="filter-buttons">
                         <button class="btn-xs btn-ghost btn-ghost-selected" id="filter-all">Tutti</button>
                         <button class="btn-xs btn-ghost" data-value="pending">In Attesa</button>
-                        <button class="btn-xs btn-ghost" data-value="in-progress">In Lavorazione</button>
+                        <button class="btn-xs btn-ghost" data-value="in_progress">In Lavorazione</button>
                         <button class="btn-xs btn-ghost" data-value="resolved">Risolti</button>
                         <button class="btn-xs btn-ghost" data-value="archived">Archiviati</button>
                     </div>
@@ -111,38 +105,11 @@
                         <input type="text" id="search-ticket" class="search-input" placeholder="Cerca ticket..."
                             autocomplete="off">
                     </div>
-                    <div class="order-bar filter-bar-element">
-                        <label for="order-by" class="label-upper"><i class="fa-solid fa-arrow-down-wide-short icon"></i>
-                            Ordina</label>
-                        <select name="order-by" id="order-by">
-                            <option value="desc">Più recenti</option>
-                            <option value="asc">Meno recenti</option>
-                            <option value="priority">Priorità</option>
-                        </select>
-                    </div>
-                </div>
-            </section>
-
-            <section id="limits">
-                <p class="small info-num">Mostrando <span id="min-num">0</span>-<span id="max-num">0</span> di <span
-                        id="total-num">0</span> ticket.</p>
-                <div class="right">
-                    <p class="small">Righe per pagina</p>
-                    <select name="page-limit" id="page-limit" class="btn-xs btn-secondary">
-                        <option value="10">10</option>
-                        <option value="25">25</option>
-                        <option value="50">50</option>
-                    </select>
                 </div>
             </section>
 
             <section id="ticket-list">
-                <p class="spinner"></p>
-            </section>
-            <section id="pages">
-                <button class="page-icon" id="page-previous"><i class="fa-solid fa-angle-left"></i></button>
-                <p id="page-number">1</p>
-                <button class="page-icon" id="page-next"><i class="fa-solid fa-angle-right"></i></button>
+                <p class="spinner" id="infinite-scroll-trigger"></p>
             </section>
         </div>
     </main>

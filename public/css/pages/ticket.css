@@ -1,13 +1,13 @@
 main {
     width: 100%;
     height: calc(100vh - 5em);
-    display: grid;
-    grid-template-columns: 1fr 5fr;
-    grid-template-rows: 2fr 5fr;
+    display: flex;
+    flex-direction: row;
 }
 
 #aside {
-    grid-row: span 2;
+    width: 25%;
+    min-width: 18em;
     padding: 1.5em;
     background-color: var(--color-surface-raised);
     display: flex;
@@ -19,7 +19,7 @@ main {
 
 #aside footer {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     flex-wrap: wrap;
     position: absolute;
     bottom: 0;
@@ -38,37 +38,61 @@ main {
 }
 
 #aside footer .btn-ghost {
-    width: 40%;
     font-size: var(--text-sm);
     justify-content: center;
+}
+
+#aside footer .dynamic-actions {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5em;
+}
+
+#aside footer .dynamic-actions button,
+#aside footer .dynamic-actions a {
+    flex-grow: 1;
 }
 
 #close-ticket-btn {
     color: var(--color-error-text)
 }
 
+.ticket-content {
+    display: flex;
+    flex-direction: column;
+    width: 83.34%;
+    flex-grow: 1;
+}
+
 .track-element {
     display: flex;
+    gap: 1em;
     flex-direction: row;
     justify-content: space-between;
 }
 
+.private-notes.hidden {
+    display: none;
+}
+
 .private-notes {
+    flex-shrink: 0;
     background-color: var(--color-surface);
     overflow: hidden;
     max-height: 3.35em;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    overflow: hidden;
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    grid-template-rows: 3.35em 1fr;
     border-bottom: 1px solid var(--color-border);
 }
 
 .private-notes.expanded {
-    max-height: 100%;
+    max-height: 30%;
 }
 
 .private-notes-header {
+    grid-column: span 2;
     background-color: var(--color-msg-private-bg);
     padding: 0.5em;
     display: flex;
@@ -117,7 +141,6 @@ main {
     gap: 0.8em;
     height: 100%;
     overflow-y: auto;
-    flex-grow: 1;
 }
 
 .private-notes-content .note {
@@ -137,24 +160,44 @@ main {
 }
 
 .private-notes-textarea {
-    width: 30em;
+    min-width: 20em;
     position: relative;
     padding: 0.5em;
     border-left: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    min-height: 0;
 }
 
-#send-private-note {
-    margin-left: auto;
+#private-notes-textarea-wrapper {
+    flex-grow: 1;
+    overflow: hidden;
+    min-height: 0;
 }
+
+
 
 .chat {
-    padding: 2em;
+    padding: 1em;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    flex-grow: 1;
+}
+
+.chat-textarea {
+    min-height: 10em;
+    flex-shrink: 0;
 }
 
 .chat-messages {
     display: flex;
     flex-direction: column;
     gap: 1em;
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 0.5em;
 }
 
 .chat-messages .message {
@@ -206,4 +249,79 @@ main {
 .chat-messages .message.right {
     margin-left: auto;
     border-bottom-right-radius: 0;
+}
+
+#badge-section {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5em;
+}
+
+.ticket-title:focus-visible {
+    outline: none;
+    border: none;
+}
+
+#status {
+    display: none;
+}
+
+.aside-operator #status {
+    display: block;
+}
+
+#rating-form {
+    background-color: var(--color-surface);
+    border-radius: var(--radius-lg);
+    border-color: var(--color-border);
+    box-shadow: var(--shadow-md);
+    padding: 1em;
+
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
+#rating-form .stars {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+}
+
+#rating-form .stars label {
+    font-size: var(--text-4xl);
+    color: var(--color-bg);
+}
+
+#rating-form .stars label:hover,
+#rating-form .stars label:hover~label,
+#rating-form .stars input:checked~label {
+    color: var(--color-pending);
+    cursor: pointer;
+}
+
+#rating-form.disabled-form .stars label {
+    pointer-events: none;
+    cursor: default;
+}
+
+#rating-form.disabled-form button {
+    opacity: 0.7;
+}
+
+#rating-form.disabled-form button:hover {
+    cursor: not-allowed;
+}
+
+#rating-form .stars input {
+    display: none;
+}
+
+#rating-form button {
+    margin-left: auto;
+}
+
+#rating-form textarea {
+    min-height: 5em;
 }

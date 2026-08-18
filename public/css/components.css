@@ -11,34 +11,36 @@
     cursor: pointer;
 }
 
+.btn-xs,
+.btn-sm,
+.btn-md,
+.btn-lg {
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    justify-content: center;
+}
+
 .btn-xs {
-    display: block;
     padding: 0.4em 0.6em;
     border-radius: var(--radius-sm);
     font-size: var(--text-sm);
-    width: fit-content;
 }
 
 .btn-sm {
-    display: block;
     padding: 0.6em 0.9em;
     border-radius: var(--radius-md);
-    width: fit-content;
 }
 
 .btn-md {
-    display: flex;
-    align-items: center;
     padding: 0.8em 1.3em;
     border-radius: var(--radius-md);
-    width: fit-content;
 }
 
 .btn-lg {
     padding: 1.3em 1.6em;
     font-size: var(--text-lg);
     border-radius: var(--radius-lg);
-    width: fit-content;
 }
 
 .btn-primary {
@@ -140,6 +142,7 @@
 
 .spinner {
     height: 4em;
+    min-height: 2em;
     position: relative;
     color: transparent !important;
     pointer-events: none;
@@ -399,7 +402,8 @@ form label {
 }
 
 form input:not([type="checkbox"]):not([type="radio"]),
-form select {
+form select,
+form textarea {
     width: 100%;
     border: 1px solid var(--color-border);
     font: inherit;
@@ -412,7 +416,8 @@ form select {
 }
 
 form input:hover,
-form select:hover {
+form select:hover,
+form textarea:hover {
     border-color: var(--color-border-strong);
 }
 
@@ -421,6 +426,7 @@ form select:focus,
 form textarea:focus {
     border-color: var(--color-accent);
     box-shadow: var(--shadow-focus);
+    outline: none;
 }
 
 button {
@@ -454,6 +460,12 @@ form input.input-error:focus {
 
 form input[type="submit"]:disabled {
     opacity: 0.50;
+    pointer-events: none;
+}
+
+input:disabled,
+select:disabled {
+    opacity: 0.5;
     pointer-events: none;
 }
 
@@ -578,6 +590,9 @@ body.modal-open {
     box-shadow: var(--shadow-sm);
     border-radius: var(--radius-md);
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
 }
 
 .rich-text-editor:hover {
@@ -591,14 +606,22 @@ body.modal-open {
     display: flex;
     flex-direction: row;
     gap: 0.3em;
+    position: relative;
+}
+
+.rich-text-editor .textarea-send-button {
+    position: absolute;
+    right: 1em;
 }
 
 .rich-text-editor .editor-content {
     padding: 1em;
     min-height: 5em;
-    max-height: 10em;
     overflow-y: scroll;
     outline: none;
+    flex-grow: 1;
+    min-height: 0;
+    background-color: var(--color-surface);
 }
 
 .rich-text-editor:has(.editor-content:focus) {
@@ -663,5 +686,5 @@ body.modal-open {
 }
 
 .hidden {
-    display: none;
+    display: none !important;
 }

@@ -11,12 +11,12 @@ const { getCategoryPaths } = require('../services/categoryService');
  */
 router.post('/', async (req, res) => {
     const { title, priority, category_id, message_text } = req.body;
-    if(!title || !priority || !category_id || !message_text)
+    if (!title || !priority || !category_id || !message_text)
         return res.status(400).json({
             success: false,
             message: 'Campi mancanti.'
         });
-    
+
     // Ottiene connessione dedicata dal pool
     const connection = await db.getConnection();
     try {
@@ -24,7 +24,7 @@ router.post('/', async (req, res) => {
         await connection.beginTransaction();
 
         const [checkCategory] = await connection.query('SELECT id FROM categories WHERE id = ? AND is_active = 1', [category_id]);
-        if(checkCategory.length === 0) {
+        if (checkCategory.length === 0) {
             await connection.rollback();
             return res.status(400).json({
                 success: false,
@@ -47,13 +47,13 @@ router.post('/', async (req, res) => {
         await connection.query(messageQuery, [ticketId, req.user.id, message_text]);
 
         await connection.commit();
-        
+
         return res.status(201).json({
             success: true,
             message: 'Ticket creato con successo.',
             ticket_id: ticketId
         });
-    } catch(error) {
+    } catch (error) {
         // Errore -> faccio rollback
         await connection.rollback();
         console.error('Errore creazione ticket:' + error.stack);
@@ -75,9 +75,9 @@ router.post('/', async (req, res) => {
  */
 router.put('/:id', async (req, res) => {
     const ticketID = req.params.id;
-    const { status, priority, category_id } = req.body;
+    const { title, status, priority, category_id, operator_id } = req.body;
 
-    if(status === undefined && priority === undefined && category_id === undefined) {
+    if (title === undefined && status === undefined && priority === undefined && category_id === undefined && operator_id === undefined) {
         return res.status(400).json({
             success: false,
             message: "Impossibile modificare il ticket: nessun dato specificato."
@@ -92,17 +92,33 @@ router.put('/:id', async (req, res) => {
         const params = [];
         const setStatements = [];
 
-        if(status !== undefined) {
+        if (title !== undefined) {
+            setStatements.push('title = ?');
+            params.push(title);
+        }
+        if (status !== undefined && (req.user.roleName !== 'Client' || (status === 'resolved' || status === 'archived'))) {
             setStatements.push('status = ?');
             params.push(status);
         }
-        if(priority !== undefined) {
+        if (priority !== undefined) {
             setStatements.push('priority = ?');
             params.push(priority);
         }
-        if(category_id !== undefined) {
+        if (category_id !== undefined) {
             setStatements.push('category_id = ?');
             params.push(category_id);
+        }
+        if (operator_id !== undefined && req.user.roleName !== 'Client') {
+            setStatements.push('operator_id = ?');
+            params.push(operator_id);
+        }
+
+        if (setStatements.length === 0) {
+            await connection.rollback();
+            return res.status(400).json({
+                success: false,
+                message: "Impossibile modificare il ticket: nessun dato valido fornito o permessi insufficienti."
+            });
         }
 
         query += setStatements.join(', ');
@@ -110,20 +126,24 @@ router.put('/:id', async (req, res) => {
         params.push(ticketID);
 
         const [result] = await connection.query(query, params);
-        if(result.affectedRows === 0) {
+        if (result.affectedRows === 0) {
+            await connection.rollback();
             return res.status(404).json({
                 success: false,
                 message: "Impossibile modificare il ticket: ticket non trovato."
             });
         }
 
+        await connection.commit();
         return res.json({
             success: true,
             message: "Ticket modificato con successo."
         });
 
-    } catch(error) {
-        if(error.code === "ER_NO_REFERENCED_ROW") {
+    } catch (error) {
+        await connection.rollback();
+
+        if (error.code === "ER_NO_REFERENCED_ROW") {
             return res.status(400).json({
                 success: false,
                 message: "Impossibile modificare il ticket: categoria inesistente."
@@ -134,7 +154,7 @@ router.put('/:id', async (req, res) => {
         return res.status(500).json({
             success: false,
             message: "Errore interno al server."
-        
+
         });
     } finally {
         connection.release();
@@ -143,23 +163,65 @@ router.put('/:id', async (req, res) => {
 
 
 /**
+ * @route GET /api/tickets/operator/stats
+ * @desc Recupera statistiche sui ticket per un operatore
+ * @access authenticated
+ */
+router.get('/operator/stats', async (req, res) => {
+    if (req.user.roleName === 'Client')
+        return res.status(403).json({ success: false, message: 'Accesso negato: area riservata agli operatori.' });
+
+    const connection = await db.getConnection();
+    try {
+        const categories = await getCategoryIdsByRole(connection, req.user.roleName, req.user.isAdmin);
+        const categoryIds = categories.map(cat => cat.category_id);
+
+        if (categoryIds.length === 0)
+            return res.json({ success: true, message: "Nessuna categoria abilitata.", stats: [] });
+
+        const query = `
+            SELECT status, COUNT(*) AS count
+            FROM tickets
+            WHERE category_id IN (?)
+            GROUP BY status
+        `;
+
+        const [result] = await connection.query(query, [categoryIds]);
+
+        return res.status(200).json({
+            success: true,
+            message: "Statistiche recuperate con successo.",
+            stats: result
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: "Si è verificato un errore interno al server."
+        });
+    } finally {
+        connection.release();
+    }
+});
+
+/**
  * @route GET /api/tickets/my/stats
  * @desc Recupera statistiche sui ticket di un utente
  * @access authenticated
  */
 router.get('/my/stats', async (req, res) => {
     const query = 'SELECT status, COUNT(*) AS count FROM tickets WHERE client_id = ? GROUP BY status';
-    
+
     const conn = await db.getConnection();
     try {
         const [result] = await conn.query(query, [req.user.id]);
-        
+
         return res.status(200).json({
             success: true,
             message: "Statistiche recuperate con successo.",
             stats: result
         });
-    } catch(error) {
+    } catch (error) {
         console.error(error);
         res.status(500).json({
             success: false,
@@ -189,16 +251,16 @@ router.get('/my', async (req, res) => {
     let filterQuery = ' WHERE t.client_id = ?';
     const filterParams = [req.user.id];
 
-    if(status != 'all') {
+    if (status != 'all') {
         filterQuery += ' AND t.status = ?'
         filterParams.push(status);
     }
 
-    if(search !== '') {
+    if (search !== '') {
         filterQuery += ' AND t.title LIKE ?';
         filterParams.push(`%${search}%`);
     }
-    
+
     const connection = await db.getConnection();
     try {
         const countQuery = `
@@ -218,7 +280,7 @@ router.get('/my', async (req, res) => {
 
 
         // Sorting
-        switch(sort.toLowerCase()) {
+        switch (sort.toLowerCase()) {
             case 'asc':
                 dataQuery += ' ORDER BY t.created_at ASC';
                 break;
@@ -233,8 +295,8 @@ router.get('/my', async (req, res) => {
         const dataParams = [...filterParams, limit, offset];
 
         const [tickets] = await connection.query(dataQuery, dataParams);
-        for(const ticket of tickets) {
-            const {category_ids, category_names} = getCategoryPaths(ticket.category_id);
+        for (const ticket of tickets) {
+            const { category_ids, category_names } = getCategoryPaths(ticket.category_id);
             ticket.category_ids = category_ids;
             ticket.category_names = category_names;
         }
@@ -245,7 +307,7 @@ router.get('/my', async (req, res) => {
             tickets: tickets,
             totalCount: totalCount
         });
-    } catch(error) {
+    } catch (error) {
         console.error('Errore recupero ticket: ' + error.stack);
         return res.status(500).json({
             success: false,
@@ -262,12 +324,13 @@ router.get('/my', async (req, res) => {
  * @access authenticated & authorized
  */
 router.get('/feed', async (req, res) => {
-    if(req.user.roleName === 'Client') 
-        return res.status(403).json({success: false, message: 'Accesso negato: area riservata agli operatori.'});
+    if (req.user.roleName === 'Client')
+        return res.status(403).json({ success: false, message: 'Accesso negato: area riservata agli operatori.' });
 
-    let { page, status } = req.query;
-    page = (page ? page : 1);
+    let { page, status, search } = req.query;
+    page = (page ? parseInt(page) : 1);
     status = (status ? status : 'pending'); // di default si vedono solo i ticket in attesa
+    search = search ? search.trim() : '';
 
     const limit = 15; // Carico 15 ticket alla volta
     const offset = limit * (page - 1);
@@ -277,42 +340,52 @@ router.get('/feed', async (req, res) => {
         const categories = await getCategoryIdsByRole(connection, req.user.roleName, req.user.isAdmin);
         const categoryIds = categories.map(cat => cat.category_id);
 
-        if(categoryIds.length === 0)
-            return res.json({success: true, message: "Nessuna categoria abilitata.", tickets:[]});
+        if (categoryIds.length === 0)
+            return res.json({ success: true, message: "Nessuna categoria abilitata.", tickets: [] });
 
         let feedQuery = `
-            SELECT t.id, t.title, t.status, t.priority, t.created_at, c.name AS category_name, u.first_name, u.last_name
+            SELECT t.id, t.title, t.status, t.priority, t.created_at, t.category_id, t.operator_id, c.name AS category_name, uc.first_name AS client_first_name, uc.last_name AS client_last_name, uo.first_name AS operator_first_name, uo.last_name AS operator_last_name
             FROM tickets t
             JOIN categories c ON t.category_id = c.id
-            JOIN users u ON t.client_id = u.id
+            JOIN users uc ON t.client_id = uc.id
+            LEFT JOIN users uo ON t.operator_id = uo.id
             WHERE t.category_id IN (?)
         `;
 
         const queryParams = [categoryIds];
 
-        if(status !== 'all') {
+        if (status !== 'all') {
             feedQuery += ' AND t.status = ?'
             queryParams.push(status);
         }
 
+        if (search !== '') {
+            feedQuery += ' AND t.title LIKE ?';
+            queryParams.push(`%${search}%`);
+        }
+
         feedQuery += `
-            ORDER BY CASE t.priority WHEN 'high' THEN 1 WHEN 'medium' THEN 2 WHEN 'low' THEN 3 END,
-            t.created_at DESC
+            ORDER BY CASE WHEN t.status = 'pending' THEN 1 WHEN t.operator_id = ? THEN 2 ELSE 3 END, t.created_at DESC
             LIMIT ? OFFSET ?
         `;
 
+        queryParams.push(req.user.id);
         queryParams.push(limit, offset);
         const [tickets] = await connection.query(feedQuery, queryParams);
 
+        for (const ticket of tickets) {
+            const { category_names } = getCategoryPaths(ticket.category_id);
+            ticket.category_names = category_names;
+        }
+
         return res.json({
             success: true,
-            page: page,
-            count: tickets.length,
+            message: "Feed recuperato con successo.",
             tickets: tickets
         });
-    } catch(error) {
+    } catch (error) {
         console.log("Errore caricamento feed operatore: " + error.stack);
-        return res.status(500).json({success: false, message: "Errore interno del server."});
+        return res.status(500).json({ success: false, message: "Errore interno del server." });
     } finally {
         connection.release();
     }
@@ -328,10 +401,10 @@ router.get('/categories', async (req, res) => {
     const connection = await db.getConnection();
     try {
         const [categories] = await connection.query("SELECT id, name, parent_id FROM categories WHERE is_active = 1");
-        
+
         // Mappa base
         const categoryMap = {};
-        for(const cat of categories) {
+        for (const cat of categories) {
             categoryMap[cat.id] = {
                 id: cat.id,
                 name: cat.name,
@@ -342,13 +415,13 @@ router.get('/categories', async (req, res) => {
 
         // Costruisco albero
         const rootCategories = [];
-        for(const cat of categories) {
+        for (const cat of categories) {
             const current = categoryMap[cat.id];
-            if(current.parent_id === null) // è categoria padre
+            if (current.parent_id === null) // è categoria padre
                 rootCategories.push(current);
             else {
                 const parent = categoryMap[cat.parent_id]; // Funziona grazie ai passaggi per riferimento
-                if(parent) // Se il padre è disattivato, non mostro neanche i figli
+                if (parent) // Se il padre è disattivato, non mostro neanche i figli
                     parent.children.push(current);
             }
         }
@@ -358,7 +431,7 @@ router.get('/categories', async (req, res) => {
             message: "Categorie recuperate con successo",
             categories: rootCategories
         });
-    } catch(error) {
+    } catch (error) {
         console.error("Errore recupero categorie: " + error.stack);
         return res.status(500).json({
             success: false,
@@ -369,5 +442,113 @@ router.get('/categories', async (req, res) => {
     }
 });
 
+
+/**
+ * @route GET /api/tickets/:id
+ * @desc Recupera le informazioni di un singolo ticket
+ * @access authenticated
+ */
+router.get('/:id', async (req, res) => {
+    const ticketId = req.params.id;
+    const connection = await db.getConnection();
+
+    try {
+        const query = `
+            SELECT t.id, t.title, t.status, t.priority, t.created_at, t.updated_at, t.category_id, t.client_id, uc.first_name AS client_first_name, uc.last_name AS client_last_name, t.operator_id, uo.first_name AS operator_first_name, uo.last_name AS operator_last_name, c.name AS category_name, r.stars AS rating_stars, r.comment AS rating_comment
+            FROM tickets t
+            JOIN categories c ON c.id = t.category_id
+            JOIN users uc ON uc.id = t.client_id
+            LEFT JOIN users uo ON uo.id = t.operator_id
+            LEFT JOIN ratings r ON r.ticket_id = t.id
+            WHERE t.id = ?
+        `;
+        const [tickets] = await connection.query(query, [ticketId]);
+
+        if (tickets.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Ticket non trovato.'
+            });
+        }
+
+        const ticket = tickets[0];
+
+        // Sicurezza: se l'utente è un Client, può vedere solo i suoi ticket
+        if (req.user.roleName === 'Client' && ticket.client_id !== req.user.id) {
+            return res.status(403).json({
+                success: false,
+                message: 'Accesso negato: non sei autorizzato a visualizzare questo ticket.'
+            });
+        }
+
+        const { category_ids, category_names } = getCategoryPaths(ticket.category_id);
+        ticket.category_ids = category_ids;
+        ticket.category_names = category_names;
+
+        return res.json({
+            success: true,
+            message: 'Ticket recuperato con successo.',
+            ticket: ticket
+        });
+    } catch (error) {
+        console.error('Errore recupero ticket: ' + error.stack);
+        return res.status(500).json({
+            success: false,
+            message: 'Errore interno del server.'
+        });
+    } finally {
+        connection.release();
+    }
+});
+
+/**
+ * @route POST /api/tickets/:id/rating
+ * @desc Invia valutazione per un ticket
+ * @access authenticated
+ */
+router.post('/:id/rating', async (req, res) => {
+    const ticketId = req.params.id;
+    if (!ticketId) {
+        return res.status(400).json({
+            success: false,
+            message: 'Non è stato specificato nessun ticket.'
+        });
+    }
+    const { stars, comment } = req.body;
+    if (!stars) {
+        return res.status(400).json({
+            success: false,
+            message: 'È necessario specificare le stelle'
+        });
+    }
+
+    const conn = await db.getConnection();
+    try {
+        const query = `
+            INSERT INTO ratings (ticket_id, stars, comment)
+            VALUES (?, ?, ?)
+        `;
+
+        await conn.query(query, [ticketId, stars, comment === undefined ? null : comment]);
+
+        return res.status(200).json({
+            success: true,
+            message: 'Valutazione inviata con successo.'
+        });
+    } catch (error) {
+        if (error.code === 'ER_DUP_ENTRY') {
+            return res.status(409).json({
+                success: false,
+                message: 'Hai già inviato una valutazione per questo ticket.'
+            });
+        }
+        return res.status(500).json({
+            success: false,
+            message: 'Si è verificato un problema interno al server'
+        });
+    } finally {
+        conn.release();
+    }
+});
 
 module.exports = router;

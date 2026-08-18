@@ -1,0 +1,331 @@
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    width: 80%;
+    margin: 2em auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2em;
+    flex-grow: 1;
+}
+
+.ticket-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    flex-grow: 1;
+    padding-bottom: 2em;
+}
+
+#welcome-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+}
+
+#welcome-section .welcome {
+    font-size: 2em;
+    font-weight: var(--font-extrabold);
+}
+
+#welcome-section .welcome span {
+    color: var(--color-accent);
+}
+
+#enabled-categories {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5em;
+    flex-wrap: wrap;
+    margin-top: 0.5em;
+}
+
+#statistics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: 1fr;
+    gap: 1em;
+}
+
+.statistics-card {
+    background-color: var(--color-surface);
+    border-radius: var(--radius-lg);
+    padding: 1em;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    box-shadow: var(--shadow-sm);
+    border-top: 3px solid transparent;
+}
+
+.statistics-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.statistics-card .card-icon {
+    background-color: var(--color-bg);
+    padding: 0.7em;
+    width: fit-content;
+    aspect-ratio: 1 / 1;
+    border-radius: var(--radius-md);
+}
+
+#pending-card .card-icon {
+    background-color: var(--color-pending-bg);
+    color: var(--color-pending-text);
+}
+
+#pending-card {
+    border-top-color: var(--color-pending);
+}
+
+#in-progress-card .card-icon {
+    background-color: var(--color-in-progress-bg);
+    color: var(--color-in-progress-text);
+}
+
+#in-progress-card {
+    border-top-color: var(--color-in-progress);
+}
+
+#resolved-card .card-icon {
+    background-color: var(--color-resolved-bg);
+    color: var(--color-resolved-text);
+}
+
+#resolved-card {
+    border-top-color: var(--color-resolved);
+}
+
+.statistics-card .card-value {
+    font-family: var(--font-display);
+    font-weight: var(--font-extrabold);
+    font-size: var(--text-4xl);
+}
+
+#filter-bar {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+}
+
+#filter-bar .left {
+    display: flex;
+    align-items: center;
+    gap: 1.5em;
+}
+
+#filter-bar .right {
+    display: flex;
+    gap: 0.6em;
+}
+
+.filter-bar-element {
+    background-color: var(--color-surface);
+    border-radius: var(--radius-lg);
+    padding: 0.5em;
+    border: 1px solid var(--color-border);
+    height: 100%;
+    box-shadow: var(--shadow-sm);
+}
+
+#filter-bar .filter-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5em;
+}
+
+.ticket-section .label-upper {
+    white-space: nowrap;
+}
+
+
+
+#ticket-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7em;
+    height: 70vh;
+    min-height: 30em;
+    max-height: 50em;
+    overflow-y: auto;
+
+    /* Compensazione per far uscire i badge senza disallineare la lista */
+    margin-left: -0.8em;
+    padding-top: 1.8em;
+    padding-left: 0.8em;
+    padding-right: 0.5em;
+    padding-bottom: 0.8em;
+}
+
+.ticket {
+    background-color: var(--color-surface);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-sm);
+    padding: 1em;
+    display: flex;
+    align-items: center;
+    gap: 2em;
+    min-width: 0;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.ticket:hover {
+    border-color: var(--color-border-strong);
+    box-shadow: var(--shadow-md);
+}
+
+.ticket-data {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4em;
+    align-items: center;
+}
+
+.ticket-data .id-badge {
+    width: fit-content;
+}
+
+.ticket-description {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4em;
+    min-width: 0;
+}
+
+.ticket-description .ticket-title {
+    font-weight: var(--font-bold);
+    white-space: nowrap;
+    overflow: hidden;
+    line-height: 1.1em;
+    text-overflow: ellipsis;
+    flex-grow: 0;
+}
+
+.ticket-manage {
+    margin-left: auto;
+    display: flex;
+    gap: 1em;
+}
+
+.ticket-manage-info {
+    gap: 0.4em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.ticket-manage button .btn-icon {
+    margin: 0;
+    margin-left: 0.5em;
+    vertical-align: middle;
+}
+
+.ticket-manage .btn-take {
+    white-space: nowrap;
+    font-size: var(--text-sm);
+}
+
+.ticket-manage .btn-take .btn-icon {
+    margin-left: 0;
+    margin-right: 0.5em;
+}
+
+.ticket-creation-date {
+    white-space: nowrap;
+}
+
+.ticket .small {
+    color: var(--color-text-muted);
+}
+
+.ticket-mine {
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-md);
+}
+
+.ticket-others {
+    opacity: 0.8;
+}
+
+.ticket-dimmed {
+    opacity: 0.6;
+}
+
+.mine-badge {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    background-color: var(--color-surface);
+    color: var(--color-accent);
+    border: 2px solid var(--color-accent);
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    box-shadow: var(--shadow-md);
+    z-index: 2;
+}
+
+@media (max-width: 700px) {
+    main {
+        width: 95%;
+    }
+
+    #statistics {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+    }
+
+    #filter-bar {
+        flex-wrap: wrap;
+        gap: 0.7em;
+        max-width: 100%;
+    }
+
+    #filter-bar .left {
+        max-width: 100%;
+    }
+
+    #filter-bar .left .filter-buttons {
+        overflow-x: auto;
+        min-width: 0;
+    }
+
+    .ticket {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+    }
+
+    .ticket .ticket-manage {
+        grid-column: span 2;
+        width: 100%;
+    }
+
+    .ticket .ticket-manage button {
+        flex-grow: 1;
+        text-align: center;
+        justify-content: center;
+    }
+
+    .ticket-description .ticket-title {
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        white-space: normal;
+    }
+}

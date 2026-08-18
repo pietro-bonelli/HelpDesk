@@ -18,12 +18,12 @@ async function loadStatistics() {
 
         console.log(statsJSON);
 
-        if(!statsJSON.success)
+        if (!statsJSON.success)
             return;
         totalUsers.textContent = statsJSON.data.total_users;
         resolvedTickets.textContent = statsJSON.data.resolved_tickets;
-        rating.style.width = (statsJSON.data.average_rating * 10) / 5;
-    } catch(error) {
+        rating.style.width = `${(statsJSON.data.average_rating / 5) * 100}%`;
+    } catch (error) {
         console.log(error);
         showToast('Errore', 'Impossibile recuperare le statistiche.', 'error');
     }
@@ -33,7 +33,7 @@ function faqHandler() {
     const faqWrapper = document.getElementById('faq-wrapper');
     faqWrapper.addEventListener('click', (event) => {
         const clicked = event.target.closest('.faq-title');
-        if(!clicked) return;
+        if (!clicked) return;
         const currentItem = clicked.closest('.faq-box');
         currentItem.classList.toggle('collapsed');
     });

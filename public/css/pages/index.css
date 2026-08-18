@@ -82,6 +82,7 @@
 .hero .mock .title .title-text {
     font-size: var(--text-md);
     font-weight: var(--font-bold);
+    color: var(--color-text-inverse);
 }
 .hero .mock .icon {
     margin-right: 0.5em;
@@ -257,6 +258,7 @@ section#performances .value {
 section#performances .rating-wrapper {
     position: relative;
     display: inline-block;
+    font-size: var(--text-5xl);
 }
 section#performances .rating-wrapper .stars-empty {
     color: var(--color-archived-border);

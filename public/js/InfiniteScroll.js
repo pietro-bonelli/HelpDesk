@@ -13,7 +13,7 @@ class InfiniteScroll {
         this.hasMore = true;
 
         const observerOptions = {
-            root: null,
+            root: options.root || null,
             rootMargin: options.rootMargin || '100px',
             threshold: 0
         };
@@ -27,11 +27,11 @@ class InfiniteScroll {
         const target = entries[0];
 
         // Se ci sono altri da caricare e non sta già caricando
-        if(target.isIntersecting && !this.isLoading && this.hasMore)
+        if (target.isIntersecting && !this.isLoading && this.hasMore)
             await this.loadNext();
     }
 
-    async loadNext(){
+    async loadNext() {
         this.isLoading = true;
         this.page++;
 
@@ -40,15 +40,19 @@ class InfiniteScroll {
             this.hasMore = await this.loadData(this.page);
 
             // Non ci sono più elementi
-            if(!this.hasMore) {
+            if (!this.hasMore) {
                 this.observer.disconnect();
                 this.trigger.style.display = 'none';
             }
-        } catch(error) {
+        } catch (error) {
             console.error(error);
             this.page--;
         } finally {
             this.isLoading = false;
+
+            // Forzo un ricaricamento per evitare che non si triggeri se sono già sopra lo spinner
+            this.observer.unobserve(this.trigger);
+            this.observer.observe(this.trigger);
         }
     }
 

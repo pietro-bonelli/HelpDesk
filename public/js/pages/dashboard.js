@@ -8,11 +8,14 @@ let totalCount = 0;
 
 let categories;
 
+let userData;
+
 document.addEventListener('DOMContentLoaded', async () => {
     ticketsContainer = document.getElementById('ticket-list');
 
     categories = await getCategories();
-    
+    await loadUserData();
+
     loadStats();
     renderTickets();
     loadStatusFilterListener();
@@ -23,6 +26,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     loadPageSwitchListener();
     newTicketListener();
 });
+
+async function loadUserData() {
+    if (!userData) {
+        const res = await fetch(`/api/users/me`);
+        const resJSON = await res.json();
+
+        if (!resJSON.success) {
+            showToast('Errore', 'Si è verificato un problema nel recuperare le informazioni utente.', 'error');
+        } else {
+            userData = resJSON.user;
+        }
+    }
+}
 
 function loadCreateTicketListener() {
     const form = document.getElementById('create-ticket-form');
@@ -61,41 +77,41 @@ async function createTicket(title, priority, categoryId, description) {
         });
 
         const resJSON = await res.json();
-        if(!resJSON.success) {
+        if (!resJSON.success) {
             showToast('Impossibile creare il ticket', resJSON.message, 'error');
             return;
         } else {
             showToast('Successo', resJSON.message, 'success');
         }
-    } catch(error) {
+    } catch (error) {
         showToast('Errore', 'Si è verificato un problema durante la creazione del ticket.', 'error');
     }
 }
 
 function loadCategorySelectListener() {
     const modal = document.getElementById('modal-overlay');
-    
+
     modal.addEventListener('change', (event) => {
         const clicked = event.target;
-        if(!clicked.classList.contains('category-selector')) 
+        if (!clicked.classList.contains('category-selector'))
             return;
 
         const sub = clicked.dataset.sub;
-        
+
         const form = modal.querySelector('form');
         form.dataset.category_id = "";
-        for(const subCat of form.children) {
-            if(subCat.classList.contains('category-selector') && subCat.dataset.sub > sub)
+        for (const subCat of form.children) {
+            if (subCat.classList.contains('category-selector') && subCat.dataset.sub > sub)
                 subCat.remove();
         }
 
         const children = getChildrenCategories(clicked.value, categories);
-        if(children && children.length > 0) {
+        if (children && children.length > 0) {
             const categorySelect = document.createElement('select');
             categorySelect.setAttribute('name', 'category-' + parseInt(sub) + 1);
             categorySelect.required = true;
             categorySelect.classList.add('category-selector');
-            categorySelect.dataset.sub = parseInt(sub) +1;
+            categorySelect.dataset.sub = parseInt(sub) + 1;
             const defaultOpt = document.createElement('option');
             defaultOpt.selected = true;
             defaultOpt.disabled = true;
@@ -103,7 +119,7 @@ function loadCategorySelectListener() {
             defaultOpt.value = '';
             defaultOpt.textContent = "Seleziona un'opzione...";
             categorySelect.appendChild(defaultOpt);
-            for(const cat of children) {
+            for (const cat of children) {
                 const opt = document.createElement('option');
                 opt.setAttribute('value', cat.id);
                 opt.textContent = cat.name;
@@ -120,11 +136,11 @@ function loadCategorySelectListener() {
 
 
 function openNewTicketModal() {
-    if(!categories) {
+    if (!categories) {
         showToast('Errore', 'Impossibile recuperare la lista categorie.', 'error');
     }
     setModalTitle("Nuovo Ticket");
-    
+
     const form = document.createElement('form');
     form.id = 'create-ticket-form';
     form.dataset.loading = true;
@@ -152,7 +168,7 @@ function openNewTicketModal() {
     low.setAttribute('value', 'low');
     low.innerHTML = 'Bassa';
     prioritySelect.appendChild(low);
-    
+
     const medium = document.createElement('option');
     medium.setAttribute('value', 'medium');
     medium.innerHTML = 'Media';
@@ -182,7 +198,7 @@ function openNewTicketModal() {
     defaultOpt.value = '';
     defaultOpt.textContent = "Seleziona un'opzione...";
     categorySelect.appendChild(defaultOpt);
-    for(const cat of categories) {
+    for (const cat of categories) {
         const opt = document.createElement('option');
         opt.setAttribute('value', cat.id);
         opt.textContent = cat.name;
@@ -193,10 +209,10 @@ function openNewTicketModal() {
     const descriptionLabel = document.createElement('label');
     descriptionLabel.textContent = 'Descrizione del problema';
     form.appendChild(descriptionLabel);
-    form.appendChild(getTextAreaElement());
-    
+    form.appendChild(getTextAreaElement('ticket-message'));
+
     addModalElement(form);
-    
+
     const createButton = document.createElement('button');
     createButton.type = 'submit';
 
@@ -218,7 +234,7 @@ async function getCategories() {
         const resJSON = await res.json();
 
         return resJSON.categories;
-    } catch(error) {
+    } catch (error) {
         showToast('Errore', 'Impossibile recuperare la lista categorie', 'error');
         return null;
     }
@@ -233,27 +249,42 @@ function newTicketListener() {
 }
 
 async function loadStats() {
+    const dateElement = document.getElementById('date');
+    dateElement.textContent = getCurrentDateFormatted();
+
+    const usernameElement = document.getElementById('user-first-name');
+    usernameElement.textContent = userData.first_name;
+
     const pending = document.getElementById('pending-value');
     const inProgress = document.getElementById('in-progress-value');
     const resolved = document.getElementById('resolved-value');
     const total = document.getElementById('total-value');
-    
+
     try {
         const res = await fetch('/api/tickets/my/stats');
         const resJSON = await res.json();
+        console.log(resJSON)
 
-        const pendingValue = resJSON.stats[0].count;
-        const inProgressValue = resJSON.stats[1].count;
-        const resolvedValue = resJSON.stats[2].count;
-        const archivedValue = resJSON.stats[3].count;
+        let pendingValue = 0;
+        let inProgressValue = 0;
+        let resolvedValue = 0;
+        let archivedValue = 0;
+        if (resJSON.stats) {
+            for (const stat of resJSON.stats) {
+                if (stat.status === 'pending') pendingValue = stat.count;
+                else if (stat.status === 'in_progress') inProgressValue = stat.count;
+                else if (stat.status === 'resolved') resolvedValue = stat.count;
+                else if (stat.status === 'archived') archivedValue = stat.count;
+            }
+        }
 
         pending.textContent = pendingValue;
         inProgress.textContent = inProgressValue;
         resolved.textContent = resolvedValue;
         total.textContent = pendingValue + inProgressValue + resolvedValue + archivedValue;
 
-    } catch(error) {
-
+    } catch (error) {
+        console.error(error);
     }
 }
 
@@ -261,14 +292,14 @@ function loadPageSwitchListener() {
     const container = document.getElementById('pages');
     container.addEventListener('click', (event) => {
         const clicked = event.target.closest('.page-icon');
-        if(!clicked)
+        if (!clicked)
             return;
 
-        if(clicked.id === 'page-previous' && page > 1) {
+        if (clicked.id === 'page-previous' && page > 1) {
             page--;
             renderTickets(limit, page, orderBy, filter, search);
             window.location.href = '#ticket-section';
-        } else if(clicked.id === 'page-next' && (limit * page) < totalCount) {
+        } else if (clicked.id === 'page-next' && (limit * page) < totalCount) {
             page++;
             renderTickets(limit, page, orderBy, filter, search);
             window.location.href = '#ticket-section';
@@ -285,9 +316,9 @@ function loadSearchBarListener() {
         clearTimeout(debounceTimer);
 
         debounceTimer = setTimeout(() => {
-        search = event.target.value.trim();
+            search = event.target.value.trim();
 
-        renderTickets(limit, page, orderBy, filter, search);
+            renderTickets(limit, page, orderBy, filter, search);
         }, 500); // si esegue con 500ms di ritardo e solo se non ci sono altri input nel frattempo
     });
 }
@@ -304,7 +335,7 @@ function loadPageLimitListener() {
 
 function loadOrderByListener() {
     const orderByElement = document.getElementById('order-by');
-    
+
     orderByElement.addEventListener('change', (event) => {
         orderBy = event.target.value;
 
@@ -318,10 +349,10 @@ function loadStatusFilterListener() {
 
     statusFilterContainer.addEventListener('click', (event) => {
         const clicked = event.target.closest('.btn-xs');
-        if(!clicked)
+        if (!clicked)
             return;
 
-        if(clicked.classList.contains('btn-ghost-selected')) return;
+        if (clicked.classList.contains('btn-ghost-selected')) return;
 
         const allSwitches = statusFilterContainer.querySelectorAll('.btn-xs');
         allSwitches.forEach(btn => btn.classList.remove('btn-ghost-selected'));
@@ -336,10 +367,10 @@ function loadStatusFilterListener() {
 }
 
 function loadTicketOpenListener() {
-    
+
     ticketsContainer.addEventListener('click', (event) => {
         const clicked = event.target.closest('.ticket');
-        if(!clicked)
+        if (!clicked)
             return;
 
         window.location.href = '/ticket/' + clicked.dataset.ticket_id;
@@ -351,14 +382,14 @@ async function renderTickets(limit = 10, page = 1, orderBy = 'desc', filter = 'a
     try {
         const res = await fetch(`/api/tickets/my?limit=${limit}&page=${page}&sort=${orderBy}&status=${filter}&search=${search}`);
         const resJSON = await res.json();
-        if(!resJSON.success) {
+        if (!resJSON.success) {
             showToast('Errore', resJSON.message, 'error');
             return;
         }
 
-        
+
         const tickets = resJSON.tickets;
-        
+
         const minNum = document.getElementById('min-num');
         const maxNum = document.getElementById('max-num');
         const totalNum = document.getElementById('total-num');
@@ -373,16 +404,16 @@ async function renderTickets(limit = 10, page = 1, orderBy = 'desc', filter = 'a
         const pageNext = document.getElementById('page-next');
         pagePrev.classList.remove('disabled');
         pageNext.classList.remove('disabled');
-        if(page === 1) {
+        if (page === 1) {
             pagePrev.classList.add('disabled');
         }
-        if(limit * page >= totalCount) {
+        if (limit * page >= totalCount) {
             pageNext.classList.add('disabled');
         }
 
         const fragment = document.createDocumentFragment();
 
-        for(const ticket of tickets) {
+        for (const ticket of tickets) {
             const e = document.createElement('article');
             e.classList.add('ticket');
             e.dataset.ticket_id = ticket.id;
@@ -431,20 +462,20 @@ async function renderTickets(limit = 10, page = 1, orderBy = 'desc', filter = 'a
         }
         ticketsContainer.innerHTML = '';
         ticketsContainer.appendChild(fragment);
-    } catch(error) {
+    } catch (error) {
         showToast('Errore', "Impossibile caricare la lista dei ticket." + error, 'error');
     }
 }
 
 function getChildrenCategories(targetId, categories) {
     console.log(categories);
-    for(const cat of categories) {
-        if(cat.id == targetId)
+    for (const cat of categories) {
+        if (cat.id == targetId)
             return cat.children;
 
-        if(cat.children && cat.children.length > 0) {
+        if (cat.children && cat.children.length > 0) {
             const found = getChildrenCategories(targetId, cat.children);
-            if(found !== null)
+            if (found !== null)
                 return found;
         }
     }

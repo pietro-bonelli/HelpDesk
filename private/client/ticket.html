@@ -18,6 +18,7 @@
 <script src="../js/toast.js"></script>
 <script src="../js/global.js"></script>
 <script src="../js/header.js"></script>
+<script src="../js/InfiniteScroll.js"></script>
 <script src="../js/pages/ticket.js"></script>
 </head>
 
@@ -60,128 +61,139 @@
     </header>
 
     <main>
-        <aside class="aside-operator" id="aside">
-            <h2 class="ticket-title">Problemi di connessione di rete</h2>
-            <div class="badge-section"></div>
+        <aside id="aside">
+            <h2 id="ticket-title" class="ticket-title" contenteditable="true">Caricamento...</h2>
+            <div id="badge-section"></div>
             <hr>
             <form class="ticket-info">
-                <label for="category" class="label-upper">Categoria</label>
-                <input type="text" value="Rete">
-                <input type="text" value="VPN">
                 <label for="priority" class="label-upper">Priorità</label>
-                <input type="text" value="Alta">
+                <select name="priority" id="priority">
+                    <option value="loading" selected>Caricamento...</option>
+                </select>
                 <label for="status" class="label-upper">Stato</label>
-                <input type="text" value="In Attesa">
+                <select name="status" id="status">
+                    <option value="loading" selected>Caricamento...</option>
+                </select>
                 <hr>
 
                 <p class="label-upper">Tracciamento</p>
                 <div class="track-element">
                     <p class="small">Aperto il</p>
-                    <p id="created-at">12 mag 2026, 14:30</p>
+                    <p id="created-at"></p>
                 </div>
                 <hr>
                 <div class="track-element">
                     <p class="small">Ultimo aggiornamento</p>
-                    <p id="updated-at">Oggi, 15:42</p>
+                    <p id="updated-at"></p>
                 </div>
                 <hr>
                 <div class="track-element">
                     <p class="small">ID Ticket</p>
-                    <p id="ticket-id">#00001</p>
+                    <p id="ticket-id"></p>
                 </div>
                 <hr>
                 <div class="track-element">
-                    <p class="small">Operatoret</p>
-                    <p id="operator">Pietro Bonelli</p>
+                    <p class="small">Categoria</p>
+                    <p id="category"></p>
+                </div>
+                <hr>
+                <div class="track-element">
+                    <p class="small">Operatore</p>
+                    <p id="operator"></p>
                 </div>
                 <hr>
                 <div class="track-element">
                     <p class="small">Cliente</p>
-                    <p id="client">Mario Rossi</p>
+                    <p id="client"></p>
                 </div>
             </form>
 
-            <footer class="ticket-actions">
-                <button class="btn-md btn-secondary" id="edit-ticket-btn">
+            <footer class="ticket-actions" id="ticket-actions">
+                <button type="submit" class="btn-md btn-secondary" id="edit-ticket-btn" form="ticket-info">
                     <i class="fa-solid fa-pen-to-square btn-icon"></i>
                     Modifica Informazioni
                 </button>
-                <button class="btn-sm btn-ghost" id="archive-ticket-btn">
-                    <i class="fa-solid fa-box-archive btn-icon"></i>
-                    Archivia
-                </button>
-                <button class="btn-sm btn-ghost" id="close-ticket-btn">
-                    <i class="fa-solid fa-lock btn-icon"></i>
-                    Chiudi
-                </button>
+                <div class="dynamic-actions">
+                    <button class="btn-sm btn-ghost hidden" id="archive-ticket-btn">
+                        <i class="fa-solid fa-box-archive btn-icon"></i>
+                        Archivia
+                    </button>
+                    <button class="btn-sm btn-ghost hidden" id="close-ticket-btn">
+                        <i class="fa-solid fa-lock btn-icon"></i>
+                        Chiudi
+                    </button>
+                    <a href="/dashboard" class="btn-sm btn-ghost" id="back-ticket-btn">
+                        <i class="fa-solid fa-arrow-left btn-icon"></i>
+                        Torna alla Dashboard
+                    </a>
+                </div>
             </footer>
         </aside>
 
-        <section class="private-notes expanded">
-            <div class="private-notes-header">
-                <p class="private-notes-icon"><i class="fa-solid fa-lock"></i></p>
-                <p class="label-upper">Note Private</p>
-                <i class="fa-solid fa-angle-down"></i>
-            </div>
-
-            <div class="private-notes-content">
-                <div class="note">
-                    <p class="note-message">
-                        Verificato da Pietro.
-                    </p>
-                    <p class="note-info small">
-                        Pietro • 12 mag, 15:53
-                    </p>
+        <div class="ticket-content">
+            <section class="private-notes hidden expanded" id="private-notes">
+                <div class="private-notes-header" id="private-notes-header">
+                    <p class="private-notes-icon"><i class="fa-solid fa-lock"></i></p>
+                    <p class="label-upper">Note Private</p>
+                    <i class="fa-solid fa-angle-down"></i>
                 </div>
-                <div class="note">
-                    <p class="note-message">
-                        Verificato da Pietro.
-                    </p>
-                    <p class="note-info small">
-                        Pietro • 12 mag, 15:53
-                    </p>
-                </div>
-                <div class="note">
-                    <p class="note-message">
-                        Verificato da Pietro.
-                    </p>
-                    <p class="note-info small">
-                        Pietro • 12 mag, 15:53
-                    </p>
-                </div>
-            </div>
 
-            <div class="private-notes-textarea">
-                <button class="btn-sm btn-secondary" id="send-private-note">
-                    <i class="fa-regular fa-paper-plane btn-icon"></i>
-                    Invia Nota
-                </button>
-            </div>
-        </section>
-
-        <section class="chat">
-            <div class="chat-messages">
-                <div class="message client right">
-                    <p class="message-text">Corpo del messaggio con tatto di <b>formattazione</b></b></p>
-                    <div class="message-data">
-                        <p class="message-owner">Pietro Bonelli</p>
-                        <p class="message-date">25/05/2026 21:30</p>
-                    </div>
+                <div class="private-notes-content" id="private-notes-content">
+                    <div class="spinner" id="load-more-notes"></div>
                 </div>
-                <div class="message operator left">
-                    <p class="message-text">Corpo del messaggio con tatto di <b>formattazione</b></b></p>
-                    <div class="message-data">
-                        <p class="message-owner">Pietro Bonelli</p>
-                        <p class="message-date">25/05/2026 21:30</p>
-                    </div>
+
+                <div class="private-notes-textarea" id="private-notes-textarea-container">
+                    <div id="private-notes-textarea-wrapper"></div>
+
                 </div>
-            </div>
+            </section>
 
-            <div class="chat-textarea">
+            <section class="chat">
+                <div class="chat-messages" id="chat-messages">
+                    <div class="spinner" id="load-more-messages"></div>
+                </div>
 
-            </div>
-        </section>
+                <div class="chat-textarea" id="chat-textarea-container">
+                    <form id="rating-form" class="hidden">
+                        <p class="label-upper">Lascia una valutazione</p>
+                        <div class="stars">
+                            <input type="radio" name="stars" value="5" id="5-stars">
+                            <label for="5-stars"><i class="fa-solid fa-star"></i></label>
+                            <input type="radio" name="stars" value="4" id="4-stars">
+                            <label for="4-stars"><i class="fa-solid fa-star"></i></label>
+                            <input type="radio" name="stars" value="3" id="3-stars">
+                            <label for="3-stars"><i class="fa-solid fa-star"></i></label>
+                            <input type="radio" name="stars" value="2" id="2-stars">
+                            <label for="2-stars"><i class="fa-solid fa-star"></i></label>
+                            <input type="radio" name="stars" value="1" id="1-stars">
+                            <label for="1-stars"><i class="fa-solid fa-star"></i></label>
+                        </div>
+
+                        <textarea name="comment" id="comment" placeholder="Scrivi un commento..."></textarea>
+
+                        <button type="submit" class="btn-md btn-primary">
+                            <i class="fa-regular fa-paper-plane btn-icon"></i>Invia
+                            Valutazione
+                        </button>
+                    </form>
+                </div>
+            </section>
+        </div>
     </main>
+
+    <div id="modal-overlay" class="modal-overlay hidden">
+        <div class="modal-window">
+            <header class="modal-header">
+                <h3 id="modal-title"></h3>
+                <button class="btn-close" id="modal-close-btn"><i class="fa-solid fa-xmark"></i></button>
+            </header>
+
+            <div class="modal-body" id="modal-body">
+            </div>
+            <div class="modal-footer" id="modal-footer">
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

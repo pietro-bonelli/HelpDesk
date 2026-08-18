@@ -4,12 +4,12 @@ const db = require('../db/connection');
 
 /**
  * @route GET /api/messages/ticket/:id
- * @desc Recupera la cronologia dei messaggi di un ticket
+ * @desc Recupera la cronologia dei messaggi pubblici di un ticket
  * @access authenticated
  */
 router.get('/ticket/:id', async (req, res) => {
     const ticketId = req.params.id;
-    if(!ticketId)
+    if (!ticketId)
         return res.status(400).json({
             success: false,
             message: "ID ticket mancante"
@@ -17,6 +17,7 @@ router.get('/ticket/:id', async (req, res) => {
 
     const limit = parseInt(req.query.limit) || 10;
     const offset = parseInt(req.query.offset) || 0;
+    const minMessageId = parseInt(req.query.min_id) || 0;
 
     const connection = await db.getConnection();
     try {
@@ -24,29 +25,24 @@ router.get('/ticket/:id', async (req, res) => {
         const checkQuery = 'SELECT client_id, operator_id FROM tickets WHERE id = ?';
         const [tickets] = await connection.query(checkQuery, [ticketId]);
 
-        if(tickets.length === 0) 
-            return res.status(404).json({success: false, message: "Ticket non trovato."});
+        if (tickets.length === 0)
+            return res.status(404).json({ success: false, message: "Ticket non trovato." });
 
         // Controllo che sia il proprietario (se è l'utente a richiederlo)
-        if(req.user.roleName === 'Client' && tickets[0].client_id !== req.user.id)
-            return res.status(403).json({success: false, message: 'Non sei autorizzato a visualizzare questo ticket'});
+        if (req.user.roleName === 'Client' && tickets[0].client_id !== req.user.id)
+            return res.status(403).json({ success: false, message: 'Non sei autorizzato a visualizzare questo ticket' });
 
         let messagesQuery = `
             SELECT * FROM (
                 SELECT tm.id, tm.message_text, tm.message_type, tm.created_at, tm.sender_id,
-                       u.first_name, u.last_name, r.name AS role_name
+                       u.first_name, u.last_name, r.name AS role_name, r.id AS role_id
                 FROM ticket_messages tm
                 JOIN users u ON tm.sender_id = u.id
                 LEFT JOIN roles r ON u.role_id = r.id
-                WHERE tm.ticket_id = ?
+                WHERE tm.ticket_id = ? AND tm.message_type != 'private' AND tm.id >= ?
         `;
 
-        const queryParams = [ticketId];
-
-        // Se è un utente, tolgo le note private
-        if(req.user.roleName === 'Client') {
-            messagesQuery += " AND tm.message_type != 'private'"
-        }
+        const queryParams = [ticketId, minMessageId];
 
         // Logica di sort e limitazione risultati
         messagesQuery += `
@@ -59,7 +55,7 @@ router.get('/ticket/:id', async (req, res) => {
         queryParams.push(limit, offset);
 
         const [messages] = await connection.query(messagesQuery, queryParams);
-        
+
         return res.json({
             success: true,
             message: "Messaggi recuperati con successo",
@@ -68,8 +64,76 @@ router.get('/ticket/:id', async (req, res) => {
             messages: messages
         });
 
-    } catch(error) {
+    } catch (error) {
         console.error("Errore durante recupero messaggi: " + error.stack);
+        return res.status(500).json({
+            success: false,
+            message: "Errore interno al server"
+        });
+    } finally {
+        connection.release();
+    }
+});
+
+
+/**
+ * @route GET /api/messages/ticket/:id/private
+ * @desc Recupera le note private di un ticket
+ * @access authenticated
+ */
+router.get('/ticket/:id/private', async (req, res) => {
+    const ticketId = req.params.id;
+    if (!ticketId)
+        return res.status(400).json({
+            success: false,
+            message: "ID ticket mancante"
+        });
+
+    // Controllo che l'utente non sia un Client
+    if (req.user.roleName === 'Client')
+        return res.status(403).json({ success: false, message: 'Non sei autorizzato a visualizzare le note private.' });
+
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = parseInt(req.query.offset) || 0;
+    const minMessageId = parseInt(req.query.min_id) || 0;
+
+    const connection = await db.getConnection();
+    try {
+        // Controllo esistenza ticket
+        const checkQuery = 'SELECT id FROM tickets WHERE id = ?';
+        const [tickets] = await connection.query(checkQuery, [ticketId]);
+
+        if (tickets.length === 0)
+            return res.status(404).json({ success: false, message: "Ticket non trovato." });
+
+        const messagesQuery = `
+            SELECT * FROM (
+                SELECT tm.id, tm.message_text, tm.message_type, tm.created_at, tm.sender_id,
+                       u.first_name, u.last_name, r.name AS role_name, r.id AS role_id
+                FROM ticket_messages tm
+                JOIN users u ON tm.sender_id = u.id
+                LEFT JOIN roles r ON u.role_id = r.id
+                WHERE tm.ticket_id = ? AND tm.message_type = 'private' AND tm.id >= ?
+                ORDER BY tm.created_at DESC
+                LIMIT ? OFFSET ?
+            ) AS subquery
+            ORDER BY created_at ASC;
+        `;
+
+        const queryParams = [ticketId, minMessageId, limit, offset];
+
+        const [messages] = await connection.query(messagesQuery, queryParams);
+
+        return res.json({
+            success: true,
+            message: "Note private recuperate con successo",
+            limit: limit,
+            offset: offset,
+            messages: messages
+        });
+
+    } catch (error) {
+        console.error("Errore durante recupero note private: " + error.stack);
         return res.status(500).json({
             success: false,
             message: "Errore interno al server"
@@ -89,24 +153,24 @@ router.post('/ticket/:id', async (req, res) => {
     const ticketId = req.params.id;
     let { message_text, message_type } = req.body;
 
-    if(!message_text || message_text.trim() === '')
-        return res.status(400).json({success: false, message: 'Il testo del messaggio non può essere vuoto.'});
+    if (!message_text || message_text.trim() === '')
+        return res.status(400).json({ success: false, message: 'Il testo del messaggio non può essere vuoto.' });
 
-    if(!message_type || req.user.roleName == 'Client')
+    if (!message_type || req.user.roleName == 'Client')
         message_type = 'default';
 
     const connection = await db.getConnection();
     try {
         // Controllo stato ticket
         const [tickets] = await connection.query('SELECT status, client_id FROM tickets WHERE id = ?', [ticketId]);
-        if(tickets.length == 0)
-            return res.status(400).json({success: false, message: 'Ticket inesistente.'});
-        if(tickets[0].status === 'archived' || tickets[0].status === 'resolved')
-            return res.status(400).json({success: false, message: 'Impossibile rispondere: questo ticket è chiuso.'});
+        if (tickets.length == 0)
+            return res.status(400).json({ success: false, message: 'Ticket inesistente.' });
+        if (tickets[0].status === 'archived' || tickets[0].status === 'resolved')
+            return res.status(400).json({ success: false, message: 'Impossibile rispondere: questo ticket è chiuso.' });
 
         // verifico che sia il proprietario
-        if(req.user.roleName === 'Client' && tickets[0].client_id != req.user.id)
-            return res.status(403).json({success: false, message: 'Impossibile rispondere: non sei autorizzato ad accedere a questo ticket.'});
+        if (req.user.roleName === 'Client' && tickets[0].client_id != req.user.id)
+            return res.status(403).json({ success: false, message: 'Impossibile rispondere: non sei autorizzato ad accedere a questo ticket.' });
 
         const insertQuery = `
             INSERT INTO ticket_messages (ticket_id, sender_id, message_text, message_type)
@@ -119,12 +183,14 @@ router.post('/ticket/:id', async (req, res) => {
             message: (message_type != 'private' ? 'Messaggio inviato con successo.' : 'Nota privata aggiunta con successo.'),
             message_id: result.insertId
         });
-    } catch(error) {
+    } catch (error) {
         console.error("Errore durante l'invio del messaggio: " + error.stack);
         return res.status(500).json({
             success: false,
             message: 'Errore interno del server.'
         });
+    } finally {
+        connection.release();
     }
 });
 
