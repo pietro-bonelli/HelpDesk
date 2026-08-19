@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db/connection');
+const presenceService = require('../services/presenceService');
+const emailService = require('../services/emailService');
 
 /**
  * @route GET /api/messages/ticket/:id
@@ -31,6 +33,10 @@ router.get('/ticket/:id', async (req, res) => {
         // Controllo che sia il proprietario (se è l'utente a richiederlo)
         if (req.user.roleName === 'Client' && tickets[0].client_id !== req.user.id)
             return res.status(403).json({ success: false, message: 'Non sei autorizzato a visualizzare questo ticket' });
+
+
+        // Aggiorno LAST SEEN
+        presenceService.updateLastSeen(req.user.id);
 
         let messagesQuery = `
             SELECT * FROM (
@@ -162,7 +168,13 @@ router.post('/ticket/:id', async (req, res) => {
     const connection = await db.getConnection();
     try {
         // Controllo stato ticket
-        const [tickets] = await connection.query('SELECT status, client_id FROM tickets WHERE id = ?', [ticketId]);
+        const query = `
+            SELECT t.status, t.client_id, u.first_name AS client_first_name, u.email AS client_email, t.title
+            FROM tickets t
+            LEFT JOIN users u ON u.id = t.client_id
+            WHERE t.id = ?    
+        `
+        const [tickets] = await connection.query(query, [ticketId]);
         if (tickets.length == 0)
             return res.status(400).json({ success: false, message: 'Ticket inesistente.' });
         if (tickets[0].status === 'archived' || tickets[0].status === 'resolved')
@@ -177,6 +189,22 @@ router.post('/ticket/:id', async (req, res) => {
             VALUES (?, ?, ?, ?)
         ` ;
         const [result] = await connection.query(insertQuery, [ticketId, req.user.id, message_text, message_type]);
+        // Invio mail solo se messaggio non privato e ad inviare il messaggio non è il proprietario del ticket
+        if (message_type !== 'private' && tickets[0].client_id !== req.user.id) {
+            if (!presenceService.isOnline(tickets[0].client_id)) { // Invio solo se l'utente non è "online" (non sta guardando attivamente il ticket)
+                const ticketUrl = `http://${process.env.URL}:${process.env.PORT}/ticket/${ticketId}`;
+                emailService.sendNewMessageNotification(
+                    tickets[0].client_email,
+                    tickets[0].client_first_name,
+                    `${req.user.first_name} ${req.user.last_name}`,
+                    ticketId,
+                    tickets[0].title,
+                    message_text,
+                    new Date(),
+                    ticketUrl
+                )
+            }
+        }
 
         return res.status(201).json({
             success: true,

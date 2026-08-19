@@ -12,27 +12,27 @@ const jwt = require('jsonwebtoken');
 router.post('/register', async (req, res) => {
     const { first_name, last_name, email, password } = req.body;
     // Controllo base dati in input
-    if(!first_name || !last_name || !email || !password)
+    if (!first_name || !last_name || !email || !password)
         return res.status(400).json({
             success: false,
             message: "Tutti i campi sono obligatori."
         });
 
     // Controllo base email
-    if(!email.includes('@'))
+    if (!email.includes('@'))
         return res.status(400).json({
             success: false,
             message: "Indirizzo email non valido."
         });
-    
-    
+
+
     // Controllo base password
-    if(password.length < 8)
+    if (password.length < 8)
         return res.status(400).json({
             success: false,
             message: 'Password troppo semplice.'
         });
-    
+
     try {
         // Cifratura password
         const saltRounds = 10;
@@ -45,13 +45,13 @@ router.post('/register', async (req, res) => {
             success: true,
             message: 'Registrazione effettuata con successo.'
         });
-    } catch(error) {
-        if(error.code == 'ER_DUP_ENTRY') { // duplicate entry
+    } catch (error) {
+        if (error.code == 'ER_DUP_ENTRY') { // duplicate entry
             return res.status(400).json({
                 success: false,
                 message: 'Questo indirizzo email è già registrato.'
             });
-        } 
+        }
 
         console.error('Errore registrazione utente: ' + error.stack);
         // fallback errore
@@ -68,22 +68,22 @@ router.post('/register', async (req, res) => {
  * @access public
  */
 router.post('/login', async (req, res) => {
-    if(!req.body) {
+    if (!req.body) {
         return res.status(400).json({
             success: false,
             message: "Informazioni incomplete"
         });
     }
-    const {email, password} = req.body;
-    if(!email || !password)
+    const { email, password } = req.body;
+    if (!email || !password)
         return res.status(400).json({
             success: false,
             message: 'Dati di accesso incompleti'
         });
-    
+
     try {
         const query = `
-            SELECT u.id, u.first_name, u.last_name, u.password_hash, r.name AS role_name, r.is_admin AS is_admin
+            SELECT u.id, u.first_name, u.last_name, u.role_id, u.email, u.password_hash, r.name AS role_name, r.is_admin AS is_admin
             FROM users u
             LEFT JOIN roles r ON u.role_id = r.id
             WHERE u.email = ? AND u.is_active = 1
@@ -91,15 +91,15 @@ router.post('/login', async (req, res) => {
 
         const [users] = await db.query(query, [email]);
         // Se array vuoto utente non trovato
-        if(users.length == 0)
+        if (users.length == 0)
             return res.status(400).json({
                 success: false,
                 message: 'Credenziali non valide.'
             });
-        
+
         const user = users[0];
         const matches = await bcrypt.compare(password, user.password_hash);
-        if(!matches) // password errata
+        if (!matches) // password errata
             return res.status(400).json({
                 success: false,
                 message: 'Credenziali non valide.'
@@ -108,8 +108,12 @@ router.post('/login', async (req, res) => {
         // Generazione token JWT
         const payload = {
             id: user.id,
+            roleId: user.role_id,
             roleName: user.role_name || 'Client',
-            isAdmin: Boolean(user.is_admin)
+            isAdmin: Boolean(user.is_admin),
+            email: user.email,
+            first_name: user.first_name,
+            last_name: user.last_name
         };
         const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '2h' });
         res.cookie('token', token, {
@@ -128,7 +132,7 @@ router.post('/login', async (req, res) => {
                 role: user.role_name
             }
         });
-    } catch(error) {
+    } catch (error) {
         console.log('Errore durante il login: ', error.stack);
         return res.status(500).json({
             success: false,

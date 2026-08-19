@@ -24,19 +24,22 @@
 
 <body>
     <header class="header">
-        <h3 class="logo"><a href="index.html">HelpDesk</a></h3>
+        <h3 class="logo"><a href="/">HelpDesk</a></h3>
         <nav class="menu menu-closed">
             <ul>
-                <li><a href="index.html" class="btn-ghost btn-sm btn-ghost-selected">Home</a></li>
-                <li><a href="index.html#features" class="btn-ghost btn-sm">Funzionalità</a></li>
-                <li><a href="index.html#faq" class="btn-ghost btn-sm">FAQ</a></li>
-                <li><a href="index.html#contacts" class="btn-ghost btn-sm">Contatti</a></li>
+                <li><a href="/" class="btn-ghost btn-sm btn-ghost-selected">Home</a></li>
+                <li><a href="/#features" class="btn-ghost btn-sm">Funzionalità</a></li>
+                <li><a href="/#faq" class="btn-ghost btn-sm">FAQ</a></li>
+                <li><a href="/#contacts" class="btn-ghost btn-sm">Contatti</a></li>
             </ul>
 
             <div class="user-section">
-                <a href="login.html" class="btn-ghost btn-md" id="login">Login</a>
-                <a href="login.html?register=1" class="btn-primary btn-md" id="register">Registrati</a>
-                <a href="/dashboard" class="btn-primary btn-md" id="dashboard">I Tuoi Ticket</a>
+                <a href="login" class="btn-ghost btn-md" id="login">Login</a>
+                <a href="login?register=1" class="btn-primary btn-md" id="register">Registrati</a>
+                <a href="/dashboard" class="btn-primary btn-md" id="dashboard"><i
+                        class="btn-icon fa-solid fa-chart-bar"></i>I Tuoi Ticket</a>
+                <a href="/operator" class="btn-primary btn-md hidden" id="operator-dashboard"><i
+                        class="btn-icon fa-solid fa-wrench"></i>Dashboard Operatore</a>
                 <div class="user-profile" id="user-profile">
                     <div class="user-profile-button" id="user-profile-button">
                         <p class="" id="user-profile-avatar"></p>
@@ -45,11 +48,17 @@
                     </div>
                     <div class="user-section-dropdown closed" id="user-section-dropdown">
                         <p class="label-upper">Informazioni Personali</p>
-                        <p class="small" id="user-profile-email">pietro.bonelli2004@gmail.com</p>
-                        <p class="role-badge" id="user-profile-role"><i class="fa-solid fa-circle"></i></p>
+                        <p class="small" id="user-profile-email">-</p>
+                        <p id="user-profile-role"></p>
                         <hr>
                         <nav class="nav-light">
-                            <p class="label-upper nav-label">TEST</p>
+                            <a href="/dashboard" class="nav-item"><i class="icon fa-solid fa-chart-bar"></i>I tuoi
+                                ticket</a>
+                            <a href="/operator" class="nav-item hidden" id="operator-section-button"><i
+                                    class="icon fa-solid fa-wrench"></i>Area
+                                Operatore</a>
+                            <a href="/admin" class="nav-item hidden" id="admin-section-button"><i
+                                    class="icon fa-solid fa-gear"></i>Area Admin</a>
                             <button id="logout" class="nav-item"><i
                                     class="icon fa-solid fa-arrow-right-from-bracket"></i>Logout</button>
                         </nav>
@@ -61,73 +70,75 @@
     </header>
 
     <main>
-        <aside id="aside">
-            <h2 id="ticket-title" class="ticket-title" contenteditable="true">Caricamento...</h2>
-            <div id="badge-section"></div>
-            <hr>
-            <form class="ticket-info">
-                <label for="priority" class="label-upper">Priorità</label>
-                <select name="priority" id="priority">
-                    <option value="loading" selected>Caricamento...</option>
-                </select>
-                <label for="status" class="label-upper">Stato</label>
-                <select name="status" id="status">
-                    <option value="loading" selected>Caricamento...</option>
-                </select>
+        <aside>
+            <div id="aside">
+                <h2 id="ticket-title" class="ticket-title" contenteditable="true">Caricamento...</h2>
+                <div id="badge-section"></div>
                 <hr>
+                <form class="ticket-info" id="ticket-info">
+                    <label for="priority" class="label-upper">Priorità</label>
+                    <select name="priority" id="priority">
+                        <option value="loading" selected>Caricamento...</option>
+                    </select>
+                    <label for="status" class="label-upper">Stato</label>
+                    <select name="status" id="status">
+                        <option value="loading" selected>Caricamento...</option>
+                    </select>
+                    <hr>
 
-                <p class="label-upper">Tracciamento</p>
-                <div class="track-element">
-                    <p class="small">Aperto il</p>
-                    <p id="created-at"></p>
-                </div>
-                <hr>
-                <div class="track-element">
-                    <p class="small">Ultimo aggiornamento</p>
-                    <p id="updated-at"></p>
-                </div>
-                <hr>
-                <div class="track-element">
-                    <p class="small">ID Ticket</p>
-                    <p id="ticket-id"></p>
-                </div>
-                <hr>
-                <div class="track-element">
-                    <p class="small">Categoria</p>
-                    <p id="category"></p>
-                </div>
-                <hr>
-                <div class="track-element">
-                    <p class="small">Operatore</p>
-                    <p id="operator"></p>
-                </div>
-                <hr>
-                <div class="track-element">
-                    <p class="small">Cliente</p>
-                    <p id="client"></p>
-                </div>
-            </form>
+                    <p class="label-upper">Tracciamento</p>
+                    <div class="track-element">
+                        <p class="small">Aperto il</p>
+                        <p id="created-at"></p>
+                    </div>
+                    <hr>
+                    <div class="track-element">
+                        <p class="small">Ultimo aggiornamento</p>
+                        <p id="updated-at"></p>
+                    </div>
+                    <hr>
+                    <div class="track-element">
+                        <p class="small">ID Ticket</p>
+                        <p id="ticket-id"></p>
+                    </div>
+                    <hr>
+                    <div class="track-element">
+                        <p class="small">Categoria</p>
+                        <p id="category"></p>
+                    </div>
+                    <hr>
+                    <div class="track-element">
+                        <p class="small">Operatore</p>
+                        <p id="operator"></p>
+                    </div>
+                    <hr>
+                    <div class="track-element">
+                        <p class="small">Cliente</p>
+                        <p id="client"></p>
+                    </div>
+                </form>
 
-            <footer class="ticket-actions" id="ticket-actions">
-                <button type="submit" class="btn-md btn-secondary" id="edit-ticket-btn" form="ticket-info">
-                    <i class="fa-solid fa-pen-to-square btn-icon"></i>
-                    Modifica Informazioni
-                </button>
-                <div class="dynamic-actions">
-                    <button class="btn-sm btn-ghost hidden" id="archive-ticket-btn">
-                        <i class="fa-solid fa-box-archive btn-icon"></i>
-                        Archivia
+                <footer class="ticket-actions" id="ticket-actions">
+                    <button type="submit" class="btn-md btn-secondary" id="edit-ticket-btn" form="ticket-info">
+                        <i class="fa-solid fa-pen-to-square btn-icon"></i>
+                        Modifica Informazioni
                     </button>
-                    <button class="btn-sm btn-ghost hidden" id="close-ticket-btn">
-                        <i class="fa-solid fa-lock btn-icon"></i>
-                        Chiudi
-                    </button>
-                    <a href="/dashboard" class="btn-sm btn-ghost" id="back-ticket-btn">
-                        <i class="fa-solid fa-arrow-left btn-icon"></i>
-                        Torna alla Dashboard
-                    </a>
-                </div>
-            </footer>
+                    <div class="dynamic-actions">
+                        <button class="btn-sm btn-ghost hidden" id="archive-ticket-btn">
+                            <i class="fa-solid fa-box-archive btn-icon"></i>
+                            Archivia
+                        </button>
+                        <button class="btn-sm btn-ghost hidden" id="close-ticket-btn">
+                            <i class="fa-solid fa-lock btn-icon"></i>
+                            Chiudi
+                        </button>
+                        <a href="/dashboard" class="btn-sm btn-ghost" id="back-ticket-btn">
+                            <i class="fa-solid fa-arrow-left btn-icon"></i>
+                            Torna alla Dashboard
+                        </a>
+                    </div>
+                </footer>
+            </div>
         </aside>
 
         <div class="ticket-content">
@@ -178,6 +189,11 @@
                     </form>
                 </div>
             </section>
+        </div>
+
+        <div id="show-info">
+            <p><i class="icon fa-solid fa-angle-up"></i><span id="show-hide"></span> informazioni<i
+                    class="icon fa-solid fa-angle-up"></i></p>
         </div>
     </main>
 

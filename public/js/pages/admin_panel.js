@@ -168,6 +168,17 @@ function switchToPage(page) {
 
             contentButton.dataset.page = 'categories';
             break;
+        case 'statistics':
+            activePage = 'statistics';
+            const statisticsSwitch = document.getElementById('statistics-switch');
+            statisticsSwitch.classList.add('active');
+            loadStatisticsPage();
+
+            contentTitle.textContent = 'Statistiche Avanzate';
+            contentButton.innerHTML = `<i class="fa-solid fa-arrows-rotate btn-icon"></i>Genera Report`
+
+            contentButton.dataset.page = 'statistics';
+            break;
     }
 }
 
@@ -467,6 +478,9 @@ function loadSelectorSwitch() {
             case "categories-switch":
                 switchToPage('categories');
                 break;
+            case "statistics-switch":
+                switchToPage('statistics');
+                break;
         }
     });
 
@@ -480,8 +494,135 @@ function loadSelectorSwitch() {
             case "categories":
                 openCategoryModal();
                 break;
+            case "statistics":
+                generateReports();
+                break;
         }
     })
+}
+
+/*
+    STATISTICS
+*/
+function loadStatisticsPage() {
+    const instructions = document.createElement('p');
+    instructions.textContent = "Per iniziare a generare il report, clicca il pulsante in alto.";
+    instructions.style.marginTop = "2em";
+    contentArea.appendChild(instructions);
+}
+
+async function generateReports() {
+    const button = document.getElementById('content-button');
+    const chartsContainer = document.createElement('div');
+    chartsContainer.className = 'charts-container';
+
+    const ratingChartContainer = document.createElement('div');
+    ratingChartContainer.id = 'rating-chart';
+    const resolutionChartContainer = document.createElement('div');
+    resolutionChartContainer.id = 'resolution-chart'
+    const categoriesChartContainer = document.createElement('div');
+    categoriesChartContainer.id = 'categories-chart';
+
+    chartsContainer.appendChild(ratingChartContainer);
+    chartsContainer.appendChild(resolutionChartContainer);
+    chartsContainer.appendChild(categoriesChartContainer);
+
+    button.classList.add('btn-loading');
+    try {
+        await google.charts.load('current', { 'packages': ['corechart'] });
+
+        const res = await fetch('/api/admin/report');
+        const resJSON = await res.json();
+        if (!resJSON.success) {
+            showToast('Errore', resJSON.message, 'error');
+            button.classList.remove('btn-loading');
+            return;
+        }
+
+        contentArea.innerHTML = '';
+        contentArea.appendChild(chartsContainer);
+
+        const ratingDataTable = google.visualization.arrayToDataTable(resJSON.report.ratingData);
+        const resolutionDataTable = google.visualization.arrayToDataTable(resJSON.report.resolutionTimeData);
+        const categoriesDataTable = google.visualization.arrayToDataTable(resJSON.report.ticketCategoriesData);
+
+        const computedStyle = getComputedStyle(document.body);
+        const colors = [
+            computedStyle.getPropertyValue('--color-accent'),
+            computedStyle.getPropertyValue('--color-accent-light')
+        ];
+        const baseOptions = {
+            fontName: 'Manrope, sans-serif',
+            colors: colors
+        }
+
+        const operatorCount = ratingDataTable.getNumberOfRows();
+        const dynamicHeight = (operatorCount * 25); // 50px per operator + 100px di margine
+        ratingChartContainer.style.height = `${dynamicHeight}px`;
+
+        const ratingChart = new google.visualization.BarChart(ratingChartContainer);
+        ratingChart.draw(
+            ratingDataTable,
+            {
+                ...baseOptions,
+                title: 'Media Valutazioni per Operatore',
+                legend: { position: 'none' },
+                hAxis: {
+                    viewWindow: {
+                        min: 0,
+                        max: 5
+                    }
+                },
+                tooltip: {
+                    isHtml: true
+                },
+                chartArea: {
+                    height: '90%'
+                },
+                height: dynamicHeight
+            }
+        );
+
+
+        const resolutionChart = new google.visualization.LineChart(resolutionChartContainer);
+        resolutionChart.draw(
+            resolutionDataTable,
+            {
+                ...baseOptions,
+                title: "Andamento Tempi di Risoluzione (Ore)",
+                legend: { position: 'none' },
+                curveType: 'function', // rende le curve morbide
+                pointSize: 5, // aggiunge dei pallini sui dati
+                vAxis: {
+                    title: "Ore Medie"
+                },
+                tooltip: {
+                    isHtml: true
+                },
+            }
+        );
+
+
+        const categoriesChart = new google.visualization.PieChart(categoriesChartContainer);
+
+        categoriesChart.draw(
+            categoriesDataTable,
+            {
+                title: 'Distribuzione Ticket per Categoria',
+                pieHole: 0.4,
+                fontName: 'Manrope',
+                chartArea: {
+                    width: '80%',
+                    height: '80%'
+                }
+            }
+        );
+    } catch (error) {
+        console.error(error);
+        showToast('Errore', 'Si è verificato un problema interno al server.', 'error');
+    }
+
+    button.classList.remove('btn-loading');
 }
 
 /*

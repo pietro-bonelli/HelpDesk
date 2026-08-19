@@ -12,12 +12,13 @@ const JWT_SECRET = process.env.JWT_SECRET;
  */
 function authenticateToken(req, res, next) {
     const token = req.cookies.token;
+    const redirectTarget = encodeURIComponent(req.originalUrl);
 
     if (!token) {
         if (req.originalUrl.startsWith('/api'))
             return res.status(401).json({ success: false, message: 'Token mancante, accesso non autorizzato.' }); // risponde JSON se richiesta API
         else
-            return res.redirect(302, '/login'); // renderizza a homepage altrimenti.
+            return res.redirect(302, `/login?redirect=${redirectTarget}`); // renderizza a homepage altrimenti.
     }
 
     try {
@@ -29,7 +30,7 @@ function authenticateToken(req, res, next) {
         if (req.path.startsWith('/api'))
             return res.status(401).json({ success: false, message: "Token non valido." });
         else
-            return res.redirect(302, '/login.html');
+            return res.redirect(302, `/login?redirect=${redirectTarget}`);
     }
 }
 
@@ -53,18 +54,28 @@ function verifyAuthentication(req, res, next) {
  */
 function hasRole(allowedRoles) {
     return (req, res, next) => {
+        const responseType = req.accepts(['html', 'json']);
         // Verifica che sia passato per authenticateToken
         if (!req.user || !req.user.roleName) {
             return res.status(401).json({ success: false, message: 'Autenticazione mancante.' });
         }
 
-        if (req.user.isAdmin || allowedRoles.includes(req.user.roleName))
+        if (
+            req.user.isAdmin ||
+            (allowedRoles === '*' && req.user.roleId != null) ||
+            (Array.isArray(allowedRoles) && allowedRoles.includes(req.user.roleName))
+        ) {
             return next();
+        }
 
-        return res.status(403).json({
-            success: false,
-            message: 'Accesso negato: permessi insufficienti.'
-        });
+        if (responseType === 'html') {
+            return res.redirect(302, '/dashboard');
+        } else {
+            return res.status(403).json({
+                success: false,
+                message: 'Accesso negato: permessi insufficienti.'
+            });
+        }
     }
 }
 
@@ -74,7 +85,7 @@ function isAdmin(req, res, next) {
 
     if (!req.user) {
         if (responseType === 'html')
-            return res.redirect(302, '/index.html');
+            return res.redirect(302, '/dashboard');
         return res.status(401).json({ success: false, message: 'Autenticazione mancante.' });
     }
 
@@ -82,7 +93,7 @@ function isAdmin(req, res, next) {
         return next();
 
     if (responseType === 'html')
-        return res.redirect(302, '/index.html');
+        return res.redirect(302, '/dashboard');
     return res.status(403).json({
         success: false,
         message: 'Accesso negato: permessi insufficienti.'

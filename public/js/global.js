@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', (event) => {
 
     document.body.addEventListener('submit', (event) => {
@@ -26,6 +25,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
 function loadModalListeners() {
     const closeBtn = document.getElementById('modal-close-btn');
+    if (!closeBtn)
+        return;
 
     closeBtn.addEventListener('click', (event) => {
         event.preventDefault();
@@ -166,7 +167,7 @@ function getCurrentDateFormatted() {
     const year = now.getFullYear();
 
     const capitalizedWeekday = weekday.charAt(0).toUpperCase() + weekday.slice(1);
-    
+
     return `${capitalizedWeekday}, ${day} ${month} ${year}`;
 }
 

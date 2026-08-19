@@ -153,6 +153,36 @@ table .table-actions .btn-ghost {
     cursor: pointer;
 }
 
+
+div.google-visualization-tooltip {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.chart-tooltip {
+    border-radius: var(--radius-md);
+    padding: 1em;
+    box-shadow: var(--shadow-md);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border)
+}
+
+.charts-container {
+    overflow-y: auto;
+}
+
+.charts-container>div {
+    width: 100%;
+    margin-bottom: 2em;
+}
+
+#rating-chart {
+    height: 30em;
+}
+
 @media (max-width: 700px) {
     #burger-menu-btn {
         display: block;

@@ -31,6 +31,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     loadSendRatingListener();
     loadRatingBox();
+    loadResponsive();
 });
 
 async function loadTicketInformation() {
@@ -116,11 +117,20 @@ function loadActionButtons() {
             case 'edit-ticket-btn':
                 const titleElement = document.getElementById('ticket-title');
                 const priorityElement = document.getElementById('priority');
+
+                if (titleElement.textContent === ticketData.title &&
+                    priorityElement.value === ticketData.priority &&
+                    statusElement.value === ticketData.status) {
+                    showToast('Info', 'Nessuna informazione è stata modificata.', 'info');
+                    return;
+                }
+
                 payload = {
                     title: titleElement.textContent,
                     priority: priorityElement.value,
                     status: statusElement.value
                 };
+                clicked.classList.add('btn-loading');
                 sendData();
                 break;
             case 'archive-ticket-btn':
@@ -181,6 +191,7 @@ function loadActionButtons() {
 
             await loadTicketData();
             loadTicketInformation();
+            clicked.classList.remove('btn-loading');
         }
     });
 }
@@ -607,4 +618,17 @@ function loadSendRatingListener() {
             stopLoading(button);
         }
     });
+}
+
+function loadResponsive() {
+    const showAsideButton = document.getElementById('show-info');
+    const main = document.querySelector('main');
+    if (window.screen.width <= 700) {
+        const privateNotes = document.getElementById('private-notes');
+        privateNotes.classList.remove('expanded');
+    }
+
+    showAsideButton.addEventListener('click', () => {
+        main.classList.toggle('aside-opened');
+    })
 }

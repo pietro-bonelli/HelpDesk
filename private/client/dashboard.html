@@ -23,13 +23,13 @@
 
 <body>
     <header class="header">
-        <h3 class="logo"><a href="index.html">HelpDesk</a></h3>
+        <h3 class="logo"><a href="/">HelpDesk</a></h3>
         <nav class="menu menu-closed">
             <ul>
-                <li><a href="index.html" class="btn-ghost btn-sm btn-ghost-selected">Home</a></li>
-                <li><a href="index.html#features" class="btn-ghost btn-sm">Funzionalità</a></li>
-                <li><a href="index.html#faq" class="btn-ghost btn-sm">FAQ</a></li>
-                <li><a href="index.html#contacts" class="btn-ghost btn-sm">Contatti</a></li>
+                <li><a href="/" class="btn-ghost btn-sm btn-ghost-selected">Home</a></li>
+                <li><a href="/#features" class="btn-ghost btn-sm">Funzionalità</a></li>
+                <li><a href="/#faq" class="btn-ghost btn-sm">FAQ</a></li>
+                <li><a href="/#contacts" class="btn-ghost btn-sm">Contatti</a></li>
             </ul>
 
             <div class="user-section">
@@ -46,11 +46,17 @@
                     </div>
                     <div class="user-section-dropdown closed" id="user-section-dropdown">
                         <p class="label-upper">Informazioni Personali</p>
-                        <p class="small" id="user-profile-email">pietro.bonelli2004@gmail.com</p>
-                        <p class="role-badge" id="user-profile-role"><i class="fa-solid fa-circle"></i></p>
+                        <p class="small" id="user-profile-email">-</p>
+                        <p id="user-profile-role"></p>
                         <hr>
                         <nav class="nav-light">
-                            <p class="label-upper nav-label">TEST</p>
+                            <a href="/dashboard" class="nav-item"><i class="icon fa-solid fa-chart-bar"></i>I tuoi
+                                ticket</a>
+                            <a href="/operator" class="nav-item hidden" id="operator-section-button"><i
+                                    class="icon fa-solid fa-wrench"></i>Area
+                                Operatore</a>
+                            <a href="/admin" class="nav-item hidden" id="admin-section-button"><i
+                                    class="icon fa-solid fa-gear"></i>Area Admin</a>
                             <button id="logout" class="nav-item"><i
                                     class="icon fa-solid fa-arrow-right-from-bracket"></i>Logout</button>
                         </nav>

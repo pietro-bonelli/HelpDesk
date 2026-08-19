@@ -1,6 +1,7 @@
 let loginCard;
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    await checkLogin();
 
     loginCard = document.getElementById('login-card');
 
@@ -9,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    if(urlParams.get('register') === "1")
+    if (urlParams.get('register') === "1")
         switchToRegister();
 
     accessButton.addEventListener('click', () => {
@@ -36,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     registerForm.addEventListener('submit', (event) => {
         event.preventDefault();
         hideErrorMessage();
-        if(!checkPassword())
+        if (!checkPassword())
             return;
         const email = document.querySelector('#form-register input[name="email"]');
         const first_name = document.querySelector('#form-register input[name="first_name"]');
@@ -50,6 +51,16 @@ document.addEventListener('DOMContentLoaded', () => {
         checkPassword();
     });
 });
+
+async function checkLogin() {
+    try {
+        const res = await fetch('/api/users/me');
+        const resJOSN = await res.json();
+        if (resJOSN.success)
+            window.location.href = '/dashboard';
+    } catch (error) {
+    }
+}
 
 async function login(formElement, email, password) {
     const data = {
@@ -66,15 +77,17 @@ async function login(formElement, email, password) {
         });
         const resJSON = await res.json();
 
-        if(resJSON.success) {
-            window.location.href = '/dashboard';
+        if (resJSON.success) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const redirectUrl = urlParams.get('redirect') || '/dashboard';
+            window.location.href = redirectUrl;
         } else {
             showErrorMessage(resJSON.message);
         }
-    } catch(error) {
+    } catch (error) {
         showErrorMessage('Si è verificato un problema durante la connessione al server.');
     } finally {
-        if(formElement)
+        if (formElement)
             formElement.dispatchEvent(new CustomEvent('loading-end'));
     }
 }
@@ -97,22 +110,22 @@ async function register(formElement, first_name, last_name, email, password) {
         });
         const resJSON = await res.json();
 
-        if(resJSON.success) {
+        if (resJSON.success) {
             window.location.href = '/dashboard';
         } else {
             showErrorMessage(resJSON.message);
         }
-    } catch(error) {
+    } catch (error) {
         showErrorMessage('Si è verificato un problema durante la connessione al server.');
     } finally {
-        if(formElement)
+        if (formElement)
             formElement.dispatchEvent(new CustomEvent('loading-end'));
     }
 }
 
 function checkPassword() {
     hideErrorMessage();
-    
+
     const password1 = document.querySelector('#form-register input[name="password"]');
     const password2 = document.querySelector('#form-register input[name="conferma-password"]');
     const submitButton = document.getElementById('submit-register');
@@ -121,7 +134,7 @@ function checkPassword() {
     password1.classList.remove('input-error');
     password2.classList.remove('input-error');
 
-    if(password1.value !== password2.value) {
+    if (password1.value !== password2.value) {
         showErrorMessage('Le password inserite non combaciano');
         password1.classList.add('input-error');
         password2.classList.add('input-error');

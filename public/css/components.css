@@ -289,6 +289,7 @@ nav.nav-light {
     display: flex;
     gap: 1em;
     font-family: inherit;
+    text-decoration: none;
 }
 
 nav .nav-label {

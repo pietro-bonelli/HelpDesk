@@ -1,34 +1,43 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ticket Helpdesk</title>
-    
+
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/pages/index.css">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" /></head>
-    
-    <script src="js/toast.js"></script>
-    <script src="js/homepage.js"></script>
-    <script src="js/header.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+        integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<script src="js/global.js"></script>
+<script src="js/toast.js"></script>
+<script src="js/homepage.js"></script>
+<script src="js/header.js"></script>
+
 <body>
     <header class="header">
-        <h3 class="logo"><a href="index.html">HelpDesk</a></h3>
+        <h3 class="logo"><a href="/">HelpDesk</a></h3>
         <nav class="menu menu-closed">
             <ul>
-                <li><a href="index.html" class="btn-ghost btn-sm btn-ghost-selected">Home</a></li>
-                <li><a href="index.html#features" class="btn-ghost btn-sm">Funzionalità</a></li>
-                <li><a href="index.html#faq" class="btn-ghost btn-sm">FAQ</a></li>
-                <li><a href="index.html#contacts" class="btn-ghost btn-sm">Contatti</a></li>
+                <li><a href="/" class="btn-ghost btn-sm btn-ghost-selected">Home</a></li>
+                <li><a href="/#features" class="btn-ghost btn-sm">Funzionalità</a></li>
+                <li><a href="/#faq" class="btn-ghost btn-sm">FAQ</a></li>
+                <li><a href="/#contacts" class="btn-ghost btn-sm">Contatti</a></li>
             </ul>
 
             <div class="user-section">
                 <a href="login" class="btn-ghost btn-md" id="login">Login</a>
                 <a href="login?register=1" class="btn-primary btn-md" id="register">Registrati</a>
-                <a href="/dashboard" class="btn-primary btn-md" id="dashboard">I Tuoi Ticket</a>
+                <a href="/dashboard" class="btn-primary btn-md" id="dashboard"><i
+                        class="btn-icon fa-solid fa-chart-bar"></i>I Tuoi Ticket</a>
+                <a href="/operator" class="btn-primary btn-md hidden" id="operator-dashboard"><i
+                        class="btn-icon fa-solid fa-wrench"></i>Dashboard Operatore</a>
                 <div class="user-profile" id="user-profile">
                     <div class="user-profile-button" id="user-profile-button">
                         <p class="" id="user-profile-avatar"></p>
@@ -37,12 +46,19 @@
                     </div>
                     <div class="user-section-dropdown closed" id="user-section-dropdown">
                         <p class="label-upper">Informazioni Personali</p>
-                        <p class="small" id="user-profile-email">pietro.bonelli2004@gmail.com</p>
-                        <p class="role-badge" id="user-profile-role"><i class="fa-solid fa-circle"></i></p>
+                        <p class="small" id="user-profile-email">-</p>
+                        <p id="user-profile-role"></p>
                         <hr>
                         <nav class="nav-light">
-                            <p class="label-upper nav-label">TEST</p>
-                            <button id="logout" class="nav-item"><i class="icon fa-solid fa-arrow-right-from-bracket"></i>Logout</button>
+                            <a href="/dashboard" class="nav-item"><i class="icon fa-solid fa-chart-bar"></i>I tuoi
+                                ticket</a>
+                            <a href="/operator" class="nav-item hidden" id="operator-section-button"><i
+                                    class="icon fa-solid fa-wrench"></i>Area
+                                Operatore</a>
+                            <a href="/admin" class="nav-item hidden" id="admin-section-button"><i
+                                    class="icon fa-solid fa-gear"></i>Area Admin</a>
+                            <button id="logout" class="nav-item"><i
+                                    class="icon fa-solid fa-arrow-right-from-bracket"></i>Logout</button>
                         </nav>
                     </div>
                 </div>
@@ -54,9 +70,11 @@
     <div class="hero">
         <div class="left-col">
             <h1>Richiedi Supporto<br><span>senza stress.</span></h1>
-            <p>Apri una richiesta in pochi secondi, monitora lo stato in tempo reale e ricevi aggiornamenti istantanei via e-mail. <br>Il tuo team di supporto sempre a portata di mano.</p>
+            <p>Apri una richiesta in pochi secondi, monitora lo stato in tempo reale e ricevi aggiornamenti istantanei
+                via e-mail. <br>Il tuo team di supporto sempre a portata di mano.</p>
             <div class="buttons">
-                <a href="dashboard" class="btn-lg btn-primary"><i class="fa-solid fa-plus btn-icon"></i>Apri il tuo Primo Ticket</a>
+                <a href="dashboard" class="btn-lg btn-primary"><i class="fa-solid fa-plus btn-icon"></i>Apri il tuo
+                    Primo Ticket</a>
                 <a href="#features" class="btn-lg btn-secondary">Scopri le funzionalità</a>
             </div>
         </div>
@@ -64,17 +82,20 @@
         <div class="right-col">
             <div class="mock">
                 <div class="title">
-                    <p class="title-text"><i class="fa-regular fa-file-lines icon"></i>Problemi di accesso all'account</p>
+                    <p class="title-text"><i class="fa-regular fa-file-lines icon"></i>Problemi di accesso all'account
+                    </p>
                     <p class="status-badge in-progress"><i class="fa-solid fa-circle"></i>In Lavorazione</p>
                 </div>
 
                 <div class="chat">
                     <div class="left">
-                        <p class="message">Buongiorno, da stamattina non riesco ad accedere alla mia casella di posta aziendale.</p>
+                        <p class="message">Buongiorno, da stamattina non riesco ad accedere alla mia casella di posta
+                            aziendale.</p>
                         <p class="user">Tu • 08:23</p>
                     </div>
                     <div class="right">
-                        <p class="message">Buongiorno, ha provato ad effettuare un reset della password? Potrebbe essere un problema temporaneo.</p>
+                        <p class="message">Buongiorno, ha provato ad effettuare un reset della password? Potrebbe essere
+                            un problema temporaneo.</p>
                         <p class="user">Mario R. • 08:27</p>
                     </div>
                     <div class="left">
@@ -112,10 +133,14 @@
             <div class="rating">
                 <div class="rating-wrapper">
                     <div class="stars-empty value">
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                            class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                            class="fa-solid fa-star"></i>
                     </div>
                     <div class="stars-filled value" id="rating">
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                            class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                            class="fa-solid fa-star"></i>
                     </div>
                 </div>
 
@@ -126,12 +151,14 @@
         <section id="features">
             <p class="small"><i class="icon fa-solid fa-star"></i>perchè scegliere HelpDesk</p>
             <h2>Tutto il necessario per un supporto <span>davvero efficace</span></h2>
-            <p class="subtitle">Una piattaforma pensata sia per chi ha bisogno di aiuto, sia per chi lo fornisce ogni giorno.</p>
+            <p class="subtitle">Una piattaforma pensata sia per chi ha bisogno di aiuto, sia per chi lo fornisce ogni
+                giorno.</p>
             <div class="cards">
                 <div class="card">
                     <p class="icon"><i class="fa-regular fa-envelope"></i></p>
                     <h3>Aggiornamenti Istantanei</h3>
-                    <p class="desc">Ogni modifica e aggiornamento riguardo ai tuoi ticket viene sempre notificata in pochi secondi tramite e-mail, per risolvere ogni tuo problema con la massima efficienza.</p>
+                    <p class="desc">Ogni modifica e aggiornamento riguardo ai tuoi ticket viene sempre notificata in
+                        pochi secondi tramite e-mail, per risolvere ogni tuo problema con la massima efficienza.</p>
                     <ul>
                         <li>Item 1</li>
                         <li>Item 2</li>
@@ -141,7 +168,8 @@
                 <div class="card">
                     <p class="icon"><i class="fa-solid fa-chart-line"></i></p>
                     <h3>Analisi e Report</h3>
-                    <p class="desc">L'amministratore dispone di statistiche dettagliate per valutare la qualità del servizio, i tempi di risposta e la soddisfazione degli utenti.</p>
+                    <p class="desc">L'amministratore dispone di statistiche dettagliate per valutare la qualità del
+                        servizio, i tempi di risposta e la soddisfazione degli utenti.</p>
                     <ul>
                         <li>Report generati da Worker Thread</li>
                         <li>Grafici interattivi con Google Charts</li>
@@ -151,7 +179,8 @@
                 <div class="card">
                     <p class="icon"><i class="fa-regular fa-eye"></i></p>
                     <h3>Piena Trasparenza</h3>
-                    <p class="desc">Il cliente segue ogni fase della richiesta in tempo reale. Nessuna scatola nera: stato, operatore assegnato e aggiornamenti sempre visibili.</p>
+                    <p class="desc">Il cliente segue ogni fase della richiesta in tempo reale. Nessuna scatola nera:
+                        stato, operatore assegnato e aggiornamenti sempre visibili.</p>
                     <ul>
                         <li>Stato ticket sempre aggiornato</li>
                         <li>Cronologia messaggi completa</li>
@@ -161,7 +190,8 @@
                 <div class="card">
                     <p class="icon"><i class="fa-regular fa-message"></i></p>
                     <h3>Chat Integrata</h3>
-                    <p class="desc">Ogni ticket ha una chat dedicata con supporto Markdown, note private tra operatori e invio di risposta senza ricaricare la pagina.</p>
+                    <p class="desc">Ogni ticket ha una chat dedicata con supporto Markdown, note private tra operatori e
+                        invio di risposta senza ricaricare la pagina.</p>
                     <ul>
                         <li>Editor Markdown per messaggi ricchi</li>
                         <li>Note private visibili solo agli operatori</li>
@@ -171,7 +201,8 @@
                 <div class="card">
                     <p class="icon"><i class="fa-solid fa-shield"></i></p>
                     <h3>Controllo Accessi</h3>
-                    <p class="desc">Ruoli e permessi granulari: il sistema garantisce che ogni operatore veda solo i ticket di propria competenza, con categorie abilitate dall'admin.</p>
+                    <p class="desc">Ruoli e permessi granulari: il sistema garantisce che ogni operatore veda solo i
+                        ticket di propria competenza, con categorie abilitate dall'admin.</p>
                     <ul>
                         <li>Ruoli personalizzati dagli amministratori</li>
                         <li>Categorie abilitate per ruolo</li>
@@ -181,7 +212,8 @@
                 <div class="card">
                     <p class="icon"><i class="fa-solid fa-display"></i></p>
                     <h3>Interfaccia Reattiva</h3>
-                    <p class="desc">Single Page Interface con aggiornamenti DOM dinamici, infinite scroll per gli operatori e nessun ricaricamento di pagina non necessario.</p>
+                    <p class="desc">Single Page Interface con aggiornamenti DOM dinamici, infinite scroll per gli
+                        operatori e nessun ricaricamento di pagina non necessario.</p>
                     <ul>
                         <li>Filtri ticket senza ricaricamento</li>
                         <li>Infinite scroll con DOM recycling</li>
@@ -198,34 +230,57 @@
                 <p class="small"><i class="fa-solid fa-circle-question icon"></i>domande frequenti</p>
                 <h2>Hai dei dubbi?</h2>
                 <p>Tutto quello che vuoi sapere sulla piattaforma.<br>
-                Non trivi la risposta che cerchi?</p>
-                <a href="mailto:helpdesk@pbonelli.it" class="btn-secondary btn-md"><i class="fa-regular fa-message btn-icon"></i>Contattaci</a>
+                    Non trivi la risposta che cerchi?</p>
+                <a href="mailto:helpdesk@pbonelli.it" class="btn-secondary btn-md"><i
+                        class="fa-regular fa-message btn-icon"></i>Contattaci</a>
             </div>
 
             <div class="right-col" id="faq-wrapper">
                 <article class="faq-box">
-                    <p class="faq-title">Come faccio ad aprire un nuovo ticket di assistenza?<i class="fa-solid fa-angle-down icon"></i></p>
-                    <p class="faq-description">Accedi alla tua dashboard personale e clicca su "Apri un Nuovo Ticket". Compila i campi richiesti (Oggetto, Categoria, Priorità) e inserisci una descrizione dettagliata del problema — supporta la formattazione Markdown per messaggi più chiari. Una volta confermato, un operatore competente prenderà in carico la tua richiesta.</p>
+                    <p class="faq-title">Come faccio ad aprire un nuovo ticket di assistenza?<i
+                            class="fa-solid fa-angle-down icon"></i></p>
+                    <p class="faq-description">Accedi alla tua dashboard personale e clicca su "Apri un Nuovo Ticket".
+                        Compila i campi richiesti (Oggetto, Categoria, Priorità) e inserisci una descrizione dettagliata
+                        del problema — supporta la formattazione Markdown per messaggi più chiari. Una volta confermato,
+                        un operatore competente prenderà in carico la tua richiesta.</p>
                 </article>
                 <article class="faq-box collapsed">
-                    <p class="faq-title">Quanto tempo ci vuole per ricevere una prima risposta?<i class="fa-solid fa-angle-down icon"></i></p>
-                    <p class="faq-description">I tempi dipendono dalla priorità selezionata al momento dell'apertura: i ticket ad Alta Priorità vengono gestiti entro 2 ore lavorative, quelli a Media Priorità entro 8 ore, e quelli a Bassa Priorità entro 24 ore. Riceverai una notifica via email non appena l'operatore prende in carico la tua richiesta.</p>
+                    <p class="faq-title">Quanto tempo ci vuole per ricevere una prima risposta?<i
+                            class="fa-solid fa-angle-down icon"></i></p>
+                    <p class="faq-description">I tempi dipendono dalla priorità selezionata al momento dell'apertura: i
+                        ticket ad Alta Priorità vengono gestiti entro 2 ore lavorative, quelli a Media Priorità entro 8
+                        ore, e quelli a Bassa Priorità entro 24 ore. Riceverai una notifica via email non appena
+                        l'operatore prende in carico la tua richiesta.</p>
                 </article>
                 <article class="faq-box collapsed">
-                    <p class="faq-title">Posso aggiungere informazioni ad un ticket già aperto?<i class="fa-solid fa-angle-down icon"></i></p>
-                    <p class="faq-description">Assolutamente sì. Nella pagina di dettaglio del ticket trovi una chat dedicata: puoi scrivere nuovi messaggi in qualsiasi momento, anche con formattazione Markdown. L'operatore riceverà una notifica automatica via email a ogni tuo aggiornamento.</p>
+                    <p class="faq-title">Posso aggiungere informazioni ad un ticket già aperto?<i
+                            class="fa-solid fa-angle-down icon"></i></p>
+                    <p class="faq-description">Assolutamente sì. Nella pagina di dettaglio del ticket trovi una chat
+                        dedicata: puoi scrivere nuovi messaggi in qualsiasi momento, anche con formattazione Markdown.
+                        L'operatore riceverà una notifica automatica via email a ogni tuo aggiornamento.</p>
                 </article>
                 <article class="faq-box collapsed">
-                    <p class="faq-title">Come funziona il sistema di notifiche email?<i class="fa-solid fa-angle-down icon"></i></p>
-                    <p class="faq-description">Il sistema invia automaticamente un'email HTML in tre occasioni: quando il tuo ticket viene preso in carico, quando l'operatore ti invia un messaggio di risposta, e quando lo stato del ticket cambia (es. "Risolto"). Le email sono formattate in modo chiaro e contengono un link diretto al ticket.</p>
+                    <p class="faq-title">Come funziona il sistema di notifiche email?<i
+                            class="fa-solid fa-angle-down icon"></i></p>
+                    <p class="faq-description">Il sistema invia automaticamente un'email HTML in tre occasioni: quando
+                        il tuo ticket viene preso in carico, quando l'operatore ti invia un messaggio di risposta, e
+                        quando lo stato del ticket cambia (es. "Risolto"). Le email sono formattate in modo chiaro e
+                        contengono un link diretto al ticket.</p>
                 </article>
                 <article class="faq-box collapsed">
-                    <p class="faq-title">Cosa succede quando il ticket viene risolto?<i class="fa-solid fa-angle-down icon"></i></p>
-                    <p class="faq-description">Quando l'operatore imposta il ticket su "Risolto", ti verrà mostrato nella pagina di dettaglio un box per lasciare una valutazione: una votazione da 1 a 5 stelle e un commento opzionale. Il tuo feedback viene utilizzato dall'amministratore per generare report sulla qualità del servizio.</p>
+                    <p class="faq-title">Cosa succede quando il ticket viene risolto?<i
+                            class="fa-solid fa-angle-down icon"></i></p>
+                    <p class="faq-description">Quando l'operatore imposta il ticket su "Risolto", ti verrà mostrato
+                        nella pagina di dettaglio un box per lasciare una valutazione: una votazione da 1 a 5 stelle e
+                        un commento opzionale. Il tuo feedback viene utilizzato dall'amministratore per generare report
+                        sulla qualità del servizio.</p>
                 </article>
                 <article class="faq-box collapsed">
-                    <p class="faq-title">Come faccio a registrarmi se non ho ancora un account?<i class="fa-solid fa-angle-down icon"></i></p>
-                    <p class="faq-description">Vai alla pagina di accesso e seleziona la scheda "Registrati". Compila il form con Nome, Cognome, Email e Password. Una volta registrato, sarai reindirizzato automaticamente alla tua dashboard personale.</p>
+                    <p class="faq-title">Come faccio a registrarmi se non ho ancora un account?<i
+                            class="fa-solid fa-angle-down icon"></i></p>
+                    <p class="faq-description">Vai alla pagina di accesso e seleziona la scheda "Registrati". Compila il
+                        form con Nome, Cognome, Email e Password. Una volta registrato, sarai reindirizzato
+                        automaticamente alla tua dashboard personale.</p>
                 </article>
             </div>
         </div>
@@ -238,7 +293,8 @@
                 <p>Registrati in 30 secondi e inizia ad utilizzare la piattaforma.</p>
             </div>
             <div class="right-col">
-                <a href="dashboard" class="btn-md btn-primary"><i class="fa-solid fa-plus btn-icon"></i>Apri un Ticket</a>
+                <a href="dashboard" class="btn-md btn-primary"><i class="fa-solid fa-plus btn-icon"></i>Apri un
+                    Ticket</a>
                 <a href="login.html?register=1" class="btn-md btn-secondary">Registrati gratis</a>
             </div>
         </div>
@@ -288,4 +344,5 @@
         </div>
     </footer>
 </body>
+
 </html>

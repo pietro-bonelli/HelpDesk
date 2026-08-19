@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,16 +10,20 @@
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/pages/login.css">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" /></head>
-    
-    <script src="js/toast.js"></script>
-    <script src="js/global.js"></script>
-    <script src="js/header.js"></script>
-    <script src="js/login.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+        integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
+
+<script src="js/toast.js"></script>
+<script src="js/global.js"></script>
+<script src="js/header.js"></script>
+<script src="js/login.js"></script>
+</head>
+
 <body>
     <header class="header">
-        <h3 class="logo"><a href="index.html">HelpDesk</a></h3>
+        <h3 class="logo"><a href="/">HelpDesk</a></h3>
         <nav class="menu menu-closed">
             <ul>
                 <li><a href="index.html" class="btn-ghost btn-sm btn-ghost-selected">Home</a></li>
@@ -28,9 +33,12 @@
             </ul>
 
             <div class="user-section">
-                <a href="login.html" class="btn-ghost btn-md" id="login">Login</a>
-                <a href="login.html?register=1" class="btn-primary btn-md" id="register">Registrati</a>
-                <a href="/dashboard" class="btn-primary btn-md" id="dashboard">I Tuoi Ticket</a>
+                <a href="login" class="btn-ghost btn-md" id="login">Login</a>
+                <a href="login?register=1" class="btn-primary btn-md" id="register">Registrati</a>
+                <a href="/dashboard" class="btn-primary btn-md" id="dashboard"><i
+                        class="btn-icon fa-solid fa-chart-bar"></i>I Tuoi Ticket</a>
+                <a href="/operator" class="btn-primary btn-md hidden" id="operator-dashboard"><i
+                        class="btn-icon fa-solid fa-wrench"></i>Dashboard Operatore</a>
                 <div class="user-profile" id="user-profile">
                     <div class="user-profile-button" id="user-profile-button">
                         <p class="" id="user-profile-avatar"></p>
@@ -39,12 +47,19 @@
                     </div>
                     <div class="user-section-dropdown closed" id="user-section-dropdown">
                         <p class="label-upper">Informazioni Personali</p>
-                        <p class="small" id="user-profile-email">pietro.bonelli2004@gmail.com</p>
-                        <p class="role-badge" id="user-profile-role"><i class="fa-solid fa-circle"></i></p>
+                        <p class="small" id="user-profile-email">-</p>
+                        <p id="user-profile-role"></p>
                         <hr>
                         <nav class="nav-light">
-                            <p class="label-upper nav-label">TEST</p>
-                            <button id="logout" class="nav-item"><i class="icon fa-solid fa-arrow-right-from-bracket"></i>Logout</button>
+                            <a href="/dashboard" class="nav-item"><i class="icon fa-solid fa-chart-bar"></i>I tuoi
+                                ticket</a>
+                            <a href="/operator" class="nav-item hidden" id="operator-section-button"><i
+                                    class="icon fa-solid fa-wrench"></i>Area
+                                Operatore</a>
+                            <a href="/admin" class="nav-item hidden" id="admin-section-button"><i
+                                    class="icon fa-solid fa-gear"></i>Area Admin</a>
+                            <button id="logout" class="nav-item"><i
+                                    class="icon fa-solid fa-arrow-right-from-bracket"></i>Logout</button>
                         </nav>
                     </div>
                 </div>
@@ -60,7 +75,9 @@
         <p class="small" id="card-text-register">Registrati per inviare il tuo primo ticket.</p>
 
         <div class="slider">
-            <div class="slider-background-wrapper"><div class="slider-background"></div></div>
+            <div class="slider-background-wrapper">
+                <div class="slider-background"></div>
+            </div>
             <div class="slider-text">
                 <button id="slider-accedi">Accedi</button>
                 <button id="slider-registrati">Registrati</button>
@@ -99,4 +116,5 @@
         </div>
     </main>
 </body>
+
 </html>

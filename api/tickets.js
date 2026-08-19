@@ -3,6 +3,8 @@ const router = express.Router();
 const db = require('../db/connection');
 const { getCategoryIdsByRole } = require('../services/dbServices');
 const { getCategoryPaths } = require('../services/categoryService');
+const emailService = require('../services/emailService');
+const presenceService = require('../services/presenceService');
 
 /**
  * @route POST /api/tickets
@@ -88,6 +90,15 @@ router.put('/:id', async (req, res) => {
     try {
         await connection.beginTransaction();
 
+        const selectQuery = `
+            SELECT u.id AS client_id, u.first_name AS client_first_name, u.last_name AS client_last_name, u.email AS client_email, t.title AS ticket_title, t.status AS ticket_old_status
+            FROM tickets t
+            LEFT JOIN users u ON t.client_id = u.id
+            WHERE t.id = ?
+        `;
+        const [selectRes] = await connection.query(selectQuery, [ticketID]);
+        const selectResult = selectRes[0];
+
         let query = "UPDATE tickets SET ";
         const params = [];
         const setStatements = [];
@@ -132,6 +143,21 @@ router.put('/:id', async (req, res) => {
                 success: false,
                 message: "Impossibile modificare il ticket: ticket non trovato."
             });
+        }
+
+        if (status && !presenceService.isOnline(selectResult.client_id) && selectResult.client_id !== req.user.id) {
+            const ticketUrl = `http://${process.env.URL}:${process.env.PORT}/ticket/${ticketID}`;
+
+            emailService.sendStatusChangeNotification(
+                selectResult.client_email,
+                selectResult.client_first_name,
+                `${req.user.first_name} ${req.user.last_name}`,
+                ticketID,
+                selectResult.ticket_title,
+                selectResult.ticket_old_status,
+                status,
+                ticketUrl
+            );
         }
 
         await connection.commit();

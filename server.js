@@ -28,7 +28,7 @@ app.get('/ticket/:id', authenticateToken, (req, res) => {
     res.sendFile(path.join(__dirname, 'private', 'client', 'ticket.html'));
 });
 
-app.get('/operator', authenticateToken, (req, res) => {
+app.get('/operator', authenticateToken, hasRole('*'), (req, res) => {
     res.sendFile(path.join(__dirname, 'private', 'operator', 'operator_dashboard.html'));
 });
 
@@ -58,6 +58,7 @@ app.use('/api/users', require('./api/users'));
 app.use('/api/admin/roles', isAdmin, require('./api/admin/roles'));
 app.use('/api/admin/categories', isAdmin, require('./api/admin/categories'));
 app.use('/api/admin/users', isAdmin, require('./api/admin/users'));
+app.use('/api/admin/report', isAdmin, require('./api/admin/report'));
 
 
 
