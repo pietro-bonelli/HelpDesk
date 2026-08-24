@@ -244,7 +244,7 @@
     margin: 5em auto;
 }
 
-section#performances {
+div#performances {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     box-shadow: var(--shadow-md);
@@ -254,47 +254,50 @@ section#performances {
     gap: 2px;
 }
 
-section#performances .total-users,
-section#performances .resolved-tickets,
-section#performances .rating {
+div#performances .total-users,
+div#performances .resolved-tickets,
+div#performances .rating {
     background-color: var(--color-surface);
+    container-type: inline-size;
     padding: 2em;
     position: relative;
 }
 
-section#performances .total-users {
+div#performances .total-users {
     border-top: 2px solid var(--color-accent);
 }
 
-section#performances .resolved-tickets {
+div#performances .resolved-tickets {
     border-top: 2px solid var(--color-resolved);
 }
 
-section#performances .rating {
+div#performances .rating {
     border-top: 2px solid var(--color-pending);
 }
 
-section#performances .label-upper {
+div#performances .label-upper {
     position: absolute;
     bottom: 2em;
 }
 
-section#performances .value {
+div#performances .value {
     margin-bottom: 0.5em;
+    font-size: min(var(--text-5xl), 25cqi);
+    /* 18% della dimensione del container */
 }
 
-section#performances .rating-wrapper {
+div#performances .rating-wrapper {
     position: relative;
     display: inline-block;
-    font-size: var(--text-5xl);
+    font-size: min(var(--text-5xl), 25cqi);
 }
 
-section#performances .rating-wrapper .stars-empty {
+div#performances .rating-wrapper .stars-empty {
     color: var(--color-archived-border);
     white-space: nowrap;
 }
 
-section#performances .rating-wrapper .stars-filled {
+div#performances .rating-wrapper .stars-filled {
     width: 0;
     position: absolute;
     top: 0;
@@ -459,6 +462,9 @@ section#faq .faq-box .faq-title {
     font-weight: var(--font-semibold);
     color: var(--color-text-primary);
     position: relative;
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: 1em;
 }
 
 section#faq .faq-box .faq-title:hover {
@@ -564,13 +570,13 @@ section#start-now .bubble .right-col .btn-secondary:hover {
         width: 95%;
     }
 
-    section#performances {
+    div#performances {
         grid-template-columns: 1fr 1fr;
         grid-template-rows: 1fr 1fr;
         height: fit-content;
     }
 
-    section#performances .rating {
+    div#performances .rating {
         grid-column: span 2;
     }
 

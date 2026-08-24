@@ -61,7 +61,12 @@ app.use('/api/admin/users', isAdmin, require('./api/admin/users'));
 app.use('/api/admin/report', isAdmin, require('./api/admin/report'));
 
 
+// Errore 404
+app.use((req, res) => {
+    const contentType = req.accepts(['html']);
 
+    res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));
+});
 
 
 

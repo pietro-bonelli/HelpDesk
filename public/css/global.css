@@ -622,9 +622,11 @@ footer .columns .desc {
     margin-top: 2em;
 }
 
-footer .columns h4 {
+footer .columns .footer-logo-title {
     font-size: var(--text-2xl);
     color: var(--color-text-primary);
+    margin-block-start: 1.33em;
+    margin-block-end: 1.33em;
 }
 
 footer a:hover {

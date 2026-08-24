@@ -55,8 +55,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function checkLogin() {
     try {
         const res = await fetch('/api/users/me');
-        const resJOSN = await res.json();
-        if (resJOSN.success)
+        const resJSON = await res.json();
+        if (resJSON.success)
             window.location.href = '/dashboard';
     } catch (error) {
     }

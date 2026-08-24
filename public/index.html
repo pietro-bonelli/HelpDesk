@@ -13,12 +13,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
         integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-</head>
 
-<script src="js/global.js"></script>
-<script src="js/toast.js"></script>
-<script src="js/homepage.js"></script>
-<script src="js/header.js"></script>
+    <script src="js/global.js"></script>
+    <script src="js/toast.js"></script>
+    <script src="js/homepage.js"></script>
+    <script src="js/header.js"></script>
+</head>
 
 <body>
     <header class="header">
@@ -47,7 +47,7 @@
                     <div class="user-section-dropdown closed" id="user-section-dropdown">
                         <p class="label-upper">Informazioni Personali</p>
                         <p class="small" id="user-profile-email">-</p>
-                        <p id="user-profile-role"></p>
+                        <div id="user-profile-role"></div>
                         <hr>
                         <nav class="nav-light">
                             <a href="/dashboard" class="nav-item"><i class="icon fa-solid fa-chart-bar"></i>I tuoi
@@ -121,7 +121,7 @@
     </div>
 
     <main id="landing-main">
-        <section id="performances">
+        <div id="performances">
             <div class="total-users">
                 <p class="value display-xl" id="total-users">-</p>
                 <p class="label-upper">Utenti Totali</p>
@@ -146,7 +146,7 @@
 
                 <p class="label-upper">Soddisfazione Clienti</p>
             </div>
-        </section>
+        </div>
 
         <section id="features">
             <p class="small"><i class="icon fa-solid fa-star"></i>perchè scegliere HelpDesk</p>
@@ -225,54 +225,54 @@
                 <p class="small"><i class="fa-solid fa-circle-question icon"></i>domande frequenti</p>
                 <h2>Hai dei dubbi?</h2>
                 <p>Tutto quello che vuoi sapere sulla piattaforma.<br>
-                    Non trivi la risposta che cerchi?</p>
+                    Non trovi la risposta che cerchi?</p>
                 <a href="mailto:helpdesk@pbonelli.it" class="btn-secondary btn-md"><i
                         class="fa-regular fa-message btn-icon"></i>Contattaci</a>
             </div>
 
             <div class="right-col" id="faq-wrapper">
                 <article class="faq-box">
-                    <p class="faq-title">Come faccio ad aprire un nuovo ticket di assistenza?<i
-                            class="fa-solid fa-angle-down icon"></i></p>
+                    <h3 class="faq-title">Come faccio ad aprire un nuovo ticket di assistenza?<i
+                            class="fa-solid fa-angle-down icon"></i></h3>
                     <p class="faq-description">Accedi alla tua dashboard personale e clicca su "Apri un Nuovo Ticket".
                         Compila i campi richiesti (Oggetto, Categoria, Priorità) e inserisci una descrizione dettagliata
                         del problema — supporta la formattazione Markdown per messaggi più chiari. Una volta confermato,
                         un operatore competente prenderà in carico la tua richiesta.</p>
                 </article>
                 <article class="faq-box collapsed">
-                    <p class="faq-title">Quanto tempo ci vuole per ricevere una prima risposta?<i
-                            class="fa-solid fa-angle-down icon"></i></p>
+                    <h3 class="faq-title">Quanto tempo ci vuole per ricevere una prima risposta?<i
+                            class="fa-solid fa-angle-down icon"></i></h3>
                     <p class="faq-description">I tempi dipendono dalla priorità selezionata al momento dell'apertura: i
                         ticket ad Alta Priorità vengono gestiti entro 2 ore lavorative, quelli a Media Priorità entro 8
                         ore, e quelli a Bassa Priorità entro 24 ore. Riceverai una notifica via email non appena
                         l'operatore prende in carico la tua richiesta.</p>
                 </article>
                 <article class="faq-box collapsed">
-                    <p class="faq-title">Posso aggiungere informazioni ad un ticket già aperto?<i
-                            class="fa-solid fa-angle-down icon"></i></p>
+                    <h3 class="faq-title">Posso aggiungere informazioni ad un ticket già aperto?<i
+                            class="fa-solid fa-angle-down icon"></i></h3>
                     <p class="faq-description">Assolutamente sì. Nella pagina di dettaglio del ticket trovi una chat
                         dedicata: puoi scrivere nuovi messaggi in qualsiasi momento, anche con formattazione Markdown.
                         L'operatore riceverà una notifica automatica via email a ogni tuo aggiornamento.</p>
                 </article>
                 <article class="faq-box collapsed">
-                    <p class="faq-title">Come funziona il sistema di notifiche email?<i
-                            class="fa-solid fa-angle-down icon"></i></p>
+                    <h3 class="faq-title">Come funziona il sistema di notifiche email?<i
+                            class="fa-solid fa-angle-down icon"></i></h3>
                     <p class="faq-description">Il sistema invia automaticamente un'email HTML in tre occasioni: quando
                         il tuo ticket viene preso in carico, quando l'operatore ti invia un messaggio di risposta, e
                         quando lo stato del ticket cambia (es. "Risolto"). Le email sono formattate in modo chiaro e
                         contengono un link diretto al ticket.</p>
                 </article>
                 <article class="faq-box collapsed">
-                    <p class="faq-title">Cosa succede quando il ticket viene risolto?<i
-                            class="fa-solid fa-angle-down icon"></i></p>
+                    <h3 class="faq-title">Cosa succede quando il ticket viene risolto?<i
+                            class="fa-solid fa-angle-down icon"></i></h3>
                     <p class="faq-description">Quando l'operatore imposta il ticket su "Risolto", ti verrà mostrato
                         nella pagina di dettaglio un box per lasciare una valutazione: una votazione da 1 a 5 stelle e
                         un commento opzionale. Il tuo feedback viene utilizzato dall'amministratore per generare report
                         sulla qualità del servizio.</p>
                 </article>
                 <article class="faq-box collapsed">
-                    <p class="faq-title">Come faccio a registrarmi se non ho ancora un account?<i
-                            class="fa-solid fa-angle-down icon"></i></p>
+                    <h3 class="faq-title">Come faccio a registrarmi se non ho ancora un account?<i
+                            class="fa-solid fa-angle-down icon"></i></h3>
                     <p class="faq-description">Vai alla pagina di accesso e seleziona la scheda "Registrati". Compila il
                         form con Nome, Cognome, Email e Password. Una volta registrato, sarai reindirizzato
                         automaticamente alla tua dashboard personale.</p>
@@ -299,7 +299,7 @@
         <div class="footer-content">
             <div class="columns">
                 <div class="col">
-                    <h4>HelpDesk</h4>
+                    <div class="footer-logo-title">HelpDesk</div>
                     <p class="desc">Sistema di ticketing per la gestione centralizzata delle richieste di supporto.</p>
                 </div>
                 <div class="col">

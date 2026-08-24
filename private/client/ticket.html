@@ -13,13 +13,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
         integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-</head>
 
-<script src="../js/toast.js"></script>
-<script src="../js/global.js"></script>
-<script src="../js/header.js"></script>
-<script src="../js/InfiniteScroll.js"></script>
-<script src="../js/pages/ticket.js"></script>
+    <script src="../js/toast.js"></script>
+    <script src="../js/global.js"></script>
+    <script src="../js/header.js"></script>
+    <script src="../js/InfiniteScroll.js"></script>
+    <script src="../js/pages/ticket.js"></script>
 </head>
 
 <body>
@@ -49,7 +48,7 @@
                     <div class="user-section-dropdown closed" id="user-section-dropdown">
                         <p class="label-upper">Informazioni Personali</p>
                         <p class="small" id="user-profile-email">-</p>
-                        <p id="user-profile-role"></p>
+                        <div id="user-profile-role"></div>
                         <hr>
                         <nav class="nav-light">
                             <a href="/dashboard" class="nav-item"><i class="icon fa-solid fa-chart-bar"></i>I tuoi
@@ -72,7 +71,7 @@
     <main>
         <aside>
             <div id="aside">
-                <h2 id="ticket-title" class="ticket-title" contenteditable="true">Caricamento...</h2>
+                <h1 id="ticket-title" class="ticket-title" contenteditable="true">Caricamento...</h1>
                 <div id="badge-section"></div>
                 <hr>
                 <form class="ticket-info" id="ticket-info">
@@ -99,7 +98,7 @@
                     <hr>
                     <div class="track-element">
                         <p class="small">ID Ticket</p>
-                        <p id="ticket-id"></p>
+                        <div id="ticket-id"></div>
                     </div>
                     <hr>
                     <div class="track-element">
@@ -142,7 +141,7 @@
         </aside>
 
         <div class="ticket-content">
-            <section class="private-notes hidden expanded" id="private-notes">
+            <div class="private-notes hidden expanded" id="private-notes">
                 <div class="private-notes-header" id="private-notes-header">
                     <p class="private-notes-icon"><i class="fa-solid fa-lock"></i></p>
                     <p class="label-upper">Note Private</p>
@@ -157,9 +156,9 @@
                     <div id="private-notes-textarea-wrapper"></div>
 
                 </div>
-            </section>
+            </div>
 
-            <section class="chat">
+            <div class="chat">
                 <div class="chat-messages" id="chat-messages">
                     <div class="spinner" id="load-more-messages"></div>
                 </div>
@@ -188,7 +187,7 @@
                         </button>
                     </form>
                 </div>
-            </section>
+            </div>
         </div>
 
         <div id="show-info">

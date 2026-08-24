@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../../db/connection');
-const { parse } = require('node:path');
+const { loadCategories } = require('../../services/categoryService');
 
 /**
  * @route POST /api/admin/categories
@@ -20,7 +20,8 @@ router.post('/', async (req, res) => {
     const connection = await db.getConnection();
     try {
         const query = "INSERT INTO categories (name, is_active, parent_id) VALUES (?, ?, ?)";
-        const result = await connection.query(query, [name, is_active, parentIdValue]);
+        const [result] = await connection.query(query, [name, is_active, parentIdValue]);
+        loadCategories();
         
         return res.status(201).json({
             success: true,
@@ -76,6 +77,8 @@ router.put('/:id', async (req, res) => {
     try {
         await connection.query('UPDATE categories SET name = ?, parent_id = ?, is_active = ? WHERE id = ?', [name, parentIdValue, is_active, categoryID]);
 
+        loadCategories();
+
         res.json({
             success: true,
             message: "Categoria modificata con successo."
@@ -92,7 +95,6 @@ router.put('/:id', async (req, res) => {
                 message: "Impossibile modificare la categoria: categoria padre inesistente."
             });
         } else {
-            console.log("Errore modifica categoria: " + error.stack);
             console.log("Errore modifica categoria: " + error.stack);
             res.status(500).json({
                 success: false,
@@ -115,12 +117,14 @@ router.delete('/:id', async (req, res) => {
     
     const connection = await db.getConnection();
     try {
-        connection.beginTransaction();
+        await connection.beginTransaction();
         
         await connection.query('DELETE FROM categories WHERE id = ?', [categoryID]);
         await connection.query('DELETE FROM role_categories WHERE category_id = ?', [categoryID]);
 
-        connection.commit();
+        await connection.commit();
+        
+        loadCategories();
 
         return res.json({
             success: true,
@@ -128,7 +132,7 @@ router.delete('/:id', async (req, res) => {
         });
 
     } catch(error) {
-        connection.rollback();
+        await connection.rollback();
         if(error.code === 'ER_ROW_IS_REFERENCED_2') {
             return res.status(409).json({
                 success: false,

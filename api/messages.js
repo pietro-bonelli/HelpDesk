@@ -3,6 +3,8 @@ const router = express.Router();
 const db = require('../db/connection');
 const presenceService = require('../services/presenceService');
 const emailService = require('../services/emailService');
+const { getCategoryIdsByRole } = require('../services/dbServices');
+const { sanitizeHTML } = require('../utils/sanitize');
 
 /**
  * @route GET /api/messages/ticket/:id
@@ -24,15 +26,23 @@ router.get('/ticket/:id', async (req, res) => {
     const connection = await db.getConnection();
     try {
         // Controllo diritti utente
-        const checkQuery = 'SELECT client_id, operator_id FROM tickets WHERE id = ?';
+        const checkQuery = 'SELECT client_id, operator_id, category_id FROM tickets WHERE id = ?';
         const [tickets] = await connection.query(checkQuery, [ticketId]);
 
         if (tickets.length === 0)
             return res.status(404).json({ success: false, message: "Ticket non trovato." });
 
         // Controllo che sia il proprietario (se è l'utente a richiederlo)
-        if (req.user.roleName === 'Client' && tickets[0].client_id !== req.user.id)
-            return res.status(403).json({ success: false, message: 'Non sei autorizzato a visualizzare questo ticket' });
+        if (req.user.roleName === 'Client') {
+            if (tickets[0].client_id !== req.user.id)
+                return res.status(403).json({ success: false, message: 'Non sei autorizzato a visualizzare questo ticket' });
+        } else if (!req.user.isAdmin) {
+            const operatorCats = await getCategoryIdsByRole(connection, req.user.roleName, req.user.isAdmin);
+            const operatorCatIds = operatorCats.map(c => c.category_id);
+            if (!operatorCatIds.includes(tickets[0].category_id)) {
+                return res.status(403).json({ success: false, message: 'Non sei autorizzato a visualizzare questo ticket.' });
+            }
+        }
 
 
         // Aggiorno LAST SEEN
@@ -106,11 +116,19 @@ router.get('/ticket/:id/private', async (req, res) => {
     const connection = await db.getConnection();
     try {
         // Controllo esistenza ticket
-        const checkQuery = 'SELECT id FROM tickets WHERE id = ?';
+        const checkQuery = 'SELECT id, category_id FROM tickets WHERE id = ?';
         const [tickets] = await connection.query(checkQuery, [ticketId]);
 
         if (tickets.length === 0)
             return res.status(404).json({ success: false, message: "Ticket non trovato." });
+
+        if (!req.user.isAdmin) {
+            const operatorCats = await getCategoryIdsByRole(connection, req.user.roleName, req.user.isAdmin);
+            const operatorCatIds = operatorCats.map(c => c.category_id);
+            if (!operatorCatIds.includes(tickets[0].category_id)) {
+                return res.status(403).json({ success: false, message: 'Non sei autorizzato a visualizzare questo ticket.' });
+            }
+        }
 
         const messagesQuery = `
             SELECT * FROM (
@@ -169,7 +187,7 @@ router.post('/ticket/:id', async (req, res) => {
     try {
         // Controllo stato ticket
         const query = `
-            SELECT t.status, t.client_id, u.first_name AS client_first_name, u.email AS client_email, t.title
+            SELECT t.status, t.client_id, u.first_name AS client_first_name, u.email AS client_email, t.title, t.category_id
             FROM tickets t
             LEFT JOIN users u ON u.id = t.client_id
             WHERE t.id = ?    
@@ -180,15 +198,23 @@ router.post('/ticket/:id', async (req, res) => {
         if (tickets[0].status === 'archived' || tickets[0].status === 'resolved')
             return res.status(400).json({ success: false, message: 'Impossibile rispondere: questo ticket è chiuso.' });
 
-        // verifico che sia il proprietario
-        if (req.user.roleName === 'Client' && tickets[0].client_id != req.user.id)
-            return res.status(403).json({ success: false, message: 'Impossibile rispondere: non sei autorizzato ad accedere a questo ticket.' });
+        // verifico che sia il proprietario o operatore autorizzato
+        if (req.user.roleName === 'Client') {
+            if (tickets[0].client_id != req.user.id)
+                return res.status(403).json({ success: false, message: 'Impossibile rispondere: non sei autorizzato ad accedere a questo ticket.' });
+        } else if (!req.user.isAdmin) {
+            const operatorCats = await getCategoryIdsByRole(connection, req.user.roleName, req.user.isAdmin);
+            const operatorCatIds = operatorCats.map(c => c.category_id);
+            if (!operatorCatIds.includes(tickets[0].category_id)) {
+                return res.status(403).json({ success: false, message: 'Impossibile rispondere: non sei autorizzato ad accedere a questo ticket.' });
+            }
+        }
 
         const insertQuery = `
             INSERT INTO ticket_messages (ticket_id, sender_id, message_text, message_type)
             VALUES (?, ?, ?, ?)
         ` ;
-        const [result] = await connection.query(insertQuery, [ticketId, req.user.id, message_text, message_type]);
+        const [result] = await connection.query(insertQuery, [ticketId, req.user.id, sanitizeHTML(message_text), message_type]);
         // Invio mail solo se messaggio non privato e ad inviare il messaggio non è il proprietario del ticket
         if (message_type !== 'private' && tickets[0].client_id !== req.user.id) {
             if (!presenceService.isOnline(tickets[0].client_id)) { // Invio solo se l'utente non è "online" (non sta guardando attivamente il ticket)

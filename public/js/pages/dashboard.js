@@ -42,7 +42,6 @@ async function loadUserData() {
 
 function loadCreateTicketListener() {
     const form = document.getElementById('create-ticket-form');
-    console.log(form);
     form.addEventListener('submit', async (event) => {
         event.preventDefault();
         const titleElement = form.querySelector('input[name="title"]');
@@ -60,7 +59,6 @@ function loadCreateTicketListener() {
 }
 
 async function createTicket(title, priority, categoryId, description) {
-    console.log(title + " " + priority + " " + categoryId + " " + description);
     try {
         const res = await fetch('/api/tickets', {
             method: 'POST',
@@ -263,7 +261,6 @@ async function loadStats() {
     try {
         const res = await fetch('/api/tickets/my/stats');
         const resJSON = await res.json();
-        console.log(resJSON)
 
         let pendingValue = 0;
         let inProgressValue = 0;
@@ -428,7 +425,7 @@ async function renderTickets(limit = 10, page = 1, orderBy = 'desc', filter = 'a
 
             const ticketDescription = document.createElement('div');
             ticketDescription.className = 'ticket-description';
-            const ticketTitle = document.createElement('p');
+            const ticketTitle = document.createElement('h2');
             ticketTitle.className = 'ticket-title';
             ticketTitle.textContent = ticket.title;
             ticketDescription.appendChild(ticketTitle);
@@ -468,7 +465,6 @@ async function renderTickets(limit = 10, page = 1, orderBy = 'desc', filter = 'a
 }
 
 function getChildrenCategories(targetId, categories) {
-    console.log(categories);
     for (const cat of categories) {
         if (cat.id == targetId)
             return cat.children;

@@ -28,7 +28,6 @@ router.get('/me', async (req, res) => {
         `;
 
         const [result] = await connection.query(query, [userID]);
-        connection.release();
 
         if (result.length === 0) {
             return res.status(404).json({
@@ -120,6 +119,11 @@ router.put('/me', async (req, res) => {
                 message: "Utente non trovato"
             });
         }
+        
+        return res.status(200).json({
+            success: true,
+            message: "Profilo aggiornato con successo"
+        });
 
     } catch (error) {
         console.error("Errore aggiornamento profilo: " + error.stack);
@@ -179,7 +183,7 @@ router.put('/me/password', async (req, res) => {
         }
 
         const saltRounds = 10;
-        const newPasswordHash = bcrypt.hash(new_password, saltRounds);
+        const newPasswordHash = await bcrypt.hash(new_password, saltRounds);
 
         await connection.query('UPDATE users SET password_hash = ? WHERE id = ?', [newPasswordHash, userID]);
         await connection.commit();

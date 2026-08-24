@@ -13,13 +13,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
         integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-</head>
 
-<script src="js/toast.js"></script>
-<script src="js/global.js"></script>
-<script src="js/header.js"></script>
-<script src="js/InfiniteScroll.js"></script>
-<script src="js/pages/operator_dashboard.js"></script>
+    <script src="js/toast.js"></script>
+    <script src="js/global.js"></script>
+    <script src="js/header.js"></script>
+    <script src="js/InfiniteScroll.js"></script>
+    <script src="js/pages/operator_dashboard.js"></script>
 </head>
 
 <body>
@@ -49,7 +48,7 @@
                     <div class="user-section-dropdown closed" id="user-section-dropdown">
                         <p class="label-upper">Informazioni Personali</p>
                         <p class="small" id="user-profile-email">-</p>
-                        <p id="user-profile-role"></p>
+                        <div id="user-profile-role"></div>
                         <hr>
                         <nav class="nav-light">
                             <a href="/dashboard" class="nav-item"><i class="icon fa-solid fa-chart-bar"></i>I tuoi
@@ -73,10 +72,10 @@
         <section id="welcome-section">
             <p class="label-upper date" id="date"></p>
             <h1 class="welcome">Benvenuto, <span id="user-first-name"></span>.</h1>
-            <p id="enabled-categories"></p>
+            <div id="enabled-categories"></div>
         </section>
 
-        <section id="statistics">
+        <div id="statistics">
             <div class="statistics-card" id="pending-card">
                 <i class="fa-regular fa-clock card-icon"></i>
                 <p class="card-value" id="pending-value">-</p>
@@ -92,12 +91,12 @@
                 <p class="card-value" id="resolved-value">-</p>
                 <p class="card-description label-upper">Risolti</p>
             </div>
-        </section>
+        </div>
 
         <hr>
 
         <div class="ticket-section" id="ticket-section">
-            <section id="filter-bar">
+            <div id="filter-bar">
                 <div class="left filter-bar-element" id="filters">
                     <p class="label-upper"><i class="fa-solid fa-filter"></i> Stato</p>
                     <div class="filter-buttons">
@@ -116,11 +115,12 @@
                             autocomplete="off">
                     </div>
                 </div>
-            </section>
+            </div>
 
-            <section id="ticket-list">
+            <div id="ticket-list">
+                <!-- i ticket vengono caricati qui -->
                 <p class="spinner" id="infinite-scroll-trigger"></p>
-            </section>
+            </div>
         </div>
     </main>
 
@@ -128,7 +128,7 @@
         <div class="footer-content">
             <div class="columns">
                 <div class="col">
-                    <h4>HelpDesk</h4>
+                    <div class="footer-logo-title">HelpDesk</div>
                     <p class="desc">Sistema di ticketing per la gestione centralizzata delle richieste di supporto.</p>
                 </div>
                 <div class="col">

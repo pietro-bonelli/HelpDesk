@@ -31,18 +31,18 @@ async function getCategoryIdsByRole(connection, roleName, isAdmin) {
     const resultSet = new Set(); // per evitare duplicati
 
     // Funzione ricorsiva per trovare tutte le sotto-categorie
-    function findChilds(parentID) {
+    function findChildren(parentID) {
         resultSet.add(parentID);
-        const childs = allCats.filter(cat => cat.parent_id === parentID);
+        const children = allCats.filter(cat => cat.parent_id === parentID);
         
         // Ricorsione per trovare tutte le eventuali sotto-categorie
-        for(const child of childs)
-            findChilds(child.id);
+        for(const child of children)
+            findChildren(child.id);
     }
 
     // Ricorsione per tutte le categorie iniziali assegnate
     for(const id of startIds)
-        findChilds(id);
+        findChildren(id);
 
     return allCats
         .filter(cat => resultSet.has(cat.id))

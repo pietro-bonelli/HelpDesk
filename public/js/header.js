@@ -46,14 +46,13 @@ async function loadUserInfo() {
         const res = await fetch('/api/users/me');
         const resJSON = await res.json();
 
+        const headerElement = document.querySelector('header');
+
         if (!resJSON.success) {
             headerElement.classList.remove('logged');
             return;
         }
 
-        console.log(resJSON);
-
-        const headerElement = document.querySelector('header');
         const userDisplay = document.getElementById('user-profile-display');
         const userAvatar = document.getElementById('user-profile-avatar');
         const userEmail = document.getElementById('user-profile-email');
@@ -107,7 +106,7 @@ async function logOut() {
                 window.location.href = '/';
             }, 1000);
         } else {
-            showToast('Errore'.resJSON.message, 'error');
+            showToast('Errore', resJSON.message, 'error');
         }
     } catch (error) {
         showToast('Errore', 'Si è verificato un problema.', 'error');

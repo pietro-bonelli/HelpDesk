@@ -1,0 +1,26 @@
+main {
+    margin: 0 auto;
+    width: 80%;
+    margin-top: 5em;
+    display: flex;
+    flex-direction: column;
+    gap: 2em;
+}
+
+main h1 {
+    font-size: var(--text-6xl);
+}
+
+main h1 span {
+    color: var(--color-accent);
+}
+
+main .btn-md {
+    margin-left: auto;
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}

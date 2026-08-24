@@ -5,6 +5,7 @@ const { getCategoryIdsByRole } = require('../services/dbServices');
 const { getCategoryPaths } = require('../services/categoryService');
 const emailService = require('../services/emailService');
 const presenceService = require('../services/presenceService');
+const { sanitizeHTML } = require('../utils/sanitize');
 
 /**
  * @route POST /api/tickets
@@ -46,7 +47,7 @@ router.post('/', async (req, res) => {
             INSERT INTO ticket_messages (ticket_id, sender_id, message_text)
             VALUES (?, ?, ?)
         `;
-        await connection.query(messageQuery, [ticketId, req.user.id, message_text]);
+        await connection.query(messageQuery, [ticketId, req.user.id, sanitizeHTML(message_text)]);
 
         await connection.commit();
 
@@ -500,11 +501,23 @@ router.get('/:id', async (req, res) => {
         const ticket = tickets[0];
 
         // Sicurezza: se l'utente è un Client, può vedere solo i suoi ticket
-        if (req.user.roleName === 'Client' && ticket.client_id !== req.user.id) {
-            return res.status(403).json({
-                success: false,
-                message: 'Accesso negato: non sei autorizzato a visualizzare questo ticket.'
-            });
+        if (req.user.roleName === 'Client') {
+            if (ticket.client_id !== req.user.id) {
+                return res.status(403).json({
+                    success: false,
+                    message: 'Accesso negato: non sei autorizzato a visualizzare questo ticket.'
+                });
+            }
+        } else if (!req.user.isAdmin) {
+            // Operatore: controlliamo le sue categorie
+            const operatorCats = await getCategoryIdsByRole(connection, req.user.roleName, req.user.isAdmin);
+            const operatorCatIds = operatorCats.map(c => c.category_id);
+            if (!operatorCatIds.includes(ticket.category_id)) {
+                return res.status(403).json({
+                    success: false,
+                    message: 'Accesso negato: non sei autorizzato a visualizzare questo ticket.'
+                });
+            }
         }
 
         const { category_ids, category_names } = getCategoryPaths(ticket.category_id);

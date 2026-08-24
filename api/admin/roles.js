@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../../db/connection');
-const { parse } = require('node:path');
+
 
 /**
  * @route POST /api/admin/roles
@@ -89,7 +89,7 @@ router.put('/:id', async (req, res) => {
             await connection.query(insertQuery, [records]);
         }
 
-        connection.commit();
+        await connection.commit();
         res.status(200).json({
             success: true,
             message: 'Ruolo e categorie associate aggiornati con successo.'

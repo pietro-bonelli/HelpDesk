@@ -188,14 +188,14 @@ function renderTickets() {
 
                 const ticketDescription = document.createElement('div');
                 ticketDescription.className = 'ticket-description';
-                const ticketTitle = document.createElement('p');
+                const ticketTitle = document.createElement('h2');
                 ticketTitle.className = 'ticket-title';
                 ticketTitle.textContent = ticket.title;
                 ticketDescription.appendChild(ticketTitle);
 
                 const ticketInfo = document.createElement('p');
                 ticketInfo.className = "small ticket-info";
-                ticketInfo.innerHTML = ticket.category_names.join(' &bull; ');
+                ticketInfo.textContent = ticket.category_names.join(' • ');
                 ticketDescription.appendChild(ticketInfo);
 
                 if(ticket.operator_id) {

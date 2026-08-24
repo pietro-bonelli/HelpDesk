@@ -16,15 +16,13 @@ async function loadStatistics() {
         const stats = await fetch('/api/stats/public');
         const statsJSON = await stats.json();
 
-        console.log(statsJSON);
-
         if (!statsJSON.success)
             return;
         totalUsers.textContent = statsJSON.data.total_users;
         resolvedTickets.textContent = statsJSON.data.resolved_tickets;
         rating.style.width = `${(statsJSON.data.average_rating / 5) * 100}%`;
     } catch (error) {
-        console.log(error);
+        console.error(error);
         showToast('Errore', 'Impossibile recuperare le statistiche.', 'error');
     }
 }

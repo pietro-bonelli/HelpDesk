@@ -122,8 +122,8 @@ function getFormattedDate(date) {
     const yyyy = date.getFullYear();
     const mm = date.getMonth() + 1;
     const dd = date.getDate();
-    const hh = date.getHours();
-    const ii = date.getMinutes();
+    const hh = String(date.getHours()).padStart(2, '0');
+    const ii = String(date.getMinutes()).padStart(2, '0');
 
     return `${dd}/${mm}/${yyyy}, ${hh}:${ii}`;
 }

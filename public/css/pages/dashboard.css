@@ -191,6 +191,10 @@ main {
     line-height: 1.1em;
     text-overflow: ellipsis;
     flex-grow: 0;
+
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: 1em;
 }
 .ticket-manage {
     margin-left: auto;
@@ -317,10 +321,13 @@ main {
 
     .ticket-description .ticket-title {
         -webkit-line-clamp: 2;
-        line-clamp: 2;
         display: -webkit-box;
         -webkit-box-orient: vertical;
         overflow: hidden;
         white-space: normal;
-    }
+    
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: 1em;
+}
 }

@@ -64,9 +64,9 @@ async function loadTicketInformation() {
 
     const prioritySelect = document.getElementById('priority');
     if (ticketData.status === 'archived' || ticketData.status === 'resolved')
-        prioritySelect.setAttribute('disabled', 'true');
+        prioritySelect.disabled = true;
     else
-        prioritySelect.setAttribute('disabled', 'false');
+        prioritySelect.disabled = false;
     prioritySelect.innerHTML = '';
     for (const [key, value] of getPriorities()) {
         const opt = document.createElement('option');
@@ -353,7 +353,6 @@ async function fetchChatMessages(limit = 10, offset = 0, appendTop = false, minI
         }
 
         let messages = resJSON.messages;
-        console.log(messages);
 
         let oldScrollHeight = 0;
         let spinner = null;
@@ -430,7 +429,7 @@ function appendMessage(container, id, text, authorName, authorId, authorRole, da
 
 async function sendMessage(messageText, messageType) {
     if (messageType === 'private' && userData.role_name === 'Client') {
-        showToast('error', 'Non sei autorizzato ad inviare note private.', 'error');
+        showToast('Errore', 'Non sei autorizzato ad inviare note private.', 'error');
         return;
     }
 
@@ -460,7 +459,7 @@ async function sendMessage(messageText, messageType) {
         else
             showToast('Errore', resJSON.message, 'error');
     } catch (error) {
-        showToast('error', 'Si è verificato un problema durante l\'invio del messaggio.', 'error');
+        showToast('Errore', 'Si è verificato un problema durante l\'invio del messaggio.', 'error');
     }
 }
 
@@ -564,11 +563,10 @@ function loadRatingBox() {
         if (ticketData.rating_stars) {
             ratingForm.classList.add('disabled-form');
             const selectedStar = document.getElementById(`${ticketData.rating_stars}-stars`);
-            console.log(selectedStar);
             selectedStar.checked = true;
-            const commentTerxtarea = ratingForm.querySelector('#comment');
-            commentTerxtarea.textContent = ticketData.rating_comment;
-            commentTerxtarea.setAttribute('disabled', 'true');
+            const commentTextarea = ratingForm.querySelector('#comment');
+            commentTextarea.textContent = ticketData.rating_comment;
+            commentTextarea.disabled = true;
 
             const button = ratingForm.querySelector('button');
             button.textContent = 'Valutazione già inviata';

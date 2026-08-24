@@ -16,6 +16,10 @@ main {
     position: relative;
 }
 
+.sidebar h1 {
+    font-size: 1.17em;
+}
+
 .sidebar nav ul {
     margin-top: 2em;
     display: flex;
@@ -208,4 +212,7 @@ div.google-visualization-tooltip {
         min-height: fit-content;
     }
 
+    .content {
+        overflow-x: auto;
+    }
 }

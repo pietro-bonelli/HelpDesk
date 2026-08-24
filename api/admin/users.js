@@ -29,7 +29,7 @@ router.post('/', async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
         const insertQuery = `
-            INSERT INTO users (first_name, last_name, email, password, role_id, is_active)
+            INSERT INTO users (first_name, last_name, email, password_hash, role_id, is_active)
             VALUES (?, ?, ?, ?, ?, ?)
         `;
         const [result] = await connection.query(insertQuery, [first_name, last_name, email, hashedPassword, role_id, activeStatus]);
@@ -78,7 +78,7 @@ router.put('/:id', async (req, res) => {
         });
     }
 
-    if(is_active === false && userID === req.user.id) {
+    if(is_active === false && parseInt(userID) === parseInt(req.user.id)) {
         return res.status(400).json({
             success: false,
             message: "Impossibile modificare l'utente: non puoi disabilitare il tuo stesso utente"
@@ -99,7 +99,7 @@ router.put('/:id', async (req, res) => {
         if(password && password.trim() != '') {
             const saltRounds = 10;
             const hashedPassword = await bcrypt.hash(password, saltRounds);
-            query += ', password = ?';
+            setters.push('password_hash = ?');
             params.push(hashedPassword);
         }
 
@@ -166,7 +166,7 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
     const userID = req.params.id;
 
-    if(userID === req.user.id) {
+    if(parseInt(userID) === parseInt(req.user.id)) {
         return res.status(400).json({
             success: false,
             message: "Impossibile eliminare l'utente: non puoi eliminare il tuo stesso utente."
@@ -211,7 +211,7 @@ router.delete('/:id', async (req, res) => {
  * @access authenticated & admin 
 */
 router.get('/', async (req, res) => {
-    let { page, search , operators_only} = req.query;
+    let { page, search } = req.query;
     page = page ? parseInt(page) : 1;
 
     const limit = 10; // limitato a 10 utenti alla volta

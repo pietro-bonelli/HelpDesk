@@ -4,23 +4,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ticket Helpdesk | Admin Panel</title>
+    <title>Ticket Helpdesk</title>
 
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/components.css">
-    <link rel="stylesheet" href="css/pages/admin_panel.css">
+    <link rel="stylesheet" href="css/pages/404.css">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
         integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-    <script src="js/toast.js"></script>
-    <script src="js/global.js"></script>
-    <script src="js/header.js"></script>
-    <script src="js/InfiniteScroll.js"></script>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script src="js/pages/admin_panel.js"></script>
 </head>
+
+<script src="js/global.js"></script>
+<script src="js/toast.js"></script>
+<script src="js/header.js"></script>
 
 <body>
     <header class="header">
@@ -70,39 +67,9 @@
     </header>
 
     <main>
-        <aside class="sidebar">
-            <h1>Pannello di Gestione</h1>
-            <i class="fa-solid fa-bars" id="burger-menu-btn"></i>
-            <nav class="nav-dark" id="selector">
-                <ul>
-                    <li class="label-upper">Gestione</li>
-                    <li><button class="nav-item" id="operators-switch"><i
-                                class="fa-regular fa-user icon"></i>Operatori</button></li>
-                    <li><button class="nav-item" id="roles-switch"><i
-                                class="fa-regular fa-id-badge icon"></i>Ruoli</button></li>
-                    <li><button class="nav-item" id="categories-switch"><i
-                                class="fa-solid fa-layer-group icon"></i>Categorie</button></li>
-                    <li class="label-upper">Analisi</li>
-                    <li><button class="nav-item" id="statistics-switch"><i
-                                class="fa-solid fa-chart-pie icon"></i>Statistiche</button></li>
-                </ul>
-            </nav>
-        </aside>
-        <div class="content">
-            <header>
-                <h2 id="content-title">Titolo</h2>
-                <button id="content-button" class="btn-primary btn-md">Bottone</button>
-                <div id="search-bar" class="search-bar filter-bar-element hidden">
-                    <i class="fa-brands fa-sistrix icon"></i>
-                    <input type="text" id="search-ticket" class="search-input" placeholder="Cerca utente..."
-                        autocomplete="off">
-                </div>
-            </header>
-
-            <div id="content-area">
-
-            </div>
-        </div>
+        <h1>Errore <span>404</span></h1>
+        <h2>Spiacente, la pagina che stai cercando non esiste...</h2>
+        <a href="/" class="btn-md btn-primary"><i class="btn-icon fa-regular fa-home"></i>Torna alla Homepage</a>
     </main>
 
     <footer>
@@ -148,20 +115,6 @@
             <p class="copyright">&copy; 2026 • HelpDesk</p>
         </div>
     </footer>
-
-    <div id="modal-overlay" class="modal-overlay hidden">
-        <div class="modal-window">
-            <header class="modal-header">
-                <h3 id="modal-title"></h3>
-                <button class="btn-close" id="modal-close-btn"><i class="fa-solid fa-xmark"></i></button>
-            </header>
-
-            <div class="modal-body" id="modal-body">
-            </div>
-            <div class="modal-footer" id="modal-footer">
-            </div>
-        </div>
-    </div>
 </body>
 
 </html>

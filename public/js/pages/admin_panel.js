@@ -718,7 +718,7 @@ async function fetchRoles() {
 
         loadRolesActions();
     } catch (error) {
-        showToast('Errore', 'Si è verificato un errore durante il caricamento delle categorie.', 'error');
+        showToast('Errore', 'Si è verificato un errore durante il caricamento dei ruoli.', 'error');
         console.error(error);
     }
 
