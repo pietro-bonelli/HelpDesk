@@ -1,0 +1,41 @@
+.privacy-container {
+    width: 80%;
+    margin: 5em auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5em;
+    flex: 1;
+}
+
+.privacy-container h1 {
+    color: var(--color-accent);
+    margin-bottom: 0.5em;
+    font-size: var(--text-5xl);
+}
+
+.privacy-container h2 {
+    margin-top: 1em;
+    color: var(--color-text);
+    font-size: var(--text-2xl);
+}
+
+.privacy-container p,
+.privacy-container li {
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+}
+
+.privacy-container ul {
+    padding-left: 2em;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.privacy-container hr {
+    margin: 2em 0;
+    border: 1px solid var(--color-border);
+}

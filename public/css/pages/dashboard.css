@@ -1,10 +1,9 @@
-
 main {
     width: 80%;
     margin: 3em auto 3em auto;
     display: flex;
     flex-direction: column;
-    gap: 2em;    
+    gap: 2em;
 }
 
 .ticket-section {
@@ -46,6 +45,7 @@ main {
     box-shadow: var(--shadow-sm);
     border-top: 3px solid transparent;
 }
+
 .statistics-card:hover {
     box-shadow: var(--shadow-md);
     transform: translateY(-2px);
@@ -63,27 +63,34 @@ main {
     background-color: var(--color-pending-bg);
     color: var(--color-pending-text);
 }
+
 #pending-card {
     border-top-color: var(--color-pending);
 }
+
 #in-progress-card .card-icon {
     background-color: var(--color-in-progress-bg);
     color: var(--color-in-progress-text);
 }
+
 #in-progress-card {
     border-top-color: var(--color-in-progress);
 }
+
 #resolved-card .card-icon {
     background-color: var(--color-resolved-bg);
     color: var(--color-resolved-text);
 }
+
 #resolved-card {
     border-top-color: var(--color-resolved);
 }
+
 #total-card .card-icon {
     background-color: var(--color-role-client-bg);
     color: var(--color-role-client);
 }
+
 #total-card {
     border-top-color: var(--color-role-client);
 }
@@ -106,10 +113,12 @@ main {
     align-items: center;
     gap: 1.5em;
 }
+
 #filter-bar .right {
     display: flex;
     gap: 0.6em;
 }
+
 .filter-bar-element {
     background-color: var(--color-surface);
     border-radius: var(--radius-lg);
@@ -134,15 +143,18 @@ main {
     gap: 0.5em;
     align-items: center;
 }
+
 #filter-bar .order-bar:has(#order-by:focus) {
     border-color: var(--color-border-focus);
     box-shadow: var(--shadow-focus);
 }
+
 #order-by {
     border: none;
     outline: none;
     height: 100%;
 }
+
 #order-by:hover {
     cursor: pointer;
 }
@@ -164,26 +176,31 @@ main {
     gap: 2em;
     min-width: 0;
 }
+
 .ticket:hover {
     border-color: var(--color-border-strong);
     box-shadow: var(--shadow-md);
     cursor: pointer;
 }
+
 .ticket-data {
     display: flex;
     flex-direction: column;
     gap: 0.4em;
     align-items: center;
 }
+
 .ticket-data .id-badge {
     width: fit-content;
 }
+
 .ticket-description {
     display: flex;
     flex-direction: column;
     gap: 0.4em;
     min-width: 0;
 }
+
 .ticket-description .ticket-title {
     font-weight: var(--font-bold);
     white-space: nowrap;
@@ -196,11 +213,13 @@ main {
     font-family: var(--font-body);
     font-size: 1em;
 }
+
 .ticket-manage {
     margin-left: auto;
     display: flex;
     gap: 1em;
 }
+
 .ticket-manage-info {
     gap: 0.4em;
     display: flex;
@@ -213,6 +232,7 @@ main {
     margin-left: 0.5em;
     vertical-align: middle;
 }
+
 .ticket .small {
     color: var(--color-text-muted);
 }
@@ -223,19 +243,23 @@ main {
     justify-content: space-between;
     align-items: center;
 }
+
 #limits .small {
     color: var(--color-text-muted);
 }
+
 #limits .info-num span {
     font-weight: var(--font-bold);
     color: var(--color-text-secondary);
 }
+
 #limits .right {
     display: flex;
     flex-direction: row;
     gap: 0.5em;
     align-items: center;
 }
+
 #limits #page-limit {
     padding: 0.3em;
     border-radius: var(--radius-md);
@@ -271,6 +295,7 @@ main {
     color: var(--color-text-muted);
     opacity: 0.5;
 }
+
 #pages .page-icon.disabled:hover {
     cursor: not-allowed;
     background: none;
@@ -302,6 +327,11 @@ main {
         min-width: 0;
     }
 
+
+    .filter-buttons {
+        white-space: nowrap;
+    }
+
     .ticket {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -325,9 +355,9 @@ main {
         -webkit-box-orient: vertical;
         overflow: hidden;
         white-space: normal;
-    
-    margin: 0;
-    font-family: var(--font-body);
-    font-size: 1em;
-}
+
+        margin: 0;
+        font-family: var(--font-body);
+        font-size: 1em;
+    }
 }

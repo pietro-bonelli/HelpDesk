@@ -2,40 +2,25 @@
 
 :root {
     --color-bg: #F6F5F1;
-    /* Sfondo globale */
     --color-bg-alt: #EDECEA;
-    /* Sfondo alternativo */
     --color-surface: #FFF;
-    /* card, modali, input */
     --color-surface-raised: #FAFAF8;
-    /* elementi elevati */
     --color-overlay: #1c1b1673;
 
     --color-border: #E3E1DB;
-    /* bordo default */
     --color-border-strong: #C9C7BF;
-    /* bordo marcato */
     --color-border-focus: #2058E8;
-    /* focus input */
-
 
     --color-text-primary: #1C1B16;
     --color-text-secondary: #68665D;
-    /* label, testo secondario */
     --color-text-muted: #9C9A90;
-    /* placeholder, note, timestamp */
     --color-text-inverse: #FFFFFF;
-    /* testo su sfondi scuri */
     --color-text-link: #2058E8;
-    /* link */
-    --color-text-link-hover: #1848CC;
 
     --color-accent: #2058E8;
     --color-accent-hover: #1848CC;
     --color-accent-light: #1038A8;
-    /* sfondo badge */
     --color-accent-subtle: #F2F5FF;
-    /* sfondo hover */
 
     /*
         COLORI DI STATO
@@ -47,7 +32,7 @@
     --color-pending-text: #7C4F00;
     --color-pending-border: #FBBF24;
 
-    /* In Progress ) */
+    /* In Progress */
     --color-in-progress: #2058E8;
     --color-in-progress-bg: #EBF0FF;
     --color-in-progress-text: #1848CC;
@@ -86,25 +71,20 @@
     */
 
     --color-role-client: #7C3AED;
-    /* client */
     --color-role-client-bg: #EDE9FE;
     --color-role-operator: #2058E8;
-    /* operatore */
     --color-role-operator-bg: #EBF0FF;
     --color-role-admin: #D42B2B;
-    /* admin */
     --color-role-admin-bg: #FFE8E8;
 
     /*
         SIDEBAR
     */
     --color-sidebar-bg: #1C1B16;
-    /* sidebar scura */
     --color-sidebar-text: #C8C6BE;
     --color-sidebar-text-active: #FFFFFF;
     --color-sidebar-item-hover: #ffffff12;
     --color-sidebar-item-active: #2058e840;
-    --color-sidebar-accent: #2058E8;
     --color-sidebar-border: #ffffff14;
 
     /*
@@ -112,13 +92,12 @@
     */
 
     --color-msg-client-bg: #EBF0FF;
-    /* bubble client */
     --color-msg-client-text: #1C1B16;
+
     --color-msg-operator-bg: #FFFFFF;
-    /* bubble operatore */
     --color-msg-operator-text: #1C1B16;
+
     --color-msg-private-bg: #FFFBE6;
-    /* nota privata */
     --color-msg-private-border: #FBBF24;
     --color-msg-private-text: #5C4A00;
 
@@ -131,30 +110,18 @@
     --font-mono: 'JetBrains Mono', monospace;
 
     /* Dimensioni */
-    --text-2xs: 0.6875rem;
-    /* 11px — micro label, tag */
+    --text-2xs: 0.69rem;
     --text-xs: 0.75rem;
-    /* 12px — caption, timestamp */
-    --text-sm: 0.8125rem;
-    /* 13px — badge, note */
-    --text-base: 0.9375rem;
-    /* 15px — testo corrente */
+    --text-sm: 0.81rem;
+    --text-base: 0.94rem;
     --text-md: 1rem;
-    /* 16px — testo enfatizzato */
-    --text-lg: 1.125rem;
-    /* 18px — sottotitoli */
+    --text-lg: 1.1rem;
     --text-xl: 1.25rem;
-    /* 20px — titolo card */
     --text-2xl: 1.5rem;
-    /* 24px — titolo sezione */
-    --text-3xl: 1.875rem;
-    /* 30px — titolo pagina */
+    --text-3xl: 1.9rem;
     --text-4xl: 2.25rem;
-    /* 36px — hero subtitle */
     --text-5xl: 3rem;
-    /* 48px — hero title */
     --text-6xl: 3.75rem;
-    /* 60px — hero grande */
 
     /* Pesi */
     --font-light: 300;
@@ -168,19 +135,12 @@
         BORDER RADIUS
     */
     --radius-xs: 3px;
-    /* tag molto piccoli */
     --radius-sm: 6px;
-    /* badge, chip */
     --radius-md: 10px;
-    /* input, pulsanti, card piccole */
     --radius-lg: 14px;
-    /* card standard */
     --radius-xl: 20px;
-    /* card grandi, modal */
     --radius-2xl: 28px;
-    /* hero card, pannelli */
     --radius-full: 50%;
-    /* pill / avatar */
 
     /*
         OMBRE
@@ -197,16 +157,12 @@
     --shadow-2xl: 0 24px 64px rgba(28, 27, 22, 0.15),
         0 8px 24px rgba(28, 27, 22, 0.08);
     --shadow-focus: 0 0 0 3px rgba(32, 88, 232, 0.18);
-    /* ring focus input */
     --shadow-focus-error: 0 0 0 3px rgba(212, 43, 43, 0.18);
 
     --dark-gradient-bg: radial-gradient(ellipse 60% 50% at 75% 0%,
             #2058e82e 0%, transparent 70%), #0B0D14;
 
 
-    /* ─────────────────────────────────────────
-     FEEDBACK SISTEMA (Errori, Successi, Warning)
-  ───────────────────────────────────────── */
     --color-error: #D42B2B;
     --color-error-bg: #FFE8E8;
     --color-error-border: #F5A0A0;

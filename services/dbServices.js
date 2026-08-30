@@ -1,13 +1,9 @@
 
 /**
  * Recupera gli ID e Nomi delle categorie associate ad un ruolo
- * @param {Object} connection
- * @param {string} roleName
- * @param {boolean} isAdmin
- * @returns {Promise<Array<{category_id: number, category_name: string}>>}
  */
 async function getCategoryIdsByRole(connection, roleName, isAdmin) {
-    if(!roleName || roleName === 'Client')
+    if (!roleName || roleName === 'Client')
         return [];
 
     if (isAdmin) {
@@ -24,24 +20,24 @@ async function getCategoryIdsByRole(connection, roleName, isAdmin) {
     const [assignedRows] = await connection.query(assignedQuery, [roleName]);
     // Estrae ID di partenza
     const startIds = assignedRows.map(row => row.category_id);
-    if(startIds.length === 0)
+    if (startIds.length === 0)
         return [];
 
     const [allCats] = await connection.query('SELECT id, name, parent_id FROM categories');
-    const resultSet = new Set(); // per evitare duplicati
+    const resultSet = new Set(); // per evitare duplicati utilizzo un Set
 
     // Funzione ricorsiva per trovare tutte le sotto-categorie
     function findChildren(parentID) {
         resultSet.add(parentID);
         const children = allCats.filter(cat => cat.parent_id === parentID);
-        
+
         // Ricorsione per trovare tutte le eventuali sotto-categorie
-        for(const child of children)
+        for (const child of children)
             findChildren(child.id);
     }
 
     // Ricorsione per tutte le categorie iniziali assegnate
-    for(const id of startIds)
+    for (const id of startIds)
         findChildren(id);
 
     return allCats

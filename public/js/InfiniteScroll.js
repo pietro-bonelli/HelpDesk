@@ -1,15 +1,17 @@
 class InfiniteScroll {
+
     /**
-     * @param {HTMLElement} triggerElement
-     * @param {Function} loadDataCallback
-     * @param {Object} options
+     * 
+     * @param {HTMLElement} triggerElement elemento da osservare 
+     * @param {*} loadDataCallback funzione callback da eseguire (fetch). Deve restituire una Promise (true = ci sono altri dati, false = non ci sono altri dati)
+     * @param {*} options 
      */
     constructor(triggerElement, loadDataCallback, options = {}) {
         this.trigger = triggerElement;
         this.loadData = loadDataCallback;
 
         this.page = 0;
-        this.isLoading = false;
+        this.isLoading = false; // per evitare di far partire più chiamate contemporaneamente
         this.hasMore = true;
 
         const observerOptions = {
@@ -18,6 +20,8 @@ class InfiniteScroll {
             threshold: 0
         };
 
+        // Sfrutto l'API nativa dei Browser (IntersectionObserver) per evitare di appesantire la pagina controllando l'evento di scroll
+        // Si "triggera" quando l'elemento entra nella viewport dell'utente, in modo asincrono.
         this.observer = new IntersectionObserver(this.handleIntersection.bind(this), observerOptions);
 
         this.observer.observe(this.trigger);
@@ -36,7 +40,7 @@ class InfiniteScroll {
         this.page++;
 
         try {
-            // Esegue funzione personalizzata
+            // Esegue funzione personalizzata (fetch)
             this.hasMore = await this.loadData(this.page);
 
             // Non ci sono più elementi

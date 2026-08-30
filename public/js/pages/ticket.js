@@ -558,9 +558,18 @@ function startPolling() {
 
 function loadRatingBox() {
     const ratingForm = document.getElementById('rating-form');
-    if (ticketData.status === 'resolved' && !userData.role_id) {
+    const isClient = !userData.role_id;
+    const hasRated = !!ticketData.rating_stars;
+
+    if (ticketData.status === 'resolved') {
         ratingForm.classList.remove('hidden');
-        if (ticketData.rating_stars) {
+        
+        if (!isClient) {
+            const titleLabel = ratingForm.querySelector('.label-upper');
+            if (titleLabel) titleLabel.textContent = "Valutazione dell'utente";
+        }
+
+        if (hasRated) {
             ratingForm.classList.add('disabled-form');
             const selectedStar = document.getElementById(`${ticketData.rating_stars}-stars`);
             selectedStar.checked = true;
@@ -569,7 +578,12 @@ function loadRatingBox() {
             commentTextarea.disabled = true;
 
             const button = ratingForm.querySelector('button');
-            button.textContent = 'Valutazione già inviata';
+            button.textContent = isClient ? 'Valutazione già inviata' : 'Valutazione utente';
+            Array.from(ratingForm.elements).forEach(el => el.disabled = true);
+        } else if (!isClient) {
+            ratingForm.classList.add('disabled-form');
+            const button = ratingForm.querySelector('button');
+            button.textContent = 'Nessuna valutazione lasciata';
             Array.from(ratingForm.elements).forEach(el => el.disabled = true);
         }
     } else {

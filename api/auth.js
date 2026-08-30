@@ -38,8 +38,12 @@ router.post('/register', async (req, res) => {
         const saltRounds = 10;
         const passwordHash = await bcrypt.hash(password, saltRounds);
 
-        const query = 'INSERT INTO users (first_name, last_name, email, password_hash) VALUES (?, ?, ?, ?)';
-        await db.query(query, [first_name, last_name, email, passwordHash]);
+        // Controlla se è il primo utente a registrarsi
+        const [rows] = await db.query('SELECT COUNT(*) as count FROM users');
+        const isFirstUser = rows[0].count === 0;
+
+        const query = 'INSERT INTO users (first_name, last_name, email, password_hash, role_id) VALUES (?, ?, ?, ?, ?)';
+        await db.query(query, [first_name, last_name, email, passwordHash, isFirstUser ? 1 : null]);
 
         return res.status(201).json({
             success: true,

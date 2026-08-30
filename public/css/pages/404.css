@@ -1,4 +1,5 @@
 main {
+    flex: 1;
     margin: 0 auto;
     width: 80%;
     margin-top: 5em;
@@ -19,8 +20,8 @@ main .btn-md {
     margin-left: auto;
 }
 
-footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }

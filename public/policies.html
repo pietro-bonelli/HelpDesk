@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - HelpDesk</title>
+
+    <link rel="stylesheet" href="/css/global.css">
+    <link rel="stylesheet" href="/css/components.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+        integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link rel="stylesheet" href="/css/pages/policies.css">
+</head>
+
+<script src="/js/global.js"></script>
+<script src="/js/toast.js"></script>
+<script src="/js/header.js"></script>
+
+<body>
+    <header class="header">
+        <h3 class="logo"><a href="/">HelpDesk</a></h3>
+        <nav class="menu menu-closed">
+            <ul>
+                <li><a href="/" class="btn-ghost btn-sm">Home</a></li>
+                <li><a href="/#features" class="btn-ghost btn-sm">Funzionalità</a></li>
+                <li><a href="/#faq" class="btn-ghost btn-sm">FAQ</a></li>
+                <li><a href="/#contacts" class="btn-ghost btn-sm">Contatti</a></li>
+            </ul>
+
+            <div class="user-section">
+                <a href="/login" class="btn-ghost btn-md" id="login">Login</a>
+                <a href="/login?register=1" class="btn-primary btn-md" id="register">Registrati</a>
+                <a href="/dashboard" class="btn-primary btn-md" id="dashboard"><i
+                        class="btn-icon fa-solid fa-chart-bar"></i>I Tuoi Ticket</a>
+                <a href="/operator" class="btn-primary btn-md hidden" id="operator-dashboard"><i
+                        class="btn-icon fa-solid fa-wrench"></i>Dashboard Operatore</a>
+                <div class="user-profile" id="user-profile">
+                    <div class="user-profile-button" id="user-profile-button">
+                        <p class="" id="user-profile-avatar"></p>
+                        <p id="user-profile-display"></p>
+                        <i class="fa-solid fa-angle-down icon"></i>
+                    </div>
+                    <div class="user-section-dropdown closed" id="user-section-dropdown">
+                        <p class="label-upper">Informazioni Personali</p>
+                        <p class="small" id="user-profile-email">-</p>
+                        <div id="user-profile-role"></div>
+                        <hr>
+                        <nav class="nav-light">
+                            <a href="/dashboard" class="nav-item"><i class="icon fa-solid fa-chart-bar"></i>I tuoi
+                                ticket</a>
+                            <a href="/operator" class="nav-item hidden" id="operator-section-button"><i
+                                    class="icon fa-solid fa-wrench"></i>Area
+                                Operatore</a>
+                            <a href="/admin" class="nav-item hidden" id="admin-section-button"><i
+                                    class="icon fa-solid fa-gear"></i>Area Admin</a>
+                            <button id="logout" class="nav-item"><i
+                                    class="icon fa-solid fa-arrow-right-from-bracket"></i>Logout</button>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <p class="burger-menu dropdown-menu-btn" id="burger-menu"><i class="fa-solid fa-bars"></i></p>
+    </header>
+
+    <main class="privacy-container">
+        <h1>Privacy Policy</h1>
+
+        <h2>1. Informazioni che raccogliamo</h2>
+        <p>Quando utilizzi la piattaforma HelpDesk, raccogliamo le seguenti categorie di informazioni:</p>
+        <ul>
+            <li><strong>Dati dell'Account:</strong> Nome, cognome, indirizzo email e password (crittografata) per
+                permettere l'accesso e l'identificazione nel sistema.</li>
+            <li><strong>Dati di Supporto:</strong> Tutte le informazioni, i testi, le descrizioni, le categorie dei
+                problemi e gli eventuali allegati che inserisci volontariamente all'interno dei ticket.</li>
+            <li><strong>Dati di Utilizzo:</strong> Informazioni tecniche standard raccolte dal server, come log, orari
+                di accesso e ruoli (Utente, Operatore, Admin).</li>
+        </ul>
+
+        <h2>2. Finalità del trattamento</h2>
+        <p>Utilizziamo i tuoi dati esclusivamente per i seguenti scopi:</p>
+        <ul>
+            <li>Permetterti di aprire ticket e tracciare le tue richieste di assistenza in modo personale e sicuro.</li>
+            <li>Fornire agli operatori tecnici tutte le informazioni necessarie per risolvere i problemi che hai
+                segnalato.</li>
+            <li>Inviarti comunicazioni tecniche sullo stato di avanzamento delle tue richieste (es. Ticket Preso in
+                Carico, Risolto).</li>
+            <li>Amministrare e mantenere sicura la piattaforma web, prevenendo accessi non autorizzati o spam.</li>
+        </ul>
+
+        <h2>3. Chi ha accesso ai tuoi dati</h2>
+        <p>La privacy delle tue richieste è fondamentale. I dati non sono e non saranno mai venduti a terzi. Viene
+            garantito l'accesso ai soli utenti autorizzati:</p>
+        <ul>
+            <li><strong>Tu (Cliente):</strong> Hai accesso alla tua dashboard privata e ai soli ticket che hai aperto.
+            </li>
+            <li><strong>Operatori:</strong> Hanno accesso al contenuto dei ticket per fornirti supporto, ma non alle tue
+                password o ai dati al di fuori delle richieste.</li>
+            <li><strong>Amministratori:</strong> Possono visualizzare i log di sistema per gestire la piattaforma.</li>
+        </ul>
+
+        <h2>4. Conservazione e Sicurezza</h2>
+        <p>I tuoi dati sono conservati su server sicuri e le password sono trattate tramite algoritmi crittografici a
+            senso unico (hashing). Conserviamo i dati associati ai ticket al fine di mantenere uno storico utile per
+            future necessità di supporto e statistiche di risoluzione. Adottiamo misure tecniche organizzative adeguate
+            per proteggere le informazioni da perdita o furto.</p>
+
+        <h2>5. I tuoi Diritti</h2>
+        <p>Nel rispetto della normativa vigente (es. GDPR europeo), hai il diritto di:</p>
+        <ul>
+            <li>Accedere in ogni momento ai tuoi dati personali e ai tuoi ticket tramite la tua area personale.</li>
+            <li>Richiedere la modifica o l'aggiornamento dei tuoi dati inesatti.</li>
+            <li>Richiedere l'eliminazione definitiva del tuo account e dello storico dei tuoi ticket, contattandoci
+                direttamente o tramite apposita procedura.</li>
+        </ul>
+
+        <h2>6. Contatti</h2>
+        <p>Se hai dubbi su come trattiamo le tue informazioni o se vuoi esercitare uno dei tuoi diritti, ti invitiamo a
+            contattare il team di supporto aprendo un ticket nella tua area riservata, oppure utilizzando i recapiti
+            forniti nella sezione "Contatti" della pagina principale.</p>
+
+        <hr>
+        <h1 id="cookies">Cookie Policy</h1>
+
+        <h2>1. Cosa sono i cookie?</h2>
+        <p>I cookie sono piccoli file di testo che i siti web salvano sul tuo computer o dispositivo mobile durante la
+            navigazione. Sono ampiamente utilizzati per far funzionare i siti web o farli funzionare in modo più
+            efficiente, nonché per fornire informazioni ai proprietari del sito.</p>
+
+        <h2>2. Come utilizziamo i cookie</h2>
+        <p>HelpDesk utilizza esclusivamente <strong>cookie tecnici e strettamente necessari</strong> al funzionamento
+            della piattaforma. In particolare:</p>
+        <ul>
+            <li><strong>Cookie di Sessione:</strong> Utilizzati per mantenere attiva la tua sessione dopo il login,
+                permettendoti di navigare tra le pagine della dashboard senza dover reinserire le credenziali ad ogni
+                clic.</li>
+            <li><strong>Cookie di Sicurezza:</strong> Utilizzati per proteggere il tuo account e prevenire tentativi di
+                accesso non autorizzati.</li>
+        </ul>
+
+        <h2>3. Cookie di terze parti</h2>
+        <p>La nostra piattaforma <strong>non utilizza</strong> cookie di profilazione o tracciamento a fini
+            pubblicitari. Non condividiamo le tue abitudini di navigazione con terze parti.</p>
+
+        <h2>4. Gestione dei cookie</h2>
+        <p>Poiché utilizziamo solo cookie strettamente necessari per erogare il servizio (come il login), non è
+            richiesto il consenso preventivo tramite banner. Puoi comunque disabilitare i cookie direttamente dalle
+            impostazioni del tuo browser, ma tieni presente che questo renderà impossibile accedere alla tua area
+            riservata e utilizzare il sistema di ticketing.</p>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="columns">
+                <div class="col">
+                    <div class="footer-logo-title">HelpDesk</div>
+                    <p class="desc">Sistema di ticketing per la gestione centralizzata delle richieste di supporto.</p>
+                </div>
+                <div class="col">
+                    <p class="label-upper">Piattaforma</p>
+                    <nav>
+                        <ul>
+                            <li><a href="/dashboard">Dashboard</a></li>
+                            <li><a href="/dashboard">I miei Ticket</a></li>
+                            <li><a href="/admin">Pannello Admin</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="col">
+                    <p class="label-upper">Risorse</p>
+                    <nav>
+                        <ul>
+                            <li><a href="/#features">Funzionalità</a></li>
+                            <li><a href="/#faq">FAQ</a></li>
+                            <li><a href="/#contacts">Contatti</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="col">
+                    <p class="label-upper">Legale</p>
+                    <nav>
+                        <ul>
+                            <li><a href="/policies.html">Privacy Policy</a></li>
+                            <li><a href="/policies.html#cookies">Cookie Policy</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            <hr>
+            <p class="copyright">&copy; 2026 • HelpDesk</p>
+        </div>
+    </footer>
+</body>
+
+</html>
